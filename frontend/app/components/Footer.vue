@@ -1,5 +1,3 @@
-<script setup lang="ts"></script>
-
 <template>
     <v-footer>
         <div style="display: flex; flex-direction: column;">
@@ -7,5 +5,3 @@
         </div>
     </v-footer>
 </template>
-
-<style scoped></style>
