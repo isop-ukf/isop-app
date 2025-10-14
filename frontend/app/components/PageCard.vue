@@ -1,10 +1,3 @@
-<script setup lang="ts">
-function basicPropValidator(value: string, _other_props: any) {
-    // zatiaľ stačí vedieť či obsah nie je prázdny reťazec
-    return value.trim().length > 0
-}
-</script>
-
 <template>
     <v-card variant="outlined" :width="300" class="d-flex flex-column" style="margin: 20px; cursor: pointer" link
         :to="link">
@@ -16,6 +9,11 @@ function basicPropValidator(value: string, _other_props: any) {
 </template>
 
 <script lang="ts">
+function basicPropValidator(value: string, _other_props: any) {
+    // zatiaľ stačí vedieť či obsah nie je prázdny reťazec
+    return value.trim().length > 0
+}
+
 export default {
     props: {
         title: {
