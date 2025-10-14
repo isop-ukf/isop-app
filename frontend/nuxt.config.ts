@@ -9,6 +9,7 @@ export default defineNuxtConfig({
 
     // externé moduly
     modules: [
-        '@nuxt/image' // na obrázky
+        '@nuxt/image', // na obrázky
+        'vuetify-nuxt-module' // Vuetify
     ]
 });
