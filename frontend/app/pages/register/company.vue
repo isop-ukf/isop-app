@@ -1,9 +1,56 @@
+<script setup lang="ts">
+import { FetchError } from 'ofetch';
+
+const rules = {
+    required: (v: string) => (!!v && v.trim().length > 0) || 'Povinné pole',
+    email: (v: string) => /.+@.+\..+/.test(v) || 'Zadajte platný email',
+    phone: (v: string) => (!v || /^[0-9 +()-]{6,}$/.test(v)) || 'Zadajte platné telefónne číslo',
+    mustAgree: (v: boolean) => v === true || 'Je potrebné súhlasiť',
+};
+
+const isValid = ref(false);
+const form = reactive({
+    companyName: '',
+    companyAddress: '',
+    contactName: '',
+    contactEmail: '',
+    contactPhone: '',
+    consent: false,
+});
+
+const loading = ref(false);
+const error = ref(null as null | string);
+
+async function handleRegistration() {
+    error.value = null;
+    loading.value = true;
+
+    try {
+        // TODO: implement
+    } catch (e) {
+        if (e instanceof FetchError && e.response?.status === 422) {
+            error.value = e.response?._data.message;
+        }
+    } finally {
+        loading.value = false;
+    }
+}
+</script>
+
 <template>
     <v-container fluid class="page-container form-wrap">
         <v-card id="page-container-card">
             <h4 class="page-title">Registrácia firmy</h4>
 
-            <v-form v-model="isValid" @submit.prevent="onSubmit">
+            <!-- Chybová hláška -->
+            <v-alert v-if="error !== null" density="compact" :text="error" title="Chyba" type="error"
+                id="login-error-alert" class="mx-auto"></v-alert>
+
+            <!-- Čakajúca hláška -->
+            <v-alert v-if="loading" density="compact" text="Prosím čakajte..." title="Spracovávam" type="info"
+                id="login-error-alert" class="mx-auto"></v-alert>
+
+            <v-form v-else v-model="isValid" @submit.prevent="handleRegistration">
                 <v-text-field v-model="form.companyName" :rules="[rules.required]" label="Názov firmy:"
                     variant="outlined" density="comfortable" />
                 <v-text-field v-model="form.companyAddress" :rules="[rules.required]" label="Adresa:" variant="outlined"
@@ -28,32 +75,6 @@
         </v-card>
     </v-container>
 </template>
-
-<script setup>
-import { reactive, ref } from 'vue'
-
-const isValid = ref(false)
-
-const form = reactive({
-    companyName: '',
-    companyAddress: '',
-    contactName: '',
-    contactEmail: '',
-    contactPhone: '',
-    consent: false,
-})
-
-const rules = {
-    required: v => (!!v && String(v).trim().length > 0) || 'Povinné pole',
-    email: v => /.+@.+\..+/.test(v) || 'Zadajte platný email',
-    phone: v => (!v || /^[0-9 +()-]{6,}$/.test(v)) || 'Zadajte platné telefónne číslo',
-    mustAgree: v => v === true || 'Je potrebné súhlasiť',
-}
-
-function onSubmit() {
-
-}
-</script>
 
 <style scoped>
 .page-container {

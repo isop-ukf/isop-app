@@ -1,9 +1,51 @@
+<script setup lang="ts">
+import { FetchError } from 'ofetch';
+
+const rules = {
+    required: (v: string) => (!!v && v.trim().length > 0) || 'Povinné pole',
+    email: (v: string) => /.+@.+\..+/.test(v) || 'Zadajte platný email',
+};
+
+const isValid = ref(false);
+const showPassword = ref(false);
+const form = reactive({
+    email: '',
+    password: '',
+});
+
+const loading = ref(false);
+const error = ref(null as null | string);
+
+async function handleLogin() {
+    error.value = null;
+    loading.value = true;
+
+    try {
+        // TODO: implement
+    } catch (e) {
+        if (e instanceof FetchError && e.response?.status === 422) {
+            error.value = e.response?._data.message;
+        }
+    } finally {
+        loading.value = false;
+    }
+}
+</script>
+
 <template>
     <v-container fluid class="page-container form-wrap">
         <v-card id="page-container-card">
             <h2 class="page-title">Prihlásenie</h2>
 
-            <v-form v-model="isValid" @submit.prevent="onSubmit">
+            <!-- Chybová hláška -->
+            <v-alert v-if="error !== null" density="compact" :text="error" title="Chyba" type="error"
+                id="login-error-alert" class="mx-auto"></v-alert>
+
+            <!-- Čakajúca hláška -->
+            <v-alert v-if="loading" density="compact" text="Prosím čakajte..." title="Spracovávam" type="info"
+                id="login-error-alert" class="mx-auto"></v-alert>
+
+            <v-form v-model="isValid" @submit.prevent="handleLogin">
                 <v-text-field v-model="form.email" :rules="[rules.required, rules.email]" label="Email:"
                     variant="outlined" density="comfortable" />
 
@@ -12,7 +54,7 @@
                     :append-inner-icon="showPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
                     @click:append-inner="showPassword = !showPassword" />
 
-                <div class="actions-row">
+                <div class="actions-row" to="/reset_psw">
                     <v-spacer />
                     <v-btn type="button" variant="tonal" color="success" size="small" class="forgot-btn" dense
                         to="/reset_psw">
@@ -27,31 +69,6 @@
         </v-card>
     </v-container>
 </template>
-
-<script setup>
-import { reactive, ref } from 'vue'
-
-const isValid = ref(false)
-const showPassword = ref(false)
-
-const form = reactive({
-    email: '',
-    password: '',
-})
-
-const rules = {
-    required: v => (!!v && String(v).trim().length > 0) || 'Povinné pole',
-    email: v => /.+@.+\..+/.test(v) || 'Zadajte platný email',
-}
-
-function onSubmit() {
-
-}
-
-function onForgot() {
-
-}
-</script>
 
 <style scoped>
 .page-container {
