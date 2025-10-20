@@ -1,19 +1,11 @@
 <template>
-
-  <v-row class="pc" align="stretch" justify="start">
-    <PageCard
-      title="Registrácia študenta"
-      description="Zaregistruj sa a začni svoju odbornú prax."
-      link="/register/student"
-      icon="mdi mdi-account"
-    />
-    <PageCard
-      title="Registrácia firmy"
-      description="Staň sa partnerskou firmou a pomôž študentom získať prax vo svojom odbore."
-      link="/register/company"
-      icon="mdi mdi-office-building"
-    />
-  </v-row>
+    <v-row class="pc" align="stretch" justify="start">
+        <PageCard title="Registrácia študenta" description="Zaregistruj sa a začni svoju odbornú prax."
+            link="/register/student" icon="mdi mdi-account" />
+        <PageCard title="Registrácia firmy"
+            description="Staň sa partnerskou firmou a pomôž študentom získať prax vo svojom odbore."
+            link="/register/company" icon="mdi mdi-office-building" />
+    </v-row>
 </template>
 
 <style scoped>
