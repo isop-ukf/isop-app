@@ -11,5 +11,12 @@ export default defineNuxtConfig({
     modules: [
         '@nuxt/image', // na obrázky
         'vuetify-nuxt-module' // Vuetify
-    ]
+    ],
+
+    nitro: {
+        // statický obsah vyrenderujeme vopred
+        prerender: {
+            routes: ["/", "/info/student", "/info/company", "/register", "/about"],
+        },
+    },
 });
