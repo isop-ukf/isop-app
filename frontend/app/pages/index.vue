@@ -12,8 +12,6 @@
                         link="/info/company" />
 
                     <PageCard title="O aplikácii" description="Informácie o systéme ISOP." link="/about" />
-
-                    <PageCard title="Iné" description="Iný obsah." link="/" />
                 </v-row>
             </v-card-text>
         </v-card>
