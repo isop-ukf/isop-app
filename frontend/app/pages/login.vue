@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import { FetchError } from 'ofetch';
 
+useSeoMeta({
+    title: "Prihlásenie | ISOP",
+    ogTitle: "Prihlásenie",
+    description: "Prihlásenie ISOP",
+    ogDescription: "Prihlásenie",
+});
+
 const rules = {
     required: (v: string) => (!!v && v.trim().length > 0) || 'Povinné pole',
     email: (v: string) => /.+@.+\..+/.test(v) || 'Zadajte platný email',

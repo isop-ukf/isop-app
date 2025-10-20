@@ -1,3 +1,12 @@
+<script setup lang="ts">
+useSeoMeta({
+    title: "Registrácia | ISOP",
+    ogTitle: "Registrácia",
+    description: "Registrácia ISOP",
+    ogDescription: "Registrácia",
+});
+</script>
+
 <template>
     <v-container fluid>
         <v-card>

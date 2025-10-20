@@ -1,3 +1,12 @@
+<script lang="ts">
+useSeoMeta({
+    title: "ISOP - Systém na evidenciu študentskej praxe",
+    ogTitle: "Systém na evidenciu študentskej praxe",
+    description: "Domovská stránka systému na evidenciu študentskej praxe",
+    ogDescription: "Domovská stránka",
+});
+</script>
+
 <template>
     <v-container fluid>
         <v-card>

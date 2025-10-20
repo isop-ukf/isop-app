@@ -1,3 +1,12 @@
+<script setup lang="ts">
+useSeoMeta({
+    title: "Informácie pre študenta | ISOP",
+    ogTitle: "Informácie pre študenta",
+    description: "Informácie pre študenta ISOP",
+    ogDescription: "Informácie pre študenta",
+});
+</script>
+
 <template>
     <v-container fluid>
         <v-card>

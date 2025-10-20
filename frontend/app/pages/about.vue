@@ -1,3 +1,12 @@
+<script lang="ts">
+useSeoMeta({
+    title: "O aplikácii | ISOP",
+    ogTitle: "O aplikácii",
+    description: "O aplikácii ISOP",
+    ogDescription: "O aplikácii",
+});
+</script>
+
 <template>
     <v-container fluid>
         <v-card id="footer-card">
