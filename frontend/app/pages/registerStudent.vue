@@ -118,7 +118,7 @@ const rules = {
 }
 
 function onSubmit() {
-  console.log('FORM SUBMIT', { ...form })
+
 }
 </script>
 
