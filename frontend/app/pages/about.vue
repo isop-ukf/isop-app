@@ -1,4 +1,4 @@
-<script lang="ts">
+<script setup lang="ts">
 useSeoMeta({
     title: "O aplikácii | ISOP",
     ogTitle: "O aplikácii",

@@ -1,4 +1,4 @@
-<script lang="ts">
+<script setup lang="ts">
 useSeoMeta({
     title: "ISOP - Systém na evidenciu študentskej praxe",
     ogTitle: "Systém na evidenciu študentskej praxe",
