@@ -1,7 +1,12 @@
 <template>
     <v-card variant="outlined" :width="300" class="d-flex flex-column" style="margin: 20px; cursor: pointer" link
         :to="link">
-        <v-card-title class="text-wrap"><strong>{{ title }}</strong></v-card-title>
+        <v-card-title class="text-wrap">
+            <div class="title-row">
+                <v-icon v-if="icon" :icon="icon" size="24" class="title-icon" />
+                <strong class="title-text">{{ title }}</strong>
+            </div>
+        </v-card-title>
         <v-card-text>
             {{ description }}
         </v-card-text>
@@ -30,7 +35,26 @@ export default {
             required: true,
             type: String,
             validator: basicPropValidator
-        }
+        },
+        icon: {
+            required: false,
+            type: String,
+            default: null,
+        },
     }
 }
 </script>
+
+<style scoped>
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;              
+}
+.title-icon {
+  transform: translateY(1px);
+}
+.title-text {
+  line-height: 1.2;    
+}
+</style>
