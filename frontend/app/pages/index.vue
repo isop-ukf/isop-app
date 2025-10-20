@@ -5,11 +5,11 @@
                 <v-row>
                     <PageCard title="Informácie o odbornej praxi pre študentov"
                         description="Všetky informácie o predmete Oborná prax, ako ho absolvovať, pravidlá a zmluvy."
-                        link="/infoStudent" />
+                        link="/info/student" />
 
                     <PageCard title="Informácie o odbornej praxi pre firmy"
                         description="Všetky informácie pre zamestnávateľov o zmluvách a pravidlách absolvovania odbornej praxe."
-                        link="/infoCompany" />
+                        link="/info/company" />
 
                     <PageCard title="O aplikácii" description="Informácie o systéme ISOP." link="/about" />
 
