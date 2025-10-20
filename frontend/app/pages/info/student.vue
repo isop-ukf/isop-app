@@ -1,29 +1,31 @@
 <template>
-    <h2 class="page-container page-title">Informácie o odbornej praxi pre študentov</h2>
-    <p class="page-container page-lead">
-        Kompletné informácie o odbornej praxi – priebeh, hodnotenie, zmluvy a pokyny pre študentov.
-    </p>
+    <div>
+        <h2 class="page-container page-title">Informácie o odbornej praxi pre študentov</h2>
+        <p class="page-container page-lead">
+            Kompletné informácie o odbornej praxi – priebeh, hodnotenie, zmluvy a pokyny pre študentov.
+        </p>
 
-    <br />
+        <br />
 
-    <h3 class="page-container section-title">Podmienky absolvovania predmetu</h3>
+        <h3 class="page-container section-title">Podmienky absolvovania predmetu</h3>
 
-    <v-row class="pc" align="stretch" justify="start">
-        <PageCard title="Rozsah a účasť"
-            description="Absolvovanie praxe v minimálnom rozsahu 130 hodín a povinná účasť na úvodnom stretnutí"
-            link="/" icon="mdi-clock-time-five-outline" />
-        <PageCard title="Denník praxe"
-            description="Priebežné vedenie denníka praxe podľa predpísanej štruktúry a jeho odovzdanie na konci obdobia."
-            link="/" icon="mdi-notebook-edit-outline" />
-        <PageCard title="Poster a prezentácia"
-            description="Príprava a prezentácia posteru. Hodnotí sa obsah, vizuálna stránka a kvalita prezentácie."
-            link="/" icon="mdi-presentation" />
-        <PageCard title="Bodové hodnotenie"
-            description="Max. 100 bodov (50b firma, 50b poster a prezentácia). Minimum pre absolvovanie je 51 bodov."
-            link="/" icon="mdi-checkbox-marked-outline" />
-        <PageCard title="Kredity" description="Po úspešnom absolvovaní predmetu študent získa 5 kreditov" link="/"
-            icon="mdi-school-outline" />
-    </v-row>
+        <v-row class="pc" align="stretch" justify="start">
+            <PageCard title="Rozsah a účasť"
+                description="Absolvovanie praxe v minimálnom rozsahu 130 hodín a povinná účasť na úvodnom stretnutí"
+                link="/" icon="mdi-clock-time-five-outline" />
+            <PageCard title="Denník praxe"
+                description="Priebežné vedenie denníka praxe podľa predpísanej štruktúry a jeho odovzdanie na konci obdobia."
+                link="/" icon="mdi-notebook-edit-outline" />
+            <PageCard title="Poster a prezentácia"
+                description="Príprava a prezentácia posteru. Hodnotí sa obsah, vizuálna stránka a kvalita prezentácie."
+                link="/" icon="mdi-presentation" />
+            <PageCard title="Bodové hodnotenie"
+                description="Max. 100 bodov (50b firma, 50b poster a prezentácia). Minimum pre absolvovanie je 51 bodov."
+                link="/" icon="mdi-checkbox-marked-outline" />
+            <PageCard title="Kredity" description="Po úspešnom absolvovaní predmetu študent získa 5 kreditov" link="/"
+                icon="mdi-school-outline" />
+        </v-row>
+    </div>
 </template>
 
 <style scoped>
