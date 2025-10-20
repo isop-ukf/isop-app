@@ -1,37 +1,39 @@
 <template>
-    <div class="page-container form-wrap">
-        <h4 class="page-title">Registrácia študenta</h4>
-        <v-form v-model="isValid" @submit.prevent="onSubmit">
-            <v-text-field v-model="form.title" label="Tituly pred:" variant="outlined" density="comfortable" />
+    <v-container fluid class="page-container form-wrap">
+        <v-card id="page-container-card">
+            <h4 class="page-title">Registrácia študenta</h4>
+            <v-form v-model="isValid" @submit.prevent="onSubmit">
+                <v-text-field v-model="form.title" label="Tituly pred:" variant="outlined" density="comfortable" />
 
-            <v-text-field v-model="form.firstName" :rules="[rules.required]" label="Meno:" variant="outlined"
-                density="comfortable" />
+                <v-text-field v-model="form.firstName" :rules="[rules.required]" label="Meno:" variant="outlined"
+                    density="comfortable" />
 
-            <v-text-field v-model="form.lastName" :rules="[rules.required]" label="Priezvisko:" variant="outlined"
-                density="comfortable" />
+                <v-text-field v-model="form.lastName" :rules="[rules.required]" label="Priezvisko:" variant="outlined"
+                    density="comfortable" />
 
-            <v-text-field v-model="form.address" label="Adresa:" variant="outlined" density="comfortable" />
+                <v-text-field v-model="form.address" label="Adresa:" variant="outlined" density="comfortable" />
 
-            <v-text-field v-model="form.studentEmail" :rules="[rules.required, rules.email]" label="Študentský email:"
-                variant="outlined" density="comfortable" />
+                <v-text-field v-model="form.studentEmail" :rules="[rules.required, rules.email]"
+                    label="Študentský email:" variant="outlined" density="comfortable" />
 
-            <v-text-field v-model="form.altEmail" :rules="[rules.optionalEmail]" label="Alternatívny email:"
-                variant="outlined" density="comfortable" />
+                <v-text-field v-model="form.altEmail" :rules="[rules.optionalEmail]" label="Alternatívny email:"
+                    variant="outlined" density="comfortable" />
 
-            <v-text-field v-model="form.phone" :rules="[rules.phone]" label="Telefón:" variant="outlined"
-                density="comfortable" />
+                <v-text-field v-model="form.phone" :rules="[rules.phone]" label="Telefón:" variant="outlined"
+                    density="comfortable" />
 
-            <v-select v-model="form.studyProgram" :items="programs" :rules="[rules.required]" label="Študijný odbor:"
-                variant="outlined" density="comfortable" />
+                <v-select v-model="form.studyProgram" :items="programs" :rules="[rules.required]"
+                    label="Študijný odbor:" variant="outlined" density="comfortable" />
 
-            <v-checkbox v-model="form.consent" :rules="[rules.mustAgree]"
-                label="Súhlasím s podmienkami spracúvania osobných údajov" density="comfortable" />
+                <v-checkbox v-model="form.consent" :rules="[rules.mustAgree]"
+                    label="Súhlasím s podmienkami spracúvania osobných údajov" density="comfortable" />
 
-            <v-btn type="submit" color="success" size="large" block :disabled="!isValid || !form.consent">
-                Registrovať
-            </v-btn>
-        </v-form>
-    </div>
+                <v-btn type="submit" color="success" size="large" block :disabled="!isValid || !form.consent">
+                    Registrovať
+                </v-btn>
+            </v-form>
+        </v-card>
+    </v-container>
 </template>
 
 <script setup>
@@ -77,6 +79,10 @@ function onSubmit() {
     margin: 0 auto;
     padding-left: 24px;
     padding-right: 24px;
+}
+
+#page-container-card {
+    padding: 10px;
 }
 
 .page-title {
