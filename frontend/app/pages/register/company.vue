@@ -1,30 +1,32 @@
 <template>
-    <div class="page-container form-wrap">
-        <h4 class="page-title">Registrácia firmy</h4>
+    <v-container fluid class="page-container form-wrap">
+        <v-card id="page-container-card">
+            <h4 class="page-title">Registrácia firmy</h4>
 
-        <v-form v-model="isValid" @submit.prevent="onSubmit">
-            <v-text-field v-model="form.companyName" :rules="[rules.required]" label="Názov firmy:" variant="outlined"
-                density="comfortable" />
-            <v-text-field v-model="form.companyAddress" :rules="[rules.required]" label="Adresa:" variant="outlined"
-                density="comfortable" />
+            <v-form v-model="isValid" @submit.prevent="onSubmit">
+                <v-text-field v-model="form.companyName" :rules="[rules.required]" label="Názov firmy:"
+                    variant="outlined" density="comfortable" />
+                <v-text-field v-model="form.companyAddress" :rules="[rules.required]" label="Adresa:" variant="outlined"
+                    density="comfortable" />
 
-            <h4 class="section-heading mt-4">Kontaktná osoba</h4>
+                <h4 class="section-heading mt-4">Kontaktná osoba</h4>
 
-            <v-text-field v-model="form.contactName" :rules="[rules.required]" label="Meno:" variant="outlined"
-                density="comfortable" />
-            <v-text-field v-model="form.contactEmail" :rules="[rules.required, rules.email]" label="Email:"
-                variant="outlined" density="comfortable" />
-            <v-text-field v-model="form.contactPhone" :rules="[rules.phone]" label="Telefón:" variant="outlined"
-                density="comfortable" />
+                <v-text-field v-model="form.contactName" :rules="[rules.required]" label="Meno:" variant="outlined"
+                    density="comfortable" />
+                <v-text-field v-model="form.contactEmail" :rules="[rules.required, rules.email]" label="Email:"
+                    variant="outlined" density="comfortable" />
+                <v-text-field v-model="form.contactPhone" :rules="[rules.phone]" label="Telefón:" variant="outlined"
+                    density="comfortable" />
 
-            <v-checkbox v-model="form.consent" :rules="[rules.mustAgree]"
-                label="Súhlasím s podmienkami spracúvania osobných údajov" density="comfortable" />
+                <v-checkbox v-model="form.consent" :rules="[rules.mustAgree]"
+                    label="Súhlasím s podmienkami spracúvania osobných údajov" density="comfortable" />
 
-            <v-btn type="submit" color="success" size="large" block :disabled="!isValid || !form.consent">
-                Registrovať
-            </v-btn>
-        </v-form>
-    </div>
+                <v-btn type="submit" color="success" size="large" block :disabled="!isValid || !form.consent">
+                    Registrovať
+                </v-btn>
+            </v-form>
+        </v-card>
+    </v-container>
 </template>
 
 <script setup>
@@ -59,6 +61,10 @@ function onSubmit() {
     margin: 0 auto;
     padding-left: 24px;
     padding-right: 24px;
+}
+
+#page-container-card {
+    padding: 10px;
 }
 
 .form-wrap {
