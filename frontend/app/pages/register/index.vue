@@ -4,13 +4,13 @@
     <PageCard
       title="Registrácia študenta"
       description="Zaregistruj sa a začni svoju odbornú prax."
-      link="/registerStudent"
+      link="/register/student"
       icon="mdi mdi-account"
     />
     <PageCard
       title="Registrácia firmy"
       description="Staň sa partnerskou firmou a pomôž študentom získať prax vo svojom odbore."
-      link="/registerCompany"
+      link="/register/company"
       icon="mdi mdi-office-building"
     />
   </v-row>
