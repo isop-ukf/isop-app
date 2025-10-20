@@ -11,7 +11,7 @@
             <h3 class="page-container section-title">Zmluvné podmienky</h3>
 
             <v-row class="pc" align="stretch" justify="start">
-                <PageCard title="Zmluva o odbornej praxi" description="Medzi firmou a študentom sa uzatvára Zmluva o odbornej praxi, ktorá definuje práva a povinnosti oboch strán. 
+                <InfoCard title="Zmluva o odbornej praxi" description="Medzi firmou a študentom sa uzatvára Zmluva o odbornej praxi, ktorá definuje práva a povinnosti oboch strán. 
       Zmluva musí byť v súlade s legislatívou a internými predpismi školy." link="/"
                     icon="mdi mdi-file-document-edit-outline" />
             </v-row>
@@ -19,15 +19,15 @@
             <h3 class="page-container section-title">Pravidlá a povinnost počas praxe</h3>
 
             <v-row class="pc" align="stretch" justify="start">
-                <PageCard title="Pridelenie mentora"
+                <InfoCard title="Pridelenie mentora"
                     description="Každému študentovi musí byť pridelený zodpovedný zamestnanec (mentor), ktorý ho bude viesť, zadávať mu úlohy a poskytovať spätnú väzbu."
-                    link="/" icon="mdi mdi-account-multiple-outline" />
-                <PageCard title="Relevantné úlohy"
+                    icon="mdi mdi-account-multiple-outline" />
+                <InfoCard title="Relevantné úlohy"
                     description="Náplň práce študenta musí zodpovedať jeho študijnému odboru a umožniť mu získať praktické zručnosti a vedomosti."
-                    link="/" icon="mdi mdi-notebook-check-outline" />
-                <PageCard title="Bezpečnosť pri práci"
+                    icon="mdi mdi-notebook-check-outline" />
+                <InfoCard title="Bezpečnosť pri práci"
                     description="Firma je povinná zabezpečiť preškolenie o bezpečnosti a ochrane zdravia pri práci (BOZP) a poskytnúť potrebné ochranné pomôcky."
-                    link="/" icon="mdi mdi-shield-outline" />
+                    icon="mdi mdi-shield-outline" />
             </v-row>
 
             <h3 class="page-container section-title">Hodnotenie a ukončenie praxe</h3>
