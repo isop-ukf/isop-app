@@ -8,14 +8,14 @@
         :rules="[rules.required]"
         label="Názov firmy:"
         variant="outlined"
-        density="compact"
+        density="comfortable"
       />
       <v-text-field
         v-model="form.companyAddress"
         :rules="[rules.required]"
         label="Adresa:"
         variant="outlined"
-        density="compact"
+        density="comfortable"
       />
 
       <h4 class="section-heading mt-4">Kontaktná osoba</h4>
@@ -25,28 +25,28 @@
         :rules="[rules.required]"
         label="Meno:"
         variant="outlined"
-        density="compact"
+        density="comfortable"
       />
       <v-text-field
         v-model="form.contactEmail"
         :rules="[rules.required, rules.email]"
         label="Email:"
         variant="outlined"
-        density="compact"
+        density="comfortable"
       />
       <v-text-field
         v-model="form.contactPhone"
         :rules="[rules.phone]"
         label="Telefón:"
         variant="outlined"
-        density="compact"
+        density="comfortable"
       />
 
       <v-checkbox
         v-model="form.consent"
         :rules="[rules.mustAgree]"
         label="Súhlasím s podmienkami spracúvania osobných údajov"
-        density="compact"
+        density="comfortable"
       />
 
       <v-btn
