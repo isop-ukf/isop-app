@@ -67,7 +67,7 @@ async function handleRegistration() {
             <v-alert v-if="loading" density="compact" text="Prosím čakajte..." title="Spracovávam" type="info"
                 id="login-error-alert" class="mx-auto"></v-alert>
 
-            <v-form v-model="isValid" @submit.prevent="handleRegistration">
+            <v-form v-else v-model="isValid" @submit.prevent="handleRegistration">
                 <v-text-field v-model="form.title" label="Tituly pred:" variant="outlined" density="comfortable" />
 
                 <v-text-field v-model="form.firstName" :rules="[rules.required]" label="Meno:" variant="outlined"

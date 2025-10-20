@@ -52,7 +52,7 @@ async function handleLogin() {
             <v-alert v-if="loading" density="compact" text="Prosím čakajte..." title="Spracovávam" type="info"
                 id="login-error-alert" class="mx-auto"></v-alert>
 
-            <v-form v-model="isValid" @submit.prevent="handleLogin">
+            <v-form v-else v-model="isValid" @submit.prevent="handleLogin">
                 <v-text-field v-model="form.email" :rules="[rules.required, rules.email]" label="Email:"
                     variant="outlined" density="comfortable" />
 
