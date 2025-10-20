@@ -1,29 +1,31 @@
 <template>
-    <div class="page-container form-wrap">
-        <h2 class="page-title">Prihlásenie</h2>
+    <v-container fluid class="page-container form-wrap">
+        <v-card id="page-container-card">
+            <h2 class="page-title">Prihlásenie</h2>
 
-        <v-form v-model="isValid" @submit.prevent="onSubmit">
-            <v-text-field v-model="form.email" :rules="[rules.required, rules.email]" label="Email:" variant="outlined"
-                density="comfortable" />
+            <v-form v-model="isValid" @submit.prevent="onSubmit">
+                <v-text-field v-model="form.email" :rules="[rules.required, rules.email]" label="Email:"
+                    variant="outlined" density="comfortable" />
 
-            <v-text-field v-model="form.password" :rules="[rules.required]" :type="showPassword ? 'text' : 'password'"
-                label="Heslo:" variant="outlined" density="comfortable"
-                :append-inner-icon="showPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
-                @click:append-inner="showPassword = !showPassword" />
+                <v-text-field v-model="form.password" :rules="[rules.required]"
+                    :type="showPassword ? 'text' : 'password'" label="Heslo:" variant="outlined" density="comfortable"
+                    :append-inner-icon="showPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
+                    @click:append-inner="showPassword = !showPassword" />
 
-            <div class="actions-row">
-                <v-spacer />
-                <v-btn type="button" variant="tonal" color="success" size="small" class="forgot-btn" dense
-                    to="/reset_psw">
-                    Zabudnuté heslo...
+                <div class="actions-row">
+                    <v-spacer />
+                    <v-btn type="button" variant="tonal" color="success" size="small" class="forgot-btn" dense
+                        to="/reset_psw">
+                        Zabudnuté heslo...
+                    </v-btn>
+                </div>
+
+                <v-btn type="submit" color="success" size="large" block :disabled="!isValid">
+                    Prihlásiť
                 </v-btn>
-            </div>
-
-            <v-btn type="submit" color="success" size="large" block :disabled="!isValid">
-                Prihlásiť
-            </v-btn>
-        </v-form>
-    </div>
+            </v-form>
+        </v-card>
+    </v-container fluid>
 </template>
 
 <script setup>
@@ -57,6 +59,10 @@ function onForgot() {
     margin: 0 auto;
     padding-left: 24px;
     padding-right: 24px;
+}
+
+#page-container-card {
+    padding: 10px;
 }
 
 .form-wrap {
