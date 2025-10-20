@@ -40,6 +40,7 @@ export default {
             required: false,
             type: String,
             default: null,
+            validator: basicPropValidator
         },
     }
 }
@@ -47,14 +48,16 @@ export default {
 
 <style scoped>
 .title-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;              
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
+
 .title-icon {
-  transform: translateY(1px);
+    transform: translateY(1px);
 }
+
 .title-text {
-  line-height: 1.2;    
+    line-height: 1.2;
 }
 </style>
