@@ -24,7 +24,7 @@ const form = reactive({
     studentEmail: '',
     altEmail: '',
     phone: '',
-    studyProgram: null,
+    studyProgram: null as (string | null),
     consent: false,
 });
 
