@@ -1,20 +1,22 @@
 <template>
-    <div class="page-container form-wrap">
-        <h2 class="page-title">Reset hesla</h2>
+    <v-container fluid class="page-container form-wrap">
+        <v-card id="page-container-card">
+            <h2 class="page-title">Reset hesla</h2>
 
-        <v-form v-model="isValid" @submit.prevent="onSubmit">
-            <v-text-field v-model="email" :rules="[rules.required, rules.email]" label="Email:" variant="outlined"
-                density="comfortable" />
+            <v-form v-model="isValid" @submit.prevent="onSubmit">
+                <v-text-field v-model="email" :rules="[rules.required, rules.email]" label="Email:" variant="outlined"
+                    density="comfortable" />
 
-            <v-btn type="submit" color="success" size="large" block :disabled="!isValid">
-                Odoslať Email
-            </v-btn>
-        </v-form>
+                <v-btn type="submit" color="success" size="large" block :disabled="!isValid">
+                    Odoslať Email
+                </v-btn>
+            </v-form>
 
-        <v-snackbar v-model="snackbar" timeout="2500">
-            Odoslané na mail
-        </v-snackbar>
-    </div>
+            <v-snackbar v-model="snackbar" timeout="2500">
+                Odoslané na mail
+            </v-snackbar>
+        </v-card>
+    </v-container>
 </template>
 
 <script setup>
@@ -40,6 +42,10 @@ function onSubmit() {
     margin: 0 auto;
     padding-left: 24px;
     padding-right: 24px;
+}
+
+#page-container-card {
+    padding: 10px;
 }
 
 .form-wrap {
