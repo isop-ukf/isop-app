@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import type { User } from '~/types/user';
 
+definePageMeta({
+    middleware: ['sanctum:auth', 'student-only'],
+});
+
 useSeoMeta({
     title: "Portál študenta | ISOP",
     ogTitle: "Portál študenta",

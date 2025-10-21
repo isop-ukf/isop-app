@@ -2,6 +2,10 @@
 import { FetchError } from 'ofetch';
 const { login } = useSanctumAuth();
 
+definePageMeta({
+    middleware: ['sanctum:guest'],
+});
+
 useSeoMeta({
     title: "Prihlásenie | ISOP",
     ogTitle: "Prihlásenie",

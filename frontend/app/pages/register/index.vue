@@ -1,4 +1,8 @@
 <script setup lang="ts">
+definePageMeta({
+    middleware: ['sanctum:guest'],
+});
+
 useSeoMeta({
     title: "Registrácia | ISOP",
     ogTitle: "Registrácia",

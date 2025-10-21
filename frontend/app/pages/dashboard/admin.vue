@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import type { User } from '~/types/user';
 
+definePageMeta({
+    middleware: ['sanctum:auth', 'admin-only'],
+});
+
 useSeoMeta({
     title: "Portál administrátora | ISOP",
     ogTitle: "Portál administrátora",

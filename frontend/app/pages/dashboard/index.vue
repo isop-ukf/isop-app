@@ -2,6 +2,10 @@
 import { Role } from '~/types/role';
 import type { User } from '~/types/user';
 
+definePageMeta({
+    middleware: ['sanctum:auth'],
+});
+
 const user = useSanctumUser<User>();
 const router = useRouter();
 

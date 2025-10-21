@@ -2,6 +2,10 @@
 import { NewRole } from '~/types/role';
 import type { NewUser } from '~/types/user';
 
+definePageMeta({
+    middleware: ['sanctum:guest'],
+});
+
 const client = useSanctumClient();
 
 useSeoMeta({

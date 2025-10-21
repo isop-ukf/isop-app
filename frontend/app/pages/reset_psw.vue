@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { FetchError } from 'ofetch';
 
+definePageMeta({
+    middleware: ['sanctum:guest'],
+});
+
 useSeoMeta({
     title: "Reset hesla | ISOP",
     ogTitle: "Reset hesla",
