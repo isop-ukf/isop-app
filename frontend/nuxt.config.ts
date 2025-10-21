@@ -10,7 +10,8 @@ export default defineNuxtConfig({
     // externé moduly
     modules: [
         '@nuxt/image', // na obrázky
-        'vuetify-nuxt-module' // Vuetify
+        'vuetify-nuxt-module', // Vuetify
+        'nuxt-auth-sanctum' // Laravel Sanctum auth
     ],
 
     nitro: {
@@ -18,5 +19,18 @@ export default defineNuxtConfig({
         prerender: {
             routes: ["/", "/info/student", "/info/company", "/register", "/about"],
         },
+    },
+
+    sanctum: {
+        baseUrl: 'http://localhost:8000',
+        origin: 'http://localhost:3000',
+        redirect: {
+            onLogin: '/dashboard',
+            onLogout: "/",
+            onAuthOnly: '/login',
+            keepRequestedRoute: false,
+            onGuestOnly: false,
+        },
+        redirectIfAuthenticated: true
     },
 });
