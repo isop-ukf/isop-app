@@ -10,6 +10,8 @@ onMounted(() => {
         router.push('/dashboard/admin');
     } else if (user.value?.role === Role.STUDENT) {
         router.push('/dashboard/student');
+    } else if (user.value?.role === Role.EMPLOYER) {
+        router.push('/dashboard/company');
     }
 });
 </script>
