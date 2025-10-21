@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Mail\UserPasswordReset;
 use App\Mail\UserRegistrationCompleted;
 use App\Models\Company;
 use App\Models\StudentData;
@@ -10,7 +11,6 @@ use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Mail;
 
@@ -75,6 +75,25 @@ class RegisteredUserController extends Controller
 
         Mail::to($user)->sendNow(new UserRegistrationCompleted($user->name, $password));
         event(new Registered($user));
+
+        return response()->noContent();
+    }
+
+    public function reset_password(Request $request): Response {
+        $request->validate([
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255'],
+        ]);
+
+        $user = User::whereEmail($request->email)->first();
+        if (!$user) {
+            return response(status: 400);
+        }
+
+        $newPassword = bin2hex(random_bytes(16));
+        $user->password = Hash::make($newPassword);
+        $user->save();
+
+        Mail::to($user)->sendNow(new UserPasswordReset($user->name, $newPassword));
 
         return response()->noContent();
     }

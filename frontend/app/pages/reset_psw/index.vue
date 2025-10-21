@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FetchError } from 'ofetch';
+const client = useSanctumClient();
 
 definePageMeta({
     middleware: ['sanctum:guest'],
@@ -19,7 +19,6 @@ const rules = {
 
 const isValid = ref(false);
 const email = ref('');
-const snackbar = ref(false);
 
 const loading = ref(false);
 const error = ref(null as null | string);
@@ -29,11 +28,16 @@ async function handleReset() {
     loading.value = true;
 
     try {
-        // TODO: implement
-    } catch (e) {
-        if (e instanceof FetchError && e.response?.status === 422) {
-            error.value = e.response?._data.message;
-        }
+        await client("/api/password-reset", {
+            method: 'POST',
+            body: {
+                email: email.value
+            }
+        });
+
+        navigateTo("/reset_psw/request_sent");
+    } catch (e: any) {
+        error.value = e.data?.message as string;
     } finally {
         loading.value = false;
     }
@@ -47,11 +51,11 @@ async function handleReset() {
 
             <!-- Chybová hláška -->
             <v-alert v-if="error !== null" density="compact" :text="error" title="Chyba" type="error"
-                id="login-error-alert" class="mx-auto"></v-alert>
+                id="login-error-alert" class="alert mx-auto"></v-alert>
 
             <!-- Čakajúca hláška -->
             <v-alert v-if="loading" density="compact" text="Prosím čakajte..." title="Spracovávam" type="info"
-                id="login-error-alert" class="mx-auto"></v-alert>
+                id="login-error-alert" class="alert mx-auto"></v-alert>
 
             <v-form v-else v-model="isValid" @submit.prevent="handleReset">
                 <v-text-field v-model="email" :rules="[rules.required, rules.email]" label="Email:" variant="outlined"
@@ -61,15 +65,15 @@ async function handleReset() {
                     Odoslať Email
                 </v-btn>
             </v-form>
-
-            <v-snackbar v-model="snackbar" timeout="2500">
-                Odoslané na mail
-            </v-snackbar>
         </v-card>
     </v-container>
 </template>
 
 <style scoped>
+.alert {
+    margin-bottom: 10px;
+}
+
 .page-container {
     max-width: 1120px;
     margin: 0 auto;
