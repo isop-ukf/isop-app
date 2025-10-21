@@ -21,7 +21,7 @@ useSeoMeta({
 
             <v-row class="pc" align="stretch" justify="start">
                 <InfoCard title="Zmluva o odbornej praxi" description="Medzi firmou a študentom sa uzatvára Zmluva o odbornej praxi, ktorá definuje práva a povinnosti oboch strán. 
-      Zmluva musí byť v súlade s legislatívou a internými predpismi školy." link="/"
+      Zmluva musí byť v súlade s legislatívou a internými predpismi školy."
                     icon="mdi mdi-file-document-edit-outline" />
             </v-row>
 
