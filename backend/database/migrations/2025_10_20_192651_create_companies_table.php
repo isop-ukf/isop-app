@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string("name")->nullable(false)->unique();
             $table->string("address")->nullable(false);
             $table->unsignedInteger("ico")->nullable(false)->unique();
+            $table->foreignId("contact")->nullable(false)->constrained("users")->onDelete("cascade");
             $table->boolean("hiring")->nullable(false)->default(false);
             $table->timestamps();
         });
