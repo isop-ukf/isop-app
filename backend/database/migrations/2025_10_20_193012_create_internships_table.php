@@ -21,8 +21,6 @@ return new class extends Migration
             $table->enum("semester", ["WINTER", "SUMMER"])->nullable(false);
             $table->string("position_description")->nullable(false);
             $table->binary("agreement")->nullable(true);
-            $table->foreignId("personel_id")->nullable(false)->constrained("users")->onDelete("cascade");
-            $table->foreignId("status_id")->nullable(false)->constrained("internship_statuses")->onDelete("cascade");
             $table->timestamps();
         });
     }
