@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { FetchError } from 'ofetch';
+import { NewRole } from '~/types/role';
+import type { NewUser } from '~/types/user';
+
+const client = useSanctumClient();
 
 useSeoMeta({
     title: "Registrácia firmy | ISOP",
@@ -9,19 +12,21 @@ useSeoMeta({
 });
 
 const rules = {
-    required: (v: string) => (!!v && v.trim().length > 0) || 'Povinné pole',
+    required: (v: any) => (!!v && String(v).trim().length > 0) || 'Povinné pole',
     email: (v: string) => /.+@.+\..+/.test(v) || 'Zadajte platný email',
     phone: (v: string) => (!v || /^[0-9 +()-]{6,}$/.test(v)) || 'Zadajte platné telefónne číslo',
     mustAgree: (v: boolean) => v === true || 'Je potrebné súhlasiť',
 };
 
 const isValid = ref(false);
-const form = reactive({
-    companyName: '',
-    companyAddress: '',
-    contactName: '',
-    contactEmail: '',
-    contactPhone: '',
+const form = ref({
+    name: '',
+    address: '',
+    ico: 123456789,
+    email: '',
+    first_name: '',
+    last_name: '',
+    phone: '',
     consent: false,
 });
 
@@ -32,12 +37,30 @@ async function handleRegistration() {
     error.value = null;
     loading.value = true;
 
+    const newUser: NewUser = {
+        email: form.value.email,
+        first_name: form.value.first_name,
+        last_name: form.value.last_name,
+        phone: form.value.phone,
+        role: NewRole.EMPLOYER,
+        student_data: undefined,
+        company_data: {
+            name: form.value.name,
+            address: form.value.address,
+            ico: form.value.ico,
+            hiring: false
+        },
+    };
+
     try {
-        // TODO: implement
-    } catch (e) {
-        if (e instanceof FetchError && e.response?.status === 422) {
-            error.value = e.response?._data.message;
-        }
+        await client("/register", {
+            method: 'POST',
+            body: newUser
+        });
+
+        navigateTo("/");
+    } catch (e: any) {
+        error.value = e.data?.message as string;
     } finally {
         loading.value = false;
     }
@@ -58,18 +81,22 @@ async function handleRegistration() {
                 id="login-error-alert" class="mx-auto"></v-alert>
 
             <v-form v-else v-model="isValid" @submit.prevent="handleRegistration">
-                <v-text-field v-model="form.companyName" :rules="[rules.required]" label="Názov firmy:"
-                    variant="outlined" density="comfortable" />
-                <v-text-field v-model="form.companyAddress" :rules="[rules.required]" label="Adresa:" variant="outlined"
+                <v-text-field v-model="form.name" :rules="[rules.required]" label="Názov firmy:" variant="outlined"
                     density="comfortable" />
+                <v-text-field v-model="form.address" :rules="[rules.required]" label="Adresa:" variant="outlined"
+                    density="comfortable" />
+                <v-number-input v-model="form.ico" :rules="[rules.required]" label="IČO:"
+                    control-variant="hidden"></v-number-input>
 
                 <h4 class="section-heading mt-4">Kontaktná osoba</h4>
 
-                <v-text-field v-model="form.contactName" :rules="[rules.required]" label="Meno:" variant="outlined"
+                <v-text-field v-model="form.first_name" :rules="[rules.required]" label="Meno:" variant="outlined"
                     density="comfortable" />
-                <v-text-field v-model="form.contactEmail" :rules="[rules.required, rules.email]" label="Email:"
+                <v-text-field v-model="form.last_name" :rules="[rules.required]" label="Priezvisko:" variant="outlined"
+                    density="comfortable" />
+                <v-text-field v-model="form.email" :rules="[rules.required, rules.email]" label="Email:"
                     variant="outlined" density="comfortable" />
-                <v-text-field v-model="form.contactPhone" :rules="[rules.phone]" label="Telefón:" variant="outlined"
+                <v-text-field v-model="form.phone" :rules="[rules.phone]" label="Telefón:" variant="outlined"
                     density="comfortable" />
 
                 <v-checkbox v-model="form.consent" :rules="[rules.mustAgree]"
