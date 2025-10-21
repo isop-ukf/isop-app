@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { FetchError } from 'ofetch';
+const { login } = useSanctumAuth();
 
 useSeoMeta({
     title: "Prihlásenie | ISOP",
@@ -15,7 +16,7 @@ const rules = {
 
 const isValid = ref(false);
 const showPassword = ref(false);
-const form = reactive({
+const form = ref({
     email: '',
     password: '',
 });
@@ -28,7 +29,7 @@ async function handleLogin() {
     loading.value = true;
 
     try {
-        // TODO: implement
+        await login(form.value);
     } catch (e) {
         if (e instanceof FetchError && e.response?.status === 422) {
             error.value = e.response?._data.message;
@@ -46,11 +47,11 @@ async function handleLogin() {
 
             <!-- Chybová hláška -->
             <v-alert v-if="error !== null" density="compact" :text="error" title="Chyba" type="error"
-                id="login-error-alert" class="mx-auto"></v-alert>
+                id="login-error-alert" class="mx-auto alert"></v-alert>
 
             <!-- Čakajúca hláška -->
             <v-alert v-if="loading" density="compact" text="Prosím čakajte..." title="Spracovávam" type="info"
-                id="login-error-alert" class="mx-auto"></v-alert>
+                id="login-error-alert" class="mx-auto alert"></v-alert>
 
             <v-form v-else v-model="isValid" @submit.prevent="handleLogin">
                 <v-text-field v-model="form.email" :rules="[rules.required, rules.email]" label="Email:"
@@ -78,6 +79,10 @@ async function handleLogin() {
 </template>
 
 <style scoped>
+.alert {
+    margin-bottom: 10px;
+}
+
 .page-container {
     max-width: 1120px;
     margin: 0 auto;
