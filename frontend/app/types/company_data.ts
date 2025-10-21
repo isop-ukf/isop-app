@@ -4,5 +4,12 @@ export interface CompanyData {
     address: string;
     ico: number;
     contact: number;
-    hiring: number;
+    hiring: boolean;
+};
+
+export interface NewCompanyData {
+    name: string;
+    address: string;
+    ico: number;
+    hiring: boolean;
 };
