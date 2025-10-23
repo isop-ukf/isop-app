@@ -13,7 +13,7 @@ useSeoMeta({
             <v-card-text>
                 <v-row>
                     <PageCard title="Informácie o odbornej praxi pre študentov"
-                        description="Všetky informácie o predmete Oborná prax, ako ho absolvovať, pravidlá a zmluvy."
+                        description="Všetky informácie o predmete Odborná prax, ako ho absolvovať, pravidlá a zmluvy."
                         link="/info/student" />
 
                     <PageCard title="Informácie o odbornej praxi pre firmy"
