@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\InternshipController;
 use App\Models\Company;
 use App\Models\StudentData;
 use Illuminate\Http\Request;
@@ -21,3 +22,5 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 Route::post('/password-reset', [RegisteredUserController::class, 'reset_password'])
     ->middleware(['guest', 'throttle:6,1'])
     ->name('password.reset');
+
+Route::get('/internships', [InternshipController::class, 'all'])->middleware(['auth'])->name("api.internships");
