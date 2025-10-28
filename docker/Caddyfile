@@ -1,0 +1,24 @@
+# Leave this section
+{
+  admin off
+}
+
+http://localhost {
+  root * /app/public
+
+  encode zstd gzip
+  php_fastcgi php-fpm:9000
+
+  @laravel_not_found {
+      not file
+      not path /index.php*
+  }
+  rewrite @laravel_not_found /index.php
+
+  file_server
+}
+
+# Leave this section
+http://localhost:2019 {
+  metrics /metrics
+}
