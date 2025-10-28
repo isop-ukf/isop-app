@@ -26,20 +26,6 @@ const headers = [
 
 const user = useSanctumUser<User>();
 const { data, error } = await useSanctumFetch<Internship[]>('/api/internships');
-
-const serverItems = [
-    {
-        company: "Kutil s.r.o.",
-        start: "01.01.2025",
-        end: "30.01.2025",
-        year_of_study: 1,
-        semester: "zinmý",
-        status: "Zadané",
-    }
-];
-const totalItems = 0;
-const loading = false;
-
 </script>
 
 <template>
