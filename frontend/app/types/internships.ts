@@ -15,11 +15,11 @@ export interface Internship {
 };
 
 export interface NewInternship {
-    user_id: string;
-    company_id: string;
-    start: number;
-    end: number;
-    year_of_study: boolean;
+    user_id: number;
+    company_id: number;
+    start: string;
+    end: string;
+    year_of_study: number;
     semester: string;
     position_description: string;
     agreement?: Uint8Array;
