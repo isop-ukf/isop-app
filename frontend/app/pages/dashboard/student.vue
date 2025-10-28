@@ -51,10 +51,10 @@ const { data, error } = await useSanctumFetch<Internship[]>('/api/internships');
             <h3>Moje praxe</h3>
 
             <!-- Chybová hláška -->
-            <v-alert v-if="error !== null" density="compact" :text="error?.message" title="Chyba" type="error"
+            <v-alert v-if="error" density="compact" :text="error?.message" title="Chyba" type="error"
                 id="login-error-alert" class="mx-auto alert"></v-alert>
 
-            <v-table>
+            <v-table v-else>
                 <thead>
                     <tr>
                         <th v-for="header in headers" :class="'text-' + header.align">
