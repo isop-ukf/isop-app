@@ -25,7 +25,7 @@ const headers = [
 ];
 
 const user = useSanctumUser<User>();
-const { data, status, error } = await useSanctumFetch<Internship[]>('/api/internships');
+const { data, error } = await useSanctumFetch<Internship[]>('/api/internships');
 
 const serverItems = [
     {
@@ -63,6 +63,11 @@ const loading = false;
             <div style="height: 40px;"></div>
 
             <h3>Moje praxe</h3>
+
+            <!-- Chybová hláška -->
+            <v-alert v-if="error !== null" density="compact" :text="error?.message" title="Chyba" type="error"
+                id="login-error-alert" class="mx-auto alert"></v-alert>
+
             <v-table>
                 <thead>
                     <tr>
