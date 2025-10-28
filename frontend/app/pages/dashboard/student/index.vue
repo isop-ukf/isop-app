@@ -76,7 +76,7 @@ const { data, error } = await useSanctumFetch<Internship[]>('/api/internships');
                         </td>
                         <td class="text-left">
                             <v-btn class="m-1 op-btn" density="compact" append-icon="mdi-pencil" base-color="orange"
-                                @click="() => { }">Editovať</v-btn>
+                                :to="'/dashboard/student/internship/edit/' + item.id">Editovať</v-btn>
                             <v-btn class="m-1 op-btn" density="compact" append-icon="mdi-trash-can-outline"
                                 base-color="red" @click="async () => { }">Zmazať</v-btn>
                         </td>
