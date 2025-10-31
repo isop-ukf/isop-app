@@ -21,7 +21,7 @@ useSeoMeta({
 
             <v-row class="pc" align="stretch" justify="start">
                 <InfoCard title="Rozsah a účasť"
-                    description="Absolvovanie praxe v minimálnom rozsahu 130 hodín a povinná účasť na úvodnom stretnutí"
+                    description="Absolvovanie praxe v minimálnom rozsahu 150 hodín a povinná účasť na úvodnom stretnutí"
                     icon="mdi-clock-time-five-outline" />
                 <InfoCard title="Denník praxe"
                     description="Priebežné vedenie denníka praxe podľa predpísanej štruktúry a jeho odovzdanie na konci obdobia."
