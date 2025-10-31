@@ -91,12 +91,19 @@ const form = ref({
 
 const user = useSanctumUser<User>();
 
+function dateTimeFixup(datetime: Date) {
+    const year = datetime.getFullYear()
+    const month = String(datetime.getMonth() + 1).padStart(2, '0')
+    const day = String(datetime.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`;
+}
+
 function triggerSubmit() {
     const new_internship: NewInternship = {
         user_id: user.value?.id!,
         company_id: form.value.company_id!,
-        start: form.value.start,
-        end: form.value.end,
+        start: dateTimeFixup(form.value.start as any),
+        end: dateTimeFixup(form.value.end as any),
         year_of_study: form.value.year_of_study,
         semester: form.value.semester === "Zimný" ? "WINTER" : "SUMMER",
         position_description: form.value.description
