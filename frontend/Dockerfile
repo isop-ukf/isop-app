@@ -17,4 +17,4 @@ RUN npm run build
 STOPSIGNAL SIGTERM
 
 # Run frontend web server
-CMD ["node .output/server/index.mjs"]
+CMD ["node", ".output/server/index.mjs"]
