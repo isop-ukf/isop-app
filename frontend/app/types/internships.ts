@@ -1,9 +1,11 @@
 import type { CompanyData } from "./company_data";
 import type { InternshipStatusData } from "./internship_status";
+import type { User } from "./user";
 
 export interface Internship {
     id: number;
-    user_id: string;
+    user_id?: string;
+    user?: User;
     company: CompanyData;
     start: string;
     end: string;
