@@ -183,7 +183,7 @@ class InternshipController extends Controller
         }
 
         $this->validateNewInternship($request);
-        $this->checkOverlap($user->id, $request->start, $request->end, $internship->id);
+        $this->checkOverlap($internship->user_id, $request->start, $request->end, $internship->id);
 
         $internship->update($request->except(['user_id']));
         return response()->noContent();
