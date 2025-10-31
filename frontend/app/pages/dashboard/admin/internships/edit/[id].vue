@@ -1,0 +1,101 @@
+<script setup lang="ts">
+import type { Internship, NewInternship } from '~/types/internships';
+import { FetchError } from 'ofetch';
+
+definePageMeta({
+    middleware: ['sanctum:auth', 'admin-only'],
+});
+
+useSeoMeta({
+    title: "Edit praxe | ISOP",
+    ogTitle: "Edit praxe",
+    description: "Edit praxe ISOP",
+    ogDescription: "Edit praxe",
+});
+
+const route = useRoute();
+const client = useSanctumClient();
+
+const loading = ref(false);
+const action_error = ref(null as null | string);
+
+async function handleUpdateOfBasicInfo(internship: NewInternship) {
+    action_error.value = null;
+    loading.value = true;
+
+    try {
+        await client(`/api/internships/${route.params.id}/basic`, {
+            method: 'POST',
+            body: internship
+        });
+
+        navigateTo("/dashboard/admin/internships");
+    } catch (e) {
+        if (e instanceof FetchError && e.response?.status === 422) {
+            action_error.value = e.response?._data.message;
+        } else {
+            action_error.value = "Nepodarilo sa pripojiť na API.";
+        }
+    } finally {
+        loading.value = false;
+    }
+}
+
+const { data, error } = await useSanctumFetch<Internship>(`/api/internships/${route.params.id}`);
+</script>
+
+<template>
+    <v-container fluid>
+        <v-card id="page-container-card">
+            <h1>Edit praxe</h1>
+
+            <!-- spacer -->
+            <div style="height: 40px;"></div>
+
+            <!-- Čakajúca hláška -->
+            <v-alert v-if="loading" density="compact" text="Prosím čakajte..." title="Spracovávam" type="info"
+                id="login-error-alert" class="mx-auto alert"></v-alert>
+            
+            <!-- Chybová hláška -->
+            <v-alert v-if="action_error !== null" density="compact" :text="action_error" title="Chyba" type="error"
+                id="login-error-alert" class="mx-auto alert"></v-alert>
+
+            <div v-else>
+                <!-- Chybová hláška -->
+                <v-alert v-if="error" density="compact" :text="error?.message" title="Chyba" type="error"
+                    id="login-error-alert" class="mx-auto alert"></v-alert>
+                
+                <div v-else>
+                    <h2>Základné informácie</h2>
+                    <InternshipEditor :start="data?.start" :end="data?.end" :year_of_study="data?.year_of_study" :semester="data?.semester" :company_id="data?.company.id" :description="data?.position_description" :submit="handleUpdateOfBasicInfo"  />
+                    <hr />
+
+                    <h2>Stav</h2>
+                    <p>...</p>
+                    <hr />
+
+                    <h2>Dokumenty</h2>
+                    <p>...</p>
+                    <hr />
+                </div>
+            </div>
+        </v-card>
+    </v-container>
+</template>
+
+<style scoped>
+#page-container-card {
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+}
+
+.alert {
+    margin-bottom: 10px;
+}
+
+hr {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+</style>
