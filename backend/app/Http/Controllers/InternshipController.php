@@ -183,10 +183,7 @@ class InternshipController extends Controller
         }
 
         $this->validateNewInternship($request);
-
-        if($internship->start !== $request->start || $internship->end !== $request->end) {
-            $this->checkOverlap($user->id, $request->start, $request->end);
-        }
+        $this->checkOverlap($user->id, $request->start, $request->end, $internship->id);
 
         $internship->update($request->except(['user_id']));
         return response()->noContent();
@@ -224,8 +221,13 @@ class InternshipController extends Controller
         ]);
     }
 
-    private function checkOverlap(int $user_id, string $start_date, string $end_date) {
+    private function checkOverlap(int $user_id, string $start_date, string $end_date, ?int $current_id = null) {
         $existingInternship = Internship::where('user_id', $user_id)
+            // check if the two internships do not have the same ID
+            ->when($current_id, function ($query) use ($current_id) {
+                $query->where('id', '!=', $current_id);
+            })
+            // check if the start/end period collides with another internship
             ->where(function ($query) use ($start_date, $end_date) {
                 $query->whereBetween('start', [$start_date, $end_date])
                     ->orWhereBetween('end', [$start_date, $end_date])
@@ -241,5 +243,5 @@ class InternshipController extends Controller
                 'message' => 'You already have an internship during this period.'
             ], 400));
         }
-    } 
+    }
 }
