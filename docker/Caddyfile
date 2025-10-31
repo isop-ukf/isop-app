@@ -7,7 +7,7 @@ http://localhost {
   root * /app/public
 
   encode zstd gzip
-  php_fastcgi php-fpm:9000
+  php_fastcgi isop-php-fpm:9000
 
   @laravel_not_found {
       not file
