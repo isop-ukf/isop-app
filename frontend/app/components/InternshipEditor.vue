@@ -91,7 +91,11 @@ const form = ref({
 
 const user = useSanctumUser<User>();
 
-function dateTimeFixup(datetime: Date) {
+function dateTimeFixup(datetime: Date|string) {
+    if(typeof datetime === 'string') {
+        return datetime;
+    }
+
     const year = datetime.getFullYear()
     const month = String(datetime.getMonth() + 1).padStart(2, '0')
     const day = String(datetime.getDate()).padStart(2, '0')
