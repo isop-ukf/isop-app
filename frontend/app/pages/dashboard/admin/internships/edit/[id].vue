@@ -31,10 +31,8 @@ async function handleUpdateOfBasicInfo(internship: NewInternship) {
 
         navigateTo("/dashboard/admin/internships");
     } catch (e) {
-        if (e instanceof FetchError && e.response?.status === 422) {
+        if (e instanceof FetchError && (e.response?.status === 422 || e.response?.status === 400)) {
             action_error.value = e.response?._data.message;
-        } else {
-            action_error.value = "Nepodarilo sa pripojiť na API.";
         }
     } finally {
         loading.value = false;
