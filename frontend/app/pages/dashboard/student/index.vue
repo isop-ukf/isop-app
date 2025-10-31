@@ -25,7 +25,7 @@ const headers = [
 ];
 
 const user = useSanctumUser<User>();
-const { data, error } = await useSanctumFetch<Internship[]>('/api/internships');
+const { data, error } = await useSanctumFetch<Internship[]>('/api/internships/my');
 </script>
 
 <template>

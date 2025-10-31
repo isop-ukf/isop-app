@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 
 class InternshipController extends Controller
 {
-    public function all()
+    public function all_student()
     {
         $internships = Internship::where('user_id', auth()->id())->get()->makeHidden(['created_at', 'updated_at']);
         
