@@ -7,6 +7,7 @@ use App\Models\Internship;
 use App\Models\InternshipStatus;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class InternshipController extends Controller
 {
@@ -40,6 +41,11 @@ class InternshipController extends Controller
             $internship->status->modified_by = User::find($internship->status->modified_by)->makeHidden(['created_at', 'updated_at', 'email_verified_at']);
         });
 
+        $internships->each(function ($internship) {
+            $internship->start = Carbon::parse($internship->start)->format('d.m.Y');
+            $internship->end = Carbon::parse($internship->end)->format('d.m.Y');
+        });
+
         return response()->json($internships);
     }
 
@@ -60,6 +66,11 @@ class InternshipController extends Controller
         $internships->each(function ($internship) {
             $internship->status = InternshipStatus::whereColumn('internship_id', '=', $internship->id)->get()->first()->makeHidden(['created_at', 'updated_at', 'id']);
             $internship->status->modified_by = User::find($internship->status->modified_by)->makeHidden(['created_at', 'updated_at', 'email_verified_at']);
+        });
+
+        $internships->each(function ($internship) {
+            $internship->start = Carbon::parse($internship->start)->format('d.m.Y');
+            $internship->end = Carbon::parse($internship->end)->format('d.m.Y');
         });
 
         return response()->json($internships);
