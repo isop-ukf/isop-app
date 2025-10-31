@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\InternshipController;
 use App\Models\Company;
 use App\Models\StudentData;
@@ -23,4 +24,14 @@ Route::post('/password-reset', [RegisteredUserController::class, 'reset_password
     ->middleware(['guest', 'throttle:6,1'])
     ->name('password.reset');
 
-Route::get('/internships', [InternshipController::class, 'all'])->middleware(['auth'])->name("api.internships");
+Route::prefix('/internships')->group(function () {
+    Route::get("/", [InternshipController::class, 'all'])->name("api.internships");
+
+    Route::middleware("auth:sanctum")->group(function () {
+        Route::put("/new", [InternshipController::class, 'store'])->name("api.internships.create");
+    });
+});
+
+Route::prefix('/companies')->middleware("auth:sanctum")->group(function () {
+    Route::get("/simple", [CompanyController::class, 'all_simple']);
+});
