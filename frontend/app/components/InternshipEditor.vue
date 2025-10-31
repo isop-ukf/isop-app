@@ -140,7 +140,7 @@ const { data, error } = await useSanctumFetch<CompanyData[]>('/api/companies/sim
             density="comfortable" />
 
         <v-btn type="submit" color="success" size="large" block :disabled="!isValid || !form.consent">
-            Pridať
+            Uloziť
         </v-btn>
     </v-form>
 </template>
