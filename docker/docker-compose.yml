@@ -1,12 +1,18 @@
 services:
-  node:
-    container_name: node
+  isop-frontend:
+    container_name: isop-frontend
     build:
       context: ../frontend
       dockerfile: Dockerfile
     restart: unless-stopped
+    ports:
+      - 80:80
+    environment:
+      NUXT_PUBLIC_SANCTUM_BASE_URL: http://localhost:8080
+      NUXT_PUBLIC_SANCTUM_ORIGIN: http://localhost
+      PORT: 80
     depends_on:
-      php-fpm:
+      isop-backend:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost"]
@@ -16,12 +22,12 @@ services:
       retries: 5
 
   # Caddy webserver
-  caddy:
-    container_name: caddy
+  isop-backend:
+    container_name: isop-backend
     image: caddy:2.10.0-alpine
     restart: unless-stopped
     ports:
-      - 80:80 # Needed for HTTP->HTTPS redirection
+      - 8080:80 # Needed for HTTP->HTTPS redirection
       - 443:443
       - 443:443/udp
     volumes:
@@ -34,7 +40,8 @@ services:
       # Caddy configuration
       - ./caddy-config:/config
     depends_on:
-      - php-fpm
+      isop-php-fpm:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:2019/metrics"]
       start_period: 10s
@@ -43,8 +50,8 @@ services:
       retries: 5
 
   # Custom PHP container
-  php-fpm:
-    container_name: php-fpm
+  isop-php-fpm:
+    container_name: isop-php-fpm
     user: 'www-data:www-data'
     build:
       context: ../backend
@@ -52,8 +59,20 @@ services:
     restart: unless-stopped
     env_file:
       - ../backend/.env
+    environment:
+      APP_URL: http://localhost:8080
+      FRONTEND_URL: http://localhost
+      SESSION_DOMAIN: localhost
+      SESSION_SECURE_COOKIE: false
+      SANCTUM_STATEFUL_DOMAINS: localhost,localhost:80,localhost:8080
+      DB_CONNECTION: mariadb
+      DB_HOST: isop-database
+      DB_PORT: 3306
+      DB_DATABASE: isop
+      DB_USERNAME: root
+      DB_PASSWORD: admin
     depends_on:
-      database:
+      isop-database:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "pgrep", "-x", "php-fpm"]
@@ -64,8 +83,8 @@ services:
 
   # MariaDB database
   # No ports are open, only Shopware itself has access
-  database:
-    container_name: mariadb
+  isop-database:
+    container_name: isop-database
     image: mariadb:11.8.2-noble
     restart: unless-stopped
     cap_add:
