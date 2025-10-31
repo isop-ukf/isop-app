@@ -29,7 +29,11 @@ Route::prefix('/internships')->group(function () {
     Route::get("/my", [InternshipController::class, 'all_student'])->name("api.internships.student");
 
     Route::middleware("auth:sanctum")->group(function () {
-        Route::get("/{id}", [InternshipController::class, 'get'])->name("api.internships.get");
+        Route::prefix('/{id}')->group(function () {
+            Route::get("/", [InternshipController::class, 'get'])->name("api.internships.get");
+            Route::post("/basic", [InternshipController::class, 'update_basic'])->name("api.internships.update.basic");
+        });
+
         Route::put("/new", [InternshipController::class, 'store'])->name("api.internships.create");
     });
 });

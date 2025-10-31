@@ -115,36 +115,8 @@ class InternshipController extends Controller
     {
         $user = auth()->user();
 
-        $request->validate([
-            'company_id' => ['required', 'exists:companies,id'],
-            'start' => ['required', 'date'],
-            'end' => ['required', 'date', 'after:start'],
-            'year_of_study' => ['required', 'integer', 'between:1,5'],
-            'semester' => ['required', 'in:WINTER,SUMMER'],
-            'position_description' => ['required', 'string', 'min:1']
-        ]);
-
-        $request->merge([
-            'start' => date('Y-m-d H:i:s', strtotime($request->start)),
-            'end' => date('Y-m-d H:i:s', strtotime($request->end))
-        ]);
-
-        // je už nejaká prax ktorá sa časovo prekrýva?
-        $existingInternship = Internship::where('user_id', $user->id)
-            ->where(function ($query) use ($request) {
-                $query->whereBetween('start', [$request->start, $request->end])
-                    ->orWhereBetween('end', [$request->start, $request->end])
-                    ->orWhere(function ($q) use ($request) {
-                        $q->where('start', '<=', $request->start)
-                          ->where('end', '>=', $request->end);
-                    });
-            })
-            ->exists();
-        if ($existingInternship) {
-            return response()->json([
-                'message' => 'You already have an internship during this period.'
-            ], 422);
-        }
+        $this->validateNewInternship($request);
+        $this->checkOverlap($user->id, $request->start, $request->end);
 
         $Internship = Internship::create([
             'user_id' => $user->id,
@@ -184,6 +156,31 @@ class InternshipController extends Controller
         //
     }
 
+    public function update_basic(int $id, Request $request)
+    {
+        $user = auth()->user();
+        $internship = Internship::find($id);
+        
+        if(!$internship) {
+            return response()->json([
+                'message' => 'No such internship exists.'
+            ], 400);
+        }
+
+        if ($user->role !== 'ADMIN' && $internship->user_id !== $user->id) {
+            abort(403, 'Unauthorized');
+        }
+
+        $this->validateNewInternship($request);
+
+        if($internship->start !== $request->start || $internship->end !== $request->end) {
+            $this->checkOverlap($user->id, $request->start, $request->end);
+        }
+
+        $internship->update($request->except(['user_id']));
+        return response()->noContent();
+    }
+
     /**
      * Update the specified resource in storage.
      */
@@ -199,4 +196,39 @@ class InternshipController extends Controller
     {
         //
     }
+
+    private function validateNewInternship(Request $request) {
+        $request->validate([
+            'company_id' => ['required', 'exists:companies,id'],
+            'start' => ['required', 'date'],
+            'end' => ['required', 'date', 'after:start'],
+            'year_of_study' => ['required', 'integer', 'between:1,5'],
+            'semester' => ['required', 'in:WINTER,SUMMER'],
+            'position_description' => ['required', 'string', 'min:1']
+        ]);
+
+        $request->merge([
+            'start' => date('Y-m-d H:i:s', strtotime($request->start)),
+            'end' => date('Y-m-d H:i:s', strtotime($request->end))
+        ]);
+    }
+
+    private function checkOverlap(int $user_id, string $start_date, string $end_date) {
+        $existingInternship = Internship::where('user_id', $user_id)
+            ->where(function ($query) use ($start_date, $end_date) {
+                $query->whereBetween('start', [$start_date, $end_date])
+                    ->orWhereBetween('end', [$start_date, $end_date])
+                    ->orWhere(function ($q) use ($end_date) {
+                        $q->where('start', '<=', $end_date)
+                          ->where('end', '>=', $end_date);
+                    });
+            })
+            ->exists();
+        
+        if ($existingInternship) {
+            abort(response()->json([
+                'message' => 'You already have an internship during this period.'
+            ], 400));
+        }
+    } 
 }
