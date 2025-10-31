@@ -90,9 +90,20 @@ function triggerSubmit() {
         year_of_study: form.value.year_of_study,
         semester: form.value.semester === "Zimný" ? "WINTER" : "SUMMER",
         position_description: form.value.description
-    }
+    };
 
     props.submit(new_internship);
+}
+
+function companyListProps(company: CompanyData) {
+    return {
+        title: company.name,
+        subtitle: `IČO: ${company.ico}, Zodpovedný: ${company.contact.name}, ${!company.hiring ? "ne" : ""}prijímajú nových študentov`
+    };
+}
+
+function yearOfStudyValueHandler(item: { title: string, subtitle: string }) {
+    return parseInt(item.title) || 0;
 }
 
 const { data, error } = await useSanctumFetch<CompanyData[]>('/api/companies/simple');
@@ -105,16 +116,25 @@ const { data, error } = await useSanctumFetch<CompanyData[]>('/api/companies/sim
 
         <v-select v-model="form.year_of_study" clearable label="Ročník" :items="year_of_study_choices"
             :item-props="(item) => { return { title: item.title, subtitle: item.subtitle } }"
-            :rules="[rules.required]"></v-select>
+            :item-value="yearOfStudyValueHandler" :rules="[rules.required]"></v-select>
 
         <v-select v-model="form.semester" clearable label="Semester" :items="['Zimný', 'Letný']"
             :rules="[rules.required]"></v-select>
 
-        <v-select v-model="form.company_id" clearable label="Firma" :items="[{ title: 'a', subtitle: 'b', value: 0 }]"
-            :item-props="(item) => { return { title: item.title, subtitle: item.subtitle } }"
-            :rules="[rules.required]"></v-select>
+        <!-- Výber firmy -->
 
-        <v-textarea clearable label="Popis práce" :rules="[rules.required]"></v-textarea>
+        <!-- Čakajúca hláška -->
+        <v-alert v-if="!data && !error" density="compact" text="Prosím čakajte..." title="Spracovávam" type="info"
+            id="data-error-alert" class="mx-auto alert"></v-alert>
+
+        <!-- Chybová hláška -->
+        <v-alert v-else-if="error" density="compact" :text="error.message" title="Chyba" type="error"
+            id="data-error-alert" class="mx-auto alert"></v-alert>
+
+        <v-select v-else v-model="form.company_id" clearable label="Firma" :items="data" :item-props="companyListProps"
+            item-value="id" :rules="[rules.required]"></v-select>
+
+        <v-textarea v-model="form.description" clearable label="Popis práce" :rules="[rules.required]"></v-textarea>
 
         <v-checkbox v-model="form.consent" :rules="[rules.mustAgree]" label="Potvrdzujem, že zadané údaje sú pravdivé"
             density="comfortable" />
@@ -129,5 +149,9 @@ const { data, error } = await useSanctumFetch<CompanyData[]>('/api/companies/sim
 form {
     width: 80%;
     margin: 0 auto;
+}
+
+.alert {
+    margin-bottom: 10px;
 }
 </style>

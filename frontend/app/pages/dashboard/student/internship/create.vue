@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { User } from '~/types/user';
+import type { NewInternship } from '~/types/internships';
 
 definePageMeta({
     middleware: ['sanctum:auth', 'student-only'],
@@ -12,7 +12,25 @@ useSeoMeta({
     ogDescription: "Vytvorenie praxe",
 });
 
-const user = useSanctumUser<User>();
+const loading = ref(false);
+const error = ref(null as null | string);
+
+const client = useSanctumClient();
+
+async function handleInternshipRegistration(internship: NewInternship) {
+    try {
+        await client("/api/internships/new", {
+            method: 'PUT',
+            body: internship
+        });
+
+        navigateTo("/dashboard/student")
+    } catch (e: any) {
+        error.value = e.data?.message as string;
+    } finally {
+        loading.value = false;
+    }
+}
 </script>
 
 <template>
@@ -22,7 +40,15 @@ const user = useSanctumUser<User>();
 
             <br />
 
-            <InternshipEditor :submit="(form: any) => console.log(form)" />
+            <!-- Čakajúca hláška -->
+            <v-alert v-show="loading" density="compact" text="Prosím čakajte..." title="Spracovávam" type="info"
+                id="data-error-alert" class="mx-auto alert"></v-alert>
+
+            <!-- Chybová hláška -->
+            <v-alert v-if="error" density="compact" :text="error" title="Chyba" type="error" id="data-error-alert"
+                class="mx-auto alert"></v-alert>
+
+            <InternshipEditor v-show="!loading" :submit="handleInternshipRegistration" />
         </v-card>
     </v-container>
 </template>
@@ -32,5 +58,9 @@ const user = useSanctumUser<User>();
     padding-left: 10px;
     padding-right: 10px;
     padding-bottom: 10px;
+}
+
+.alert {
+    margin-bottom: 10px;
 }
 </style>
