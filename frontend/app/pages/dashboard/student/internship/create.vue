@@ -24,7 +24,7 @@ async function handleInternshipRegistration(internship: NewInternship) {
             body: internship
         });
 
-        navigateTo("/dashboard/student")
+        navigateTo("/dashboard/student");
     } catch (e: any) {
         error.value = e.data?.message as string;
     } finally {
