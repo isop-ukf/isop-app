@@ -41,6 +41,9 @@ const { data, error } = await useSanctumFetch<Internship[]>('/api/internships');
             <v-btn prepend-icon="mdi-plus" color="blue" class="mr-2" to="/dashboard/student/internship/create">
                 Pridať
             </v-btn>
+            <v-btn prepend-icon="mdi-domain" color="blue" class="mr-2" to="/dashboard/student/companies">
+                Firmy
+            </v-btn>
             <v-btn prepend-icon="mdi-pencil" color="orange" class="mr-2">
                 Môj profil
             </v-btn>
