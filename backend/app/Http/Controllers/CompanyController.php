@@ -3,10 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\Company;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class CompanyController extends Controller
 {
+    public function all_simple() {
+        $companies = Company::all()->makeHidden(['created_at', 'updated_at']);
+
+        $companies->each(function ($company) {
+            $company->contact = User::find($company->contact)->makeHidden(['created_at', 'updated_at', 'email_verified_at']);
+        });
+
+        return response()->json($companies);
+    }
+
     /**
      * Display a listing of the resource.
      */
