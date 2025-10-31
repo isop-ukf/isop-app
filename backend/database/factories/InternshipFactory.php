@@ -16,8 +16,8 @@ class InternshipFactory extends Factory
      */
     public function definition(): array
     {
-        $start = fake()->dateTime();
-        $end = (clone $start)->modify('+' . fake()->numberBetween(150, 160) . ' hours');
+        $start = fake()->dateTime()->setTime(0, 0, 0, 0);
+        $end = (clone $start)->modify('+' . fake()->numberBetween(150, 160) . ' hours')->setTime(0, 0, 0, 0);
 
         return [
             'user_id' => 0,
