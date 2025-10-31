@@ -216,8 +216,8 @@ class InternshipController extends Controller
         ]);
 
         $request->merge([
-            'start' => date('Y-m-d H:i:s', strtotime($request->start)),
-            'end' => date('Y-m-d H:i:s', strtotime($request->end))
+            'start' => date('Y-m-d 00:00:00', strtotime($request->start)),
+            'end' => date('Y-m-d 00:00:00', strtotime($request->end))
         ]);
     }
 
