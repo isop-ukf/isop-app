@@ -16,11 +16,14 @@ class InternshipFactory extends Factory
      */
     public function definition(): array
     {
+        $start = fake()->dateTime();
+        $end = (clone $start)->modify('+' . fake()->numberBetween(150, 160) . ' hours');
+
         return [
             'user_id' => 0,
             'company_id' => 0,
-            'start' => fake()->dateTime(),
-            'end' => fake()->dateTime("+30 days"),
+            'start' => $start,
+            'end' => $end,
             'year_of_study' => fake()->randomElement([1, 2, 3, 4, 5]),
             'semester' => fake()->randomElement(["WINTER", "SUMMER"]),
             'position_description' => fake()->jobTitle(),
