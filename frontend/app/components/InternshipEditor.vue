@@ -30,6 +30,16 @@ const year_of_study_choices = [
         subtitle: 'magisterské',
     }
 ];
+const semester_choices = [
+    {
+        title: "Zimný",
+        value: "WINTER"
+    },
+    {
+        title: "Letný",
+        value: "SUMMER"
+    }
+];
 
 const props = defineProps({
     start: {
@@ -118,7 +128,7 @@ const { data, error } = await useSanctumFetch<CompanyData[]>('/api/companies/sim
             :item-props="(item) => { return { title: item.title, subtitle: item.subtitle } }"
             :item-value="yearOfStudyValueHandler" :rules="[rules.required]"></v-select>
 
-        <v-select v-model="form.semester" clearable label="Semester" :items="['Zimný', 'Letný']"
+        <v-select v-model="form.semester" clearable label="Semester" :items="semester_choices"
             :rules="[rules.required]"></v-select>
 
         <!-- Výber firmy -->
