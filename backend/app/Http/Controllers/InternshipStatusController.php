@@ -74,9 +74,40 @@ class InternshipStatusController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, InternshipStatus $internshipStatus)
+    public function update(int $id, Request $request)
     {
-        //
+        $user = auth()->user();
+        $internship = Internship::find($id);
+
+        if(!$internship) {
+            return response()->json([
+                'message' => 'No such internship exists.'
+            ], 400);
+        }
+
+        $company_contact = User::find($internship->contact);
+
+        if ($user->role !== 'ADMIN' && $user->id !== $company_contact->id) {
+            abort(403, 'Unauthorized');
+        }
+
+        $internshipStatus = $this->currentInternshipStatus($internship);
+        $newStatusValidator = 'in:' . implode(',', $this->possibleNewStatuses($internshipStatus->status, $user->role));
+
+        $request->validate([
+            'status' => ['required', 'string', 'uppercase', $newStatusValidator],
+            'note' => ['required', 'string', 'min:1']
+        ]);
+
+        InternshipStatus::create([
+            'internship_id' => $id,
+            'status' => $request->status,
+            'note' => $request->note,
+            'changed' => now(),
+            'modified_by' => $user->id
+        ]);
+
+        return response()->noContent();
     }
 
     /**
@@ -85,5 +116,34 @@ class InternshipStatusController extends Controller
     public function destroy(InternshipStatus $internshipStatus)
     {
         //
+    }
+
+    private function possibleNewStatuses(string $current_status, string $userRole) {
+        switch ($current_status) {
+            case 'SUBMITTED':
+                if ($userRole === 'EMPLOYER') {
+                    return [];
+                }
+                return ['CONFIRMED', 'DENIED'];
+            case 'CONFIRMED':
+                if ($userRole === 'EMPLOYER') {
+                    return ['DENIED'];
+                }
+                return ['SUBMITTED', 'DENIED', 'DEFENDED', 'NOT_DEFENDED'];
+            case 'DENIED':
+                if ($userRole === 'EMPLOYER') {
+                    return ['CONFIRMED'];
+                }
+                return ['SUBMITTED', 'CONFIRMED'];
+            case 'DEFENDED':
+            case 'NOT_DEFENDED':
+                return [];
+            default:
+                throw new \InvalidArgumentException('Unknown status');
+        }
+    }
+
+    private function currentInternshipStatus(Internship $internship) {
+        return InternshipStatus::whereInternshipId($internship->id)->orderByDesc('changed')->firstOrFail();
     }
 }

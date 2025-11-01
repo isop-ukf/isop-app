@@ -32,6 +32,7 @@ Route::prefix('/internships')->group(function () {
     Route::middleware("auth:sanctum")->group(function () {
         Route::prefix('/{id}')->group(function () {
             Route::get("/", [InternshipController::class, 'get'])->name("api.internships.get");
+            Route::put("/status", [InternshipStatusController::class, 'update'])->name("api.internships.status.update");
             Route::get("/statuses", [InternshipStatusController::class, 'get'])->name("api.internships.get");
             Route::post("/basic", [InternshipController::class, 'update_basic'])->name("api.internships.update.basic");
         });
