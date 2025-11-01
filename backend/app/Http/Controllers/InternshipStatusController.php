@@ -11,7 +11,7 @@ class InternshipStatusController extends Controller
 {
     public function get(int $id) {
         $user = auth()->user();
-        $internship_statuses = InternshipStatus::whereInternshipId($id)->get()->makeHidden(['created_at', 'updated_at', 'id']);
+        $internship_statuses = InternshipStatus::whereInternshipId($id)->orderByDesc('changed')->get()->makeHidden(['created_at', 'updated_at', 'id']);
 
         if(!$internship_statuses) {
             return response()->json([

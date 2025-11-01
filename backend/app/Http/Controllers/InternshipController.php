@@ -37,7 +37,7 @@ class InternshipController extends Controller
         });
 
         $internships->each(function ($internship) {
-            $internship->status = InternshipStatus::whereColumn('internship_id', '=', $internship->id)->get()->first()->makeHidden(['created_at', 'updated_at', 'id']);
+            $internship->status = InternshipStatus::whereColumn('internship_id', '=', $internship->id)->orderByDesc('changed')->get()->first()->makeHidden(['created_at', 'updated_at', 'id']);
             $internship->status->modified_by = User::find($internship->status->modified_by)->makeHidden(['created_at', 'updated_at', 'email_verified_at']);
         });
 
@@ -64,7 +64,7 @@ class InternshipController extends Controller
         });
 
         $internships->each(function ($internship) {
-            $internship->status = InternshipStatus::whereColumn('internship_id', '=', $internship->id)->get()->first()->makeHidden(['created_at', 'updated_at', 'id']);
+            $internship->status = InternshipStatus::whereColumn('internship_id', '=', $internship->id)->orderByDesc('changed')->get()->first()->makeHidden(['created_at', 'updated_at', 'id']);
             $internship->status->modified_by = User::find($internship->status->modified_by)->makeHidden(['created_at', 'updated_at', 'email_verified_at']);
         });
 
@@ -97,7 +97,7 @@ class InternshipController extends Controller
         $internship->contact = User::find($internship->company->contact)->makeHidden(['created_at', 'updated_at', 'email_verified_at']);
         unset($internship->company->contact);
         
-        $internship->status = InternshipStatus::whereColumn('internship_id', '=', $internship->id)->get()->first()->makeHidden(['created_at', 'updated_at', 'id']);
+        $internship->status = InternshipStatus::whereColumn('internship_id', '=', $internship->id)->orderByDesc('changed')->get()->first()->makeHidden(['created_at', 'updated_at', 'id']);
         $internship->status->modified_by = User::find($internship->status->modified_by)->makeHidden(['created_at', 'updated_at', 'email_verified_at']);
 
         return response()->json($internship);
