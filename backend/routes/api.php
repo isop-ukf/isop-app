@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\InternshipController;
+use App\Http\Controllers\InternshipStatusController;
 use App\Models\Company;
 use App\Models\StudentData;
 use Illuminate\Http\Request;
@@ -31,6 +32,7 @@ Route::prefix('/internships')->group(function () {
     Route::middleware("auth:sanctum")->group(function () {
         Route::prefix('/{id}')->group(function () {
             Route::get("/", [InternshipController::class, 'get'])->name("api.internships.get");
+            Route::get("/statuses", [InternshipStatusController::class, 'get'])->name("api.internships.get");
             Route::post("/basic", [InternshipController::class, 'update_basic'])->name("api.internships.update.basic");
         });
 
