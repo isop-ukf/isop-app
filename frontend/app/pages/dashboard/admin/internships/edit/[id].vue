@@ -40,7 +40,7 @@ async function handleUpdateOfBasicInfo(internship: NewInternship) {
     }
 }
 
-const { data, error } = await useSanctumFetch<Internship>(`/api/internships/${route.params.id}`);
+const { data, error, refresh } = await useSanctumFetch<Internship>(`/api/internships/${route.params.id}`);
 </script>
 
 <template>
@@ -83,7 +83,13 @@ const { data, error } = await useSanctumFetch<Internship>(`/api/internships/${ro
                         <br />
 
                         <h4>História</h4>
-                        <InternshipStatusHistoryView :internship="data?.id" />
+                        <InternshipStatusHistoryView :key="data?.status.changed" :internship="data?.id" />
+
+                        <br />
+
+                        <h4>Zmena stavu</h4>
+                        <InternshipStatusEditor :internship="data!" @successful-submit="refresh"
+                            :key="data?.status.changed" />
                     </div>
 
                     <hr />
