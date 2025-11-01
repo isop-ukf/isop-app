@@ -24,7 +24,7 @@ export function prettyInternshipStatus(status: InternshipStatus) {
         case InternshipStatus.CONFIRMED:
             return "Potvrdené";
         case InternshipStatus.DENIED:
-            return "Zamítnuté";
+            return "Zamietnuté";
         case InternshipStatus.DEFENDED:
             return "Obhájené";
         case InternshipStatus.NOT_DEFENDED:
