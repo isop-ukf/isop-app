@@ -72,7 +72,7 @@ const { data, error, refresh } = await useSanctumFetch<Internship>(`/api/interns
                         <hr />
                     </div>
 
-                    <div :key="refreshKey">
+                    <div>
                         <h2>Stav</h2>
                         <h4>Aktuálny stav</h4>
                         <p>{{ prettyInternshipStatus(data?.status.status!) }}</p>
@@ -82,12 +82,12 @@ const { data, error, refresh } = await useSanctumFetch<Internship>(`/api/interns
                         <br />
 
                         <h4>História</h4>
-                        <InternshipStatusHistoryView :internship="data?.id" />
+                        <InternshipStatusHistoryView :internship="data!" />
 
                         <br />
 
                         <h4>Zmena stavu</h4>
-                        <InternshipStatusEditor :internship="data!"
+                        <InternshipStatusEditor :key="`e-${refreshKey}`" :internship="data!"
                             @successful-submit="() => { refresh(); refreshKey++; }" />
                     </div>
 

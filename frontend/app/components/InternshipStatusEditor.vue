@@ -14,10 +14,10 @@ const user = useSanctumUser<User>();
 const rules = {
     required: (v: any) => (!!v && String(v).trim().length > 0) || 'Povinné pole',
 };
-const possible_states = possibleNextStates(props.internship.status.status, user.value!.role).map((state) => ({
+const possible_states = computed(() => possibleNextStates(props.internship.status.status, user.value!.role).map((state) => ({
     title: prettyInternshipStatus(state),
     value: state
-}));
+})));
 
 const isValid = ref(false);
 const new_state = ref(null as InternshipStatus | null);
@@ -26,7 +26,6 @@ const note = ref("");
 const loading = ref(false);
 const error = ref(null as null | string);
 
-const route = useRoute();
 const client = useSanctumClient();
 
 async function submit() {
@@ -39,7 +38,7 @@ async function submit() {
     };
 
     try {
-        await client(`/api/internships/${route.params.id}/status`, {
+        await client(`/api/internships/${props.internship.id}/status`, {
             method: 'PUT',
             body: new_status
         });

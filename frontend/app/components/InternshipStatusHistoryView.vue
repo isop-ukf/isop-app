@@ -1,13 +1,10 @@
 <script setup lang="ts">
 import { prettyInternshipStatus, type InternshipStatusData } from '~/types/internship_status';
+import type { Internship } from '~/types/internships';
 
-const props = defineProps({
-    internship: {
-        type: Number,
-        required: true,
-        default: -1
-    },
-});
+const props = defineProps<{
+    internship: Internship
+}>();
 
 const headers = [
     { title: 'Stav', key: 'status', align: 'left' },
@@ -16,8 +13,11 @@ const headers = [
     { title: 'Zmenu vykonal', key: 'modified_by', align: 'left' },
 ];
 
-const route = useRoute();
-const { data, error, pending } = await useSanctumFetch<InternshipStatusData[]>(`/api/internships/${route.params.id}/statuses`);
+const { data, error, pending, refresh } = await useSanctumFetch<InternshipStatusData[]>(`/api/internships/${props.internship.id}/statuses`);
+
+watch(() => props.internship, () => {
+    refresh();
+});
 </script>
 
 <template>
