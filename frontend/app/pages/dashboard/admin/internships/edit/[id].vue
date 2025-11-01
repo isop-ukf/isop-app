@@ -54,7 +54,7 @@ const { data, error } = await useSanctumFetch<Internship>(`/api/internships/${ro
             <!-- Čakajúca hláška -->
             <v-alert v-if="loading" density="compact" text="Prosím čakajte..." title="Spracovávam" type="info"
                 id="login-error-alert" class="mx-auto alert"></v-alert>
-            
+
             <!-- Chybová hláška -->
             <v-alert v-if="action_error !== null" density="compact" :text="action_error" title="Chyba" type="error"
                 id="login-error-alert" class="mx-auto alert"></v-alert>
@@ -63,20 +63,26 @@ const { data, error } = await useSanctumFetch<Internship>(`/api/internships/${ro
                 <!-- Chybová hláška -->
                 <v-alert v-if="error" density="compact" :text="error?.message" title="Chyba" type="error"
                     id="login-error-alert" class="mx-auto alert"></v-alert>
-                
-                <div v-else>
-                    <h2>Základné informácie</h2>
-                    <InternshipEditor :start="data?.start" :end="data?.end" :year_of_study="data?.year_of_study" :semester="data?.semester" :company_id="data?.company.id" :description="data?.position_description" :submit="handleUpdateOfBasicInfo"  />
-                    <hr />
 
-                    <h2>Stav</h2>
-                    <h4>Aktuálny stav</h4>
-                    <p>{{ prettyInternshipStatus(data?.status.status!) }}</p>
-                    <p>Poznámka: <em>{{ data?.status.note }}</em></p>
-                    <p>Posledná zmena: <em>{{ data?.status.changed }}, {{ data?.status.modified_by.name }}</em></p>
-                    <br />
-                    <h4>História</h4>
-                    
+                <div v-else>
+                    <div>
+                        <h2>Základné informácie</h2>
+                        <InternshipEditor :start="data?.start" :end="data?.end" :year_of_study="data?.year_of_study"
+                            :semester="data?.semester" :company_id="data?.company.id"
+                            :description="data?.position_description" :submit="handleUpdateOfBasicInfo" />
+                        <hr />
+                    </div>
+
+                    <div>
+                        <h2>Stav</h2>
+                        <h4>Aktuálny stav</h4>
+                        <p>{{ prettyInternshipStatus(data?.status.status!) }}</p>
+                        <p>Poznámka: <em>{{ data?.status.note }}</em></p>
+                        <p>Posledná zmena: <em>{{ data?.status.changed }}, {{ data?.status.modified_by.name }}</em></p>
+                        <br />
+                        <h4>História</h4>
+                    </div>
+
                     <hr />
 
                     <h2>Dokumenty</h2>
