@@ -24,10 +24,10 @@ const { data, error, pending } = await useSanctumFetch<InternshipStatusData[]>(`
     <div>
         <!-- Čakajúca hláška -->
         <v-alert v-if="pending" density="compact" text="Prosím čakajte..." title="Spracovávam" type="info"
-            id="login-error-alert" class="mx-auto alert"></v-alert>
+            class="mx-auto alert"></v-alert>
 
         <!-- Chybová hláška -->
-        <v-alert v-if="error" density="compact" :text="error?.message" title="Chyba" type="error" id="login-error-alert"
+        <v-alert v-if="error" density="compact" :text="error?.message" title="Chyba" type="error"
             class="mx-auto alert"></v-alert>
 
         <v-table v-else>
@@ -49,5 +49,3 @@ const { data, error, pending } = await useSanctumFetch<InternshipStatusData[]>(`
         </v-table>
     </div>
 </template>
-
-<style scoped></style>
