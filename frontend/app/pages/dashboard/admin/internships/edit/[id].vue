@@ -79,8 +79,11 @@ const { data, error } = await useSanctumFetch<Internship>(`/api/internships/${ro
                         <p>{{ prettyInternshipStatus(data?.status.status!) }}</p>
                         <p>Poznámka: <em>{{ data?.status.note }}</em></p>
                         <p>Posledná zmena: <em>{{ data?.status.changed }}, {{ data?.status.modified_by.name }}</em></p>
+
                         <br />
+
                         <h4>História</h4>
+                        <InternshipStatusHistoryView :internship="data?.id" />
                     </div>
 
                     <hr />
