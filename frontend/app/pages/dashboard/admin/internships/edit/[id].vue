@@ -19,6 +19,7 @@ const client = useSanctumClient();
 
 const loading = ref(false);
 const action_error = ref(null as null | string);
+const refreshKey = ref(0);
 
 async function handleUpdateOfBasicInfo(internship: NewInternship) {
     action_error.value = null;
@@ -71,7 +72,7 @@ const { data, error, refresh } = await useSanctumFetch<Internship>(`/api/interns
                         <hr />
                     </div>
 
-                    <div>
+                    <div :key="refreshKey">
                         <h2>Stav</h2>
                         <h4>Aktuálny stav</h4>
                         <p>{{ prettyInternshipStatus(data?.status.status!) }}</p>
@@ -81,13 +82,13 @@ const { data, error, refresh } = await useSanctumFetch<Internship>(`/api/interns
                         <br />
 
                         <h4>História</h4>
-                        <InternshipStatusHistoryView :key="data?.status.changed" :internship="data?.id" />
+                        <InternshipStatusHistoryView :internship="data?.id" />
 
                         <br />
 
                         <h4>Zmena stavu</h4>
-                        <InternshipStatusEditor :internship="data!" @successful-submit="refresh"
-                            :key="data?.status.changed" />
+                        <InternshipStatusEditor :internship="data!"
+                            @successful-submit="() => { refresh(); refreshKey++; }" />
                     </div>
 
                     <hr />
