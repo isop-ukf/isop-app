@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Internship, NewInternship } from '~/types/internships';
+import { prettyInternshipStatus } from '~/types/internship_status';
 import { FetchError } from 'ofetch';
 
 definePageMeta({
@@ -69,7 +70,13 @@ const { data, error } = await useSanctumFetch<Internship>(`/api/internships/${ro
                     <hr />
 
                     <h2>Stav</h2>
-                    <p>...</p>
+                    <h4>Aktuálny stav</h4>
+                    <p>{{ prettyInternshipStatus(data?.status.status!) }}</p>
+                    <p>Poznámka: <em>{{ data?.status.note }}</em></p>
+                    <p>Posledná zmena: <em>{{ data?.status.changed }}, {{ data?.status.modified_by.name }}</em></p>
+                    <br />
+                    <h4>História</h4>
+                    
                     <hr />
 
                     <h2>Dokumenty</h2>
