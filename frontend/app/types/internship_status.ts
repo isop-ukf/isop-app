@@ -10,6 +10,12 @@ export interface InternshipStatusData {
     modified_by: User;
 };
 
+export interface NewInternshipStatusData {
+    internship_id: number;
+    status: InternshipStatus;
+    note: string;
+};
+
 export enum InternshipStatus {
     SUBMITTED = 'SUBMITTED',
     CONFIRMED = 'CONFIRMED',
