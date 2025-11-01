@@ -11,7 +11,6 @@ export interface InternshipStatusData {
 };
 
 export interface NewInternshipStatusData {
-    internship_id: number;
     status: InternshipStatus;
     note: string;
 };
