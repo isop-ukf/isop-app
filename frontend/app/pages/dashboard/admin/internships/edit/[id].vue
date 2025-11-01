@@ -67,9 +67,7 @@ const { data, error, refresh } = await useSanctumFetch<Internship>(`/api/interns
                 <div v-else>
                     <div>
                         <h2>Základné informácie</h2>
-                        <InternshipEditor :start="data?.start" :end="data?.end" :year_of_study="data?.year_of_study"
-                            :semester="data?.semester" :company_id="data?.company.id"
-                            :description="data?.position_description" :submit="handleUpdateOfBasicInfo" />
+                        <InternshipEditor :internship="data!" :submit="handleUpdateOfBasicInfo" />
                         <hr />
                     </div>
 

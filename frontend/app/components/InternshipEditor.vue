@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { CompanyData } from '~/types/company_data';
-import type { NewInternship } from '~/types/internships';
+import type { Internship, NewInternship } from '~/types/internships';
 import type { User } from '~/types/user';
 
 const rules = {
@@ -41,51 +41,19 @@ const semester_choices = [
     }
 ];
 
-const props = defineProps({
-    start: {
-        type: String,
-        required: false,
-        default: ''
-    },
-    end: {
-        type: String,
-        required: false,
-        default: ''
-    },
-    year_of_study: {
-        type: Number,
-        required: false,
-        default: 1
-    },
-    semester: {
-        type: String,
-        required: false,
-        default: ''
-    },
-    company_id: {
-        type: Number,
-        required: false,
-        default: -1
-    },
-    description: {
-        type: String,
-        required: false,
-        default: ''
-    },
-    submit: {
-        type: Function as PropType<(internship: NewInternship) => void>,
-        required: true
-    }
-});
+const props = defineProps<{
+    internship?: Internship,
+    submit: (new_internship: NewInternship) => void,
+}>();
 
 const isValid = ref(false);
 const form = ref({
-    start: props.start,
-    end: props.end,
-    year_of_study: props.year_of_study,
-    semester: props.semester,
-    company_id: props.company_id === -1 ? null : props.company_id,
-    description: props.description,
+    start: props.internship?.start || "",
+    end: props.internship?.end || "",
+    year_of_study: props.internship?.year_of_study || 2025,
+    semester: props.internship?.semester || "WINTER",
+    company_id: props.internship?.company?.id == undefined ? null : props.internship.company.id,
+    description: props.internship?.position_description || "",
     consent: false,
 });
 
