@@ -91,8 +91,8 @@ const form = ref({
 
 const user = useSanctumUser<User>();
 
-function dateTimeFixup(datetime: Date|string) {
-    if(typeof datetime === 'string') {
+function dateTimeFixup(datetime: Date | string) {
+    if (typeof datetime === 'string') {
         return datetime;
     }
 
