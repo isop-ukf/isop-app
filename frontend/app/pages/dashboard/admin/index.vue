@@ -23,6 +23,9 @@ const user = useSanctumUser<User>();
             <!-- spacer -->
             <div style="height: 40px;"></div>
 
+            <v-btn prepend-icon="mdi-account-school" color="blue" class="mr-2" to="/dashboard/admin/students">
+                Študenti
+            </v-btn>
             <v-btn prepend-icon="mdi-domain" color="blue" class="mr-2" to="/dashboard/admin/companies">
                 Firmy
             </v-btn>
