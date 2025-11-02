@@ -31,6 +31,26 @@ class InternshipStatusController extends Controller
         return response()->json($internship_statuses);
     }
 
+    public function get_next_states(int $id) {
+        $user = auth()->user();
+        $internship = Internship::find($id);
+
+        if(!$internship) {
+            return response()->json([
+                'message' => 'No such internship exists.'
+            ], 400);
+        }
+
+        if ($user->role !== 'ADMIN' && $internship->user_id !== $user->id && $user->id !== $internship->contact) {
+            abort(403, 'Unauthorized');
+        }
+
+        $currentStatus = $this->currentInternshipStatus($internship);
+        $nextPossibleStatuses = $this->possibleNewStatuses($currentStatus->status, $user->role);
+
+        return response()->json($nextPossibleStatuses);
+    }
+
     /**
      * Display a listing of the resource.
      */

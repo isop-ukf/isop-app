@@ -39,32 +39,3 @@ export function prettyInternshipStatus(status: InternshipStatus) {
             throw new Error("Unknown status");
     }
 }
-
-export function possibleNextStates(status: InternshipStatus, user_role: Role) {
-    switch (status) {
-        case InternshipStatus.SUBMITTED:
-            if (user_role === Role.EMPLOYER) {
-                return [];
-            }
-
-            return [InternshipStatus.CONFIRMED, InternshipStatus.DENIED];
-        case InternshipStatus.CONFIRMED:
-            if (user_role === Role.EMPLOYER) {
-                return [InternshipStatus.DENIED];
-            }
-
-            return [InternshipStatus.SUBMITTED, InternshipStatus.DENIED, InternshipStatus.DEFENDED, InternshipStatus.NOT_DEFENDED];
-        case InternshipStatus.DENIED:
-            if (user_role === Role.EMPLOYER) {
-                return [InternshipStatus.CONFIRMED];
-            }
-
-            return [InternshipStatus.SUBMITTED, InternshipStatus.CONFIRMED];
-        case InternshipStatus.DEFENDED:
-            return [];
-        case InternshipStatus.NOT_DEFENDED:
-            return [];
-        default:
-            throw new Error("Unknown status");
-    }
-}

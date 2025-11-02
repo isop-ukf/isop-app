@@ -34,6 +34,7 @@ Route::prefix('/internships')->group(function () {
             Route::get("/", [InternshipController::class, 'get'])->name("api.internships.get");
             Route::put("/status", [InternshipStatusController::class, 'update'])->name("api.internships.status.update");
             Route::get("/statuses", [InternshipStatusController::class, 'get'])->name("api.internships.get");
+            Route::get("/next-statuses", [InternshipStatusController::class, 'get_next_states'])->name("api.internships.status.next.get");
             Route::post("/basic", [InternshipController::class, 'update_basic'])->name("api.internships.update.basic");
         });
 

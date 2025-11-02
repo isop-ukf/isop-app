@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Internship } from '~/types/internships';
-import { InternshipStatus, possibleNextStates, prettyInternshipStatus, type NewInternshipStatusData } from '~/types/internship_status';
+import { InternshipStatus, prettyInternshipStatus, type NewInternshipStatusData } from '~/types/internship_status';
 import type { User } from '~/types/user';
 import { FetchError } from 'ofetch';
 
@@ -14,22 +14,24 @@ const user = useSanctumUser<User>();
 const rules = {
     required: (v: any) => (!!v && String(v).trim().length > 0) || 'Povinné pole',
 };
-const possible_states = computed(() => possibleNextStates(props.internship.status.status, user.value!.role).map((state) => ({
-    title: prettyInternshipStatus(state),
-    value: state
-})));
 
 const isValid = ref(false);
 const new_state = ref(null as InternshipStatus | null);
 const note = ref("");
 
 const loading = ref(false);
-const error = ref(null as null | string);
+const save_error = ref(null as null | string);
 
 const client = useSanctumClient();
+const { data, refresh } = await useSanctumFetch<any>(`/api/internships/${props.internship.id}/next-statuses`, undefined, {
+    transform: (statuses: InternshipStatus[]) => statuses.map((state) => ({
+        title: prettyInternshipStatus(state),
+        value: state
+    }))
+});
 
 async function submit() {
-    error.value = null;
+    save_error.value = null;
     loading.value = true;
 
     const new_status: NewInternshipStatusData = {
@@ -45,10 +47,11 @@ async function submit() {
 
         new_state.value = null;
         note.value = "";
+        refresh();
         emit('successfulSubmit');
     } catch (e) {
         if (e instanceof FetchError) {
-            error.value = e.response?._data.message;
+            save_error.value = e.response?._data.message;
         }
     } finally {
         loading.value = false;
@@ -59,11 +62,15 @@ async function submit() {
 <template>
     <div>
         <!-- Chybová hláška -->
-        <v-alert v-if="error !== null" density="compact" :text="error" title="Chyba" type="error" id="login-error-alert"
-            class="mx-auto alert"></v-alert>
+        <v-alert v-if="save_error !== null" density="compact" :text="`Nepodarilo uložiť: ${save_error}`" title="Chyba"
+            type="error" class="mx-auto alert"></v-alert>
+
+        <!-- Chybová hláška -->
+        <v-alert v-if="save_error !== null" density="compact" :text="`Nepodarilo sa načítať stavy: ${save_error}`"
+            title="Chyba" type="error" class="mx-auto alert"></v-alert>
 
         <v-form v-model="isValid" @submit.prevent="submit" :disabled="loading">
-            <v-select v-model="new_state" label="Stav" :items="possible_states" item-value="value"></v-select>
+            <v-select v-model="new_state" label="Stav" :items="data" item-value="value"></v-select>
             <v-text-field v-model="note" :rules="[rules.required]" label="Poznámka"></v-text-field>
 
             <v-btn type="submit" color="success" size="large" block :disabled="!isValid">

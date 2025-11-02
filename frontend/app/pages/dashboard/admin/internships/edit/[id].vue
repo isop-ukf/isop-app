@@ -87,7 +87,7 @@ const { data, error, refresh } = await useSanctumFetch<Internship>(`/api/interns
                         <br />
 
                         <h4>Zmena stavu</h4>
-                        <InternshipStatusEditor :key="`e-${refreshKey}`" :internship="data!"
+                        <InternshipStatusEditor :internship="data!"
                             @successful-submit="() => { refresh(); refreshKey++; }" />
                     </div>
 
