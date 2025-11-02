@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\StudentData;
 use App\Models\User;
+use App\Models\InternshipStatus;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class StudentDataController extends Controller
 {
@@ -167,5 +169,69 @@ class StudentDataController extends Controller
     public function destroy(StudentData $studentData)
     {
         //
+    }
+
+    /**
+     * Delete a student and all related data.
+     */
+    public function delete(int $id)
+    {
+        $user = auth()->user();
+
+        // Admin kontrola
+        if ($user->role !== 'ADMIN') {
+            abort(403, 'Unauthorized');
+        }
+
+        $student = User::find($id);
+
+        if (!$student) {
+            return response()->json([
+                'message' => 'No such student exists.'
+            ], 400);
+        }
+
+        if ($student->role !== 'STUDENT') {
+            return response()->json([
+                'message' => 'User is not a student.'
+            ], 400);
+        }
+
+        try {
+            DB::beginTransaction();
+
+            // 1. Získaj internship IDs
+            $internshipIds = $student->internships()->pluck('id')->toArray();
+
+            // 2. Vymaž internship statuses
+            if (!empty($internshipIds)) {
+                InternshipStatus::whereIn('internship_id', $internshipIds)->delete();
+            }
+
+            // 3. Vymaž internships
+            $student->internships()->delete();
+
+            // 4. Vymaž student_data
+            if ($student->studentData) {
+                $student->studentData()->delete();
+            }
+
+            // 5. Vymaž usera
+            $student->delete();
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Student successfully deleted.'
+            ], 200);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'message' => 'Error deleting student.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }

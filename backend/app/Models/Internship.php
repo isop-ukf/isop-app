@@ -25,4 +25,12 @@ class Internship extends Model
         'position_description',
         'agreement',
     ];
+
+    /**
+     * Get the statuses for the internship.
+     */
+    public function statuses()
+    {
+        return $this->hasMany(InternshipStatus::class, 'internship_id');
+    }
 }

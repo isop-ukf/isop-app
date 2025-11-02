@@ -57,4 +57,12 @@ class User extends Authenticatable
     {
         return $this->hasOne(StudentData::class, 'user_id');
     }
+
+    /**
+     * Get the internships for the user.
+     */
+    public function internships()
+    {
+        return $this->hasMany(Internship::class, 'user_id');
+    }
 }

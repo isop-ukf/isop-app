@@ -26,7 +26,7 @@ class RegisteredUserController extends Controller
         $password = bin2hex(random_bytes(16));
 
         $request->validate([
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'first_name' => ['required', 'string', 'max:64'],
             'last_name' => ['required', 'string', 'max:64'],
             'phone' => ['required', 'string', 'max:13'],
@@ -56,14 +56,14 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($password),
         ]);
 
-        if($user->role === "STUDENT") {
+        if ($user->role === "STUDENT") {
             StudentData::create([
                 'user_id' => $user->id,
                 'address' => $request->student_data['address'],
                 'personal_email' => $request->student_data['personal_email'],
                 'study_field' => $request->student_data['study_field'],
             ]);
-        } else if($user->role === "EMPLOYER") {
+        } else if ($user->role === "EMPLOYER") {
             Company::create([
                 'name' => $request->company_data['name'],
                 'address' => $request->company_data['address'],
@@ -79,7 +79,8 @@ class RegisteredUserController extends Controller
         return response()->noContent();
     }
 
-    public function reset_password(Request $request): Response {
+    public function reset_password(Request $request): Response
+    {
         $request->validate([
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255'],
         ]);
@@ -94,6 +95,24 @@ class RegisteredUserController extends Controller
         $user->save();
 
         Mail::to($user)->sendNow(new UserPasswordReset($user->name, $newPassword));
+
+        return response()->noContent();
+    }
+
+    public function reset_password_2(Request $request): Response
+    {
+        $request->validate([
+            'id' => ['required', 'string', 'lowercase', 'email', 'max:255'],
+            'password' => ['required', 'string', 'lowercase', 'email', 'max:255'],
+        ]);
+
+        $user = User::whereEmail($request->email)->first();
+        if (!$user) {
+            return response(status: 400);
+        }
+
+        $user->password = Hash::make($request->password);
+        $user->save();
 
         return response()->noContent();
     }
