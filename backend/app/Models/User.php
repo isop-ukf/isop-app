@@ -49,4 +49,12 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Get the student data associated with the user.
+     */
+    public function studentData()
+    {
+        return $this->hasOne(StudentData::class, 'user_id');
+    }
 }

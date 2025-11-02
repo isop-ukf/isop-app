@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\InternshipController;
+use App\Http\Controllers\StudentDataController;
 use App\Http\Controllers\InternshipStatusController;
 use App\Models\Company;
 use App\Models\StudentData;
@@ -19,6 +20,12 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     $user->student_data = $student_data;
 
     return $user;
+});
+
+Route::middleware(['auth:sanctum'])->prefix('/students')->group(function () {
+    Route::get('/', [StudentDataController::class, 'all']);
+    Route::get('/{id}', [StudentDataController::class, 'get']);
+    Route::post('/{id}', [StudentDataController::class, 'update_all']);
 });
 
 Route::post('/password-reset', [RegisteredUserController::class, 'reset_password'])
@@ -44,4 +51,6 @@ Route::prefix('/internships')->group(function () {
 
 Route::prefix('/companies')->middleware("auth:sanctum")->group(function () {
     Route::get("/simple", [CompanyController::class, 'all_simple']);
+    Route::get("/{id}", [CompanyController::class, 'get']);
+    Route::post("/{id}", [CompanyController::class, 'update_all']);
 });
