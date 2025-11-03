@@ -12,8 +12,8 @@ export interface Internship {
     year_of_study: number;
     semester: string;
     position_description: string;
-    agreement?: Uint8Array;
-    report?: Uint8Array;
+    agreement: boolean;
+    report: boolean;
     report_confirmed: boolean;
     status: InternshipStatusData;
 };
@@ -26,5 +26,4 @@ export interface NewInternship {
     year_of_study: number;
     semester: string;
     position_description: string;
-    agreement?: Uint8Array;
 };

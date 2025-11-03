@@ -46,6 +46,11 @@ class InternshipController extends Controller
             $internship->end = Carbon::parse($internship->end)->format('d.m.Y');
         });
 
+        $internships->each(function ($internship) {
+            $internship->agreement = $internship->agreement !== null;
+            $internship->report = $internship->report !== null;
+        });
+
         return response()->json($internships);
     }
 
@@ -71,6 +76,11 @@ class InternshipController extends Controller
         $internships->each(function ($internship) {
             $internship->start = Carbon::parse($internship->start)->format('d.m.Y');
             $internship->end = Carbon::parse($internship->end)->format('d.m.Y');
+        });
+
+        $internships->each(function ($internship) {
+            $internship->agreement = $internship->agreement !== null;
+            $internship->report = $internship->report !== null;
         });
 
         return response()->json($internships);
@@ -99,6 +109,9 @@ class InternshipController extends Controller
         
         $internship->status = InternshipStatus::whereColumn('internship_id', '=', $internship->id)->orderByDesc('changed')->get()->first()->makeHidden(['created_at', 'updated_at', 'id']);
         $internship->status->modified_by = User::find($internship->status->modified_by)->makeHidden(['created_at', 'updated_at', 'email_verified_at']);
+
+        $internship->agreement = $internship->agreement !== null;
+        $internship->report = $internship->report !== null;
 
         return response()->json($internship);
     }
@@ -186,6 +199,43 @@ class InternshipController extends Controller
         $this->checkOverlap($internship->user_id, $request->start, $request->end, $internship->id);
 
         $internship->update($request->except(['user_id']));
+        return response()->noContent();
+    }
+
+    public function update_documents(int $id, Request $request) {
+        $user = auth()->user();
+        $internship = Internship::find($id);
+        
+        if(!$internship) {
+            return response()->json([
+                'message' => 'No such internship exists.'
+            ], 400);
+        }
+
+        if ($user->role !== 'ADMIN' && $internship->user_id !== $user->id && $user->id !== $internship->contact) {
+            abort(403, 'Unauthorized');
+        }
+
+        $request->validate([
+            'agreement' => ['nullable', 'file', 'mimes:pdf', 'max:10240'],
+            'report' => ['nullable', 'file', 'mimes:pdf', 'max:10240']
+        ]);
+
+        if (!$request->hasFile('agreement') && !$request->hasFile('report')) {
+            return response()->json([
+                'message' => 'At least one document (agreement or report) must be provided.'
+            ], 400);
+        }
+
+        if ($request->hasFile('agreement')) {
+            $internship->agreement = file_get_contents($request->file('agreement')->getRealPath());
+        }
+
+        if ($request->hasFile('report')) {
+            $internship->report = file_get_contents($request->file('report')->getRealPath());
+        }
+
+        $internship->save();
         return response()->noContent();
     }
 
