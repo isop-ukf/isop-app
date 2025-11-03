@@ -54,4 +54,5 @@ Route::prefix('/companies')->middleware("auth:sanctum")->group(function () {
     Route::get("/simple", [CompanyController::class, 'all_simple']);
     Route::get("/{id}", [CompanyController::class, 'get']);
     Route::post("/{id}", [CompanyController::class, 'update_all']);
+    Route::delete("/{id}", [CompanyController::class, 'delete']);
 });

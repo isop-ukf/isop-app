@@ -22,4 +22,20 @@ class Company extends Model
         'contact',
         'hiring'
     ];
+
+    /**
+     * Get the internships for the company.
+     */
+    public function internships()
+    {
+        return $this->hasMany(Internship::class, 'company_id');
+    }
+
+    /**
+     * Get the contact person (user) for the company.
+     */
+    public function contactPerson()
+    {
+        return $this->belongsTo(User::class, 'contact');
+    }
 }

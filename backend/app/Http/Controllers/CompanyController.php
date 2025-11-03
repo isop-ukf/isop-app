@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Company;
 use App\Models\User;
+use App\Models\Internship;
+use App\Models\InternshipStatus;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CompanyController extends Controller
 {
@@ -151,5 +154,68 @@ class CompanyController extends Controller
     public function destroy(Company $company)
     {
         //
+    }
+
+    /**
+     * Delete a company, its contact person and all related data.
+     */
+    public function delete(int $id)
+    {
+        $user = auth()->user();
+
+        // Admin kontrola
+        if ($user->role !== 'ADMIN') {
+            abort(403, 'Unauthorized');
+        }
+
+        $company = Company::find($id);
+
+        if (!$company) {
+            return response()->json([
+                'message' => 'No such company exists.'
+            ], 400);
+        }
+
+        try {
+            DB::beginTransaction();
+
+            // 1. Získaj všetky internship IDs firmy
+            $internshipIds = Internship::where('company_id', $company->id)
+                ->pluck('id')
+                ->toArray();
+
+            // 2. Vymaž všetky internship statuses
+            if (!empty($internshipIds)) {
+                InternshipStatus::whereIn('internship_id', $internshipIds)->delete();
+            }
+
+            // 3. Vymaž všetky internships firmy
+            Internship::where('company_id', $company->id)->delete();
+
+            // 4. Získaj contact usera
+            $contactUser = User::find($company->contact);
+
+            // 5. Vymaž company
+            $company->delete();
+
+            // 6. Vymaž contact usera (EMPLOYER)
+            if ($contactUser && $contactUser->role === 'EMPLOYER') {
+                $contactUser->delete();
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Company successfully deleted.'
+            ], 200);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'message' => 'Error deleting company.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }

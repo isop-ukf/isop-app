@@ -13,6 +13,13 @@ const companyId = route.params.id;
 const loading = ref(true);
 const saving = ref(false);
 
+// Delete state
+const deleteDialog = ref(false);
+const deleteLoading = ref(false);
+const deleteError = ref<string | null>(null);
+const deleteSuccess = ref(false);
+const company = ref<CompanyData | null>(null);
+
 const form = ref({
     name: '',
     address: '',
@@ -30,6 +37,7 @@ const { data } = await useSanctumFetch<CompanyData>(`/api/companies/${companyId}
 
 watch(data, (newData) => {
     if (newData) {
+        company.value = newData;
         form.value.name = newData.name;
         form.value.address = newData.address;
         form.value.ico = newData.ico;
@@ -65,6 +73,49 @@ async function saveChanges() {
 function cancel() {
     navigateTo('/dashboard/admin/companies');
 }
+
+// Funkcia na otvorenie delete dialogu
+const openDeleteDialog = () => {
+    deleteDialog.value = true;
+    deleteError.value = null;
+};
+
+// Funkcia na zatvorenie dialogu
+const closeDeleteDialog = () => {
+    deleteDialog.value = false;
+    deleteError.value = null;
+    deleteSuccess.value = false;
+};
+
+// Funkcia na vymazanie firmy
+const deleteCompany = async () => {
+    if (!companyId) return;
+
+    deleteLoading.value = true;
+    deleteError.value = null;
+
+    try {
+        await client(`/api/companies/${companyId}`, {
+            method: 'DELETE'
+        });
+
+        deleteSuccess.value = true;
+
+        // Presmeruj na zoznam po 1.5 sekundách
+        setTimeout(() => {
+            navigateTo('/dashboard/admin/companies');
+        }, 1500);
+
+    } catch (e) {
+        if (e instanceof FetchError) {
+            deleteError.value = e.response?._data?.message || 'Chyba pri mazaní firmy.';
+        } else {
+            deleteError.value = 'Neznáma chyba pri mazaní firmy.';
+        }
+    } finally {
+        deleteLoading.value = false;
+    }
+};
 </script>
 
 <template>
@@ -120,11 +171,53 @@ function cancel() {
                             <v-btn @click="cancel" :disabled="saving">
                                 Zrušiť
                             </v-btn>
+                            <v-spacer></v-spacer>
+                            <v-btn color="red" variant="outlined" @click="openDeleteDialog" :disabled="saving">
+                                Vymazať firmu
+                            </v-btn>
                         </v-card-actions>
                     </v-card>
                 </v-col>
             </v-row>
         </div>
+
+        <!-- Delete Confirmation Dialog -->
+        <v-dialog v-model="deleteDialog" max-width="500px">
+            <v-card>
+                <v-card-title class="text-h5">
+                    Potvrdiť vymazanie
+                </v-card-title>
+                <v-card-text>
+                    <p v-if="!deleteSuccess">
+                        Naozaj chcete vymazať firmu <strong>{{ company?.name }}</strong>?
+                    </p>
+                    <p v-if="!deleteSuccess" class="text-error mt-2">
+                        Táto akcia vymaže aj kontaktnú osobu (EMPLOYER), všetky praxe a statusy spojené s touto firmou a
+                        <strong>nie je možné ju vrátiť späť</strong>.
+                    </p>
+
+                    <!-- Error message -->
+                    <v-alert v-if="deleteError" type="error" density="compact" class="mt-3">
+                        {{ deleteError }}
+                    </v-alert>
+
+                    <!-- Success message -->
+                    <v-alert v-if="deleteSuccess" type="success" density="compact" class="mt-3">
+                        Firma bola úspešne vymazaná. Presmerovanie...
+                    </v-alert>
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="grey" variant="text" @click="closeDeleteDialog" :disabled="deleteLoading">
+                        Zrušiť
+                    </v-btn>
+                    <v-btn color="red" variant="text" @click="deleteCompany" :loading="deleteLoading"
+                        :disabled="deleteSuccess">
+                        Vymazať
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
     </v-container>
 </template>
 
