@@ -34,7 +34,7 @@ Route::post('/password-reset', [RegisteredUserController::class, 'reset_password
 
 Route::prefix('/internships')->group(function () {
     Route::get("/", [InternshipController::class, 'all'])->name("api.internships");
-    Route::get("/my", [InternshipController::class, 'all_student'])->name("api.internships.student");
+    Route::get("/my", [InternshipController::class, 'all_my'])->name("api.internships.my");
 
     Route::middleware("auth:sanctum")->group(function () {
         Route::prefix('/{id}')->group(function () {

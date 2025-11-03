@@ -54,9 +54,28 @@ class InternshipController extends Controller
         return response()->json($internships);
     }
 
-    public function all_student()
+    public function all_my()
     {
-        $internships = Internship::where('user_id', auth()->id())->get()->makeHidden(['created_at', 'updated_at']);
+        $user = auth()->user();
+
+        if ($user->role === 'STUDENT') {
+            $internships = Internship::whereUserId($user->id)->get()->makeHidden(['created_at', 'updated_at']);
+        } elseif ($user->role === 'EMPLOYER') {
+            $company = Company::whereContact($user->id)->first();
+            if (!$company) {
+                return response()->json(['message' => 'No company associated with this user.'], 404);
+            }
+            $internships = Internship::whereCompanyId($company->id)->get()->makeHidden(['created_at', 'updated_at']);
+        } else {
+            abort(403, 'Unauthorized');
+        }
+
+        if($user->role === "EMPLOYER") {
+            $internships->each(function ($internship) {
+                $internship->user = User::find($internship->user_id)->makeHidden(['created_at', 'updated_at', 'email_verified_at']);
+                unset($internship->user_id);
+            });
+        }
         
         $internships->each(function ($internship) {
             $internship->company = Company::find($internship->company_id)->makeHidden(['created_at', 'updated_at']);
@@ -97,16 +116,16 @@ class InternshipController extends Controller
             ], 400);
         }
 
-        if ($user->role !== 'ADMIN' && $internship->user_id !== $user->id) {
-            abort(403, 'Unauthorized');
-        }
-
         $internship->company = Company::find($internship->company_id)->makeHidden(['created_at', 'updated_at']);
         unset($internship->company_id);
 
+        if($user->role !== 'ADMIN' && $internship->user_id !== $user->id && $user->id !== $internship->company->contact) {
+            abort(403, 'Unauthorized');
+        }
+
         $internship->contact = User::find($internship->company->contact)->makeHidden(['created_at', 'updated_at', 'email_verified_at']);
         unset($internship->company->contact);
-        
+
         $internship->status = InternshipStatus::whereColumn('internship_id', '=', $internship->id)->orderByDesc('changed')->get()->first()->makeHidden(['created_at', 'updated_at', 'id']);
         $internship->status->modified_by = User::find($internship->status->modified_by)->makeHidden(['created_at', 'updated_at', 'email_verified_at']);
 
@@ -191,7 +210,7 @@ class InternshipController extends Controller
             ], 400);
         }
 
-        if ($user->role !== 'ADMIN' && $internship->user_id !== $user->id) {
+        if ($user->role !== 'ADMIN' && $internship->user_id !== $user->id && $user->id !== $internship->company->contact) {
             abort(403, 'Unauthorized');
         }
 

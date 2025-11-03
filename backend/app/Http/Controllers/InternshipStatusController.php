@@ -20,7 +20,7 @@ class InternshipStatusController extends Controller
         }
 
         $internship = Internship::find($id);
-        if ($user->role !== 'ADMIN' && $internship->user_id !== $user->id) {
+        if ($user->role !== 'ADMIN' && $internship->user_id !== $user->id && $user->id !== $internship->company->contact) {
             abort(403, 'Unauthorized');
         }
 
@@ -41,7 +41,7 @@ class InternshipStatusController extends Controller
             ], 400);
         }
 
-        if ($user->role !== 'ADMIN' && $internship->user_id !== $user->id && $user->id !== $internship->contact) {
+        if ($user->role !== 'ADMIN' && $internship->user_id !== $user->id && $user->id !== $internship->company->contact) {
             abort(403, 'Unauthorized');
         }
 
@@ -105,9 +105,7 @@ class InternshipStatusController extends Controller
             ], 400);
         }
 
-        $company_contact = User::find($internship->contact);
-
-        if ($user->role !== 'ADMIN' && $user->id !== $company_contact->id) {
+        if ($user->role !== 'ADMIN' && $user->id !== $internship->company->contact) {
             abort(403, 'Unauthorized');
         }
 
@@ -139,11 +137,10 @@ class InternshipStatusController extends Controller
     }
 
     private function possibleNewStatuses(string $current_status, string $userRole) {
+        if($userRole === "STUDENT") return [];
+
         switch ($current_status) {
             case 'SUBMITTED':
-                if ($userRole === 'EMPLOYER') {
-                    return [];
-                }
                 return ['CONFIRMED', 'DENIED'];
             case 'CONFIRMED':
                 if ($userRole === 'EMPLOYER') {
