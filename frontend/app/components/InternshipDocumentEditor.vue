@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { Internship } from '~/types/internships';
 import { FetchError } from 'ofetch';
+import type { User } from '~/types/user';
+import { Role } from '~/types/role';
 
 const props = defineProps<{
     internship: Internship
@@ -18,14 +20,17 @@ const loading = ref(false);
 const error = ref<string | null>(null);
 const agreement = ref<File | null>(null);
 const report = ref<File | null>(null);
+const report_confirmed = ref(props.internship.report_confirmed);
 
 const client = useSanctumClient();
+const user = useSanctumUser<User>();
 
 async function onSubmit() {
     error.value = null;
     loading.value = true;
 
     const formData = new FormData();
+    formData.append('report_confirmed', report_confirmed.value ? '1' : '0');
     if (agreement.value) {
         formData.append('agreement', agreement.value);
     }
@@ -86,11 +91,13 @@ async function onSubmit() {
                 <v-file-input v-model="report" :rules="[rules.isPdf, rules.maxSize]" accept=".pdf,application/pdf"
                     prepend-icon="mdi-chart-box-outline" label="Nahrať PDF výkaz" variant="outlined" show-size clearable
                     hint="Povolené: PDF, max 10 MB" persistent-hint />
+                
+                <v-checkbox v-if="user?.role === Role.EMPLOYER" :disabled="!props.internship.agreement || !props.internship.report" v-model="report_confirmed" label="Výkaz je správny"></v-checkbox>
             </div>
 
             <br />
 
-            <v-btn type="submit" color="success" size="large" block :disabled="!agreement && !report">
+            <v-btn type="submit" color="success" size="large" block :disabled="!agreement && !report && (!props.internship.agreement || !props.internship.report)">
                 Uloziť
             </v-btn>
         </v-form>
