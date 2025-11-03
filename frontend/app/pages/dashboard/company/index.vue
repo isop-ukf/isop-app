@@ -18,26 +18,28 @@ const user = useSanctumUser<User>();
 
 <template>
     <v-container fluid>
-        <v-card id="footer-card">
-            <h1 class="ml-6">Vitajte, {{ user?.name }} <em>({{ user?.company_data?.name }})</em></h1>
+        <v-card id="page-container-card">
+            <h1>Vitajte, {{ user?.name }} <em>({{ user?.company_data?.name }})</em></h1>
 
             <!-- spacer -->
             <div style="height: 40px;"></div>
 
-            <td class="text-left">
-                <v-btn prepend-icon="mdi-pencil" color="orange" class="mr-2 ml-6 mb-4">
-                    Môj profil
-                </v-btn>
-   
-                <v-btn prepend-icon="mdi-pencil" color="orange" class="mr-2 ml-6 mb-4" :to="'/dashboard/company/internship'">
-                    Editovať
-                </v-btn>
-            </td>
+            <v-btn prepend-icon="mdi-account-circle" color="blue" class="mr-2">
+                Môj profil
+            </v-btn>
+            <v-btn prepend-icon="mdi-briefcase" color="blue" class="mr-2" to="/dashboard/company/internship">
+                Praxe
+            </v-btn>
+
+            <!-- spacer -->
+            <div style="height: 40px;"></div>
         </v-card>
     </v-container>
 </template>
 
 <style scoped>
-
-
+#page-container-card {
+    padding-left: 10px;
+    padding-right: 10px;
+}
 </style>
