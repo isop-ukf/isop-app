@@ -19,7 +19,7 @@ class InternshipStatusController extends Controller
             ], 400);
         }
 
-        $internship = Internship::where($id);
+        $internship = Internship::find($id);
         if ($user->role !== 'ADMIN' && $internship->user_id !== $user->id) {
             abort(403, 'Unauthorized');
         }
