@@ -42,36 +42,6 @@ async function handleUpdateOfBasicInfo(internship: NewInternship) {
 }
 
 const { data, error, refresh } = await useSanctumFetch<Internship>(`/api/internships/${route.params.id}`);
-
-// ---- helpery pre sekciu Dokumenty ----
-const docs = computed(() => {
-    const d: any = data.value ?? {}
-    return {
-        contract: d.documents?.contract ?? d.contract ?? null,
-        report: d.documents?.report ?? d.report ?? null,
-    }
-})
-
-function docUrl(doc: any) {
-    return doc?.url ?? doc?.download_url ?? doc?.link ?? null
-}
-function docName(doc: any) {
-    return doc?.fileName ?? doc?.filename ?? doc?.name ?? 'dokument.pdf'
-}
-function docSize(doc: any) {
-    const bytes = doc?.size ?? doc?.filesize ?? null
-    if (!bytes && bytes !== 0) return null
-    if (bytes < 1024) return `${bytes} B`
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
-}
-function docDate(doc: any) {
-    const dt = doc?.uploadedAt ?? doc?.created_at ?? doc?.uploaded_at ?? null
-    return dt ? new Date(dt).toLocaleString() : null
-}
-function docBy(doc: any) {
-    return doc?.uploadedBy?.name ?? doc?.uploaded_by?.name ?? doc?.uploaded_by ?? null
-}
 </script>
 
 <template>
@@ -124,93 +94,7 @@ function docBy(doc: any) {
                     <hr />
 
                     <h2>Dokumenty</h2>
-                    <v-row>
-                        <!-- Podpísaná zmluva -->
-                        <v-col cols="12" md="6">
-                            <v-card variant="outlined">
-                                <v-card-title class="d-flex align-center ga-2">
-                                    <v-icon icon="mdi mdi-file-document-outline" />
-                                    Podpísaná zmluva
-                                </v-card-title>
-                                <v-card-text>
-                                    <template v-if="docs.contract">
-                                        <div><strong>Súbor:</strong> {{ docName(docs.contract) }}</div>
-                                        <div v-if="docDate(docs.contract)"><strong>Nahrané:</strong> {{ docDate(docs.contract) }}</div>
-                                        <div v-if="docBy(docs.contract)"><strong>Nahral:</strong> {{ docBy(docs.contract) }}</div>
-                                        <div v-if="docSize(docs.contract)"><strong>Veľkosť:</strong> {{ docSize(docs.contract) }}</div>
-
-                                        <div class="mt-3 d-flex ga-2">
-                                            <v-btn
-                                                v-if="docUrl(docs.contract)"
-                                                :href="docUrl(docs.contract)"
-                                                target="_blank"
-                                                variant="tonal"
-                                                prepend-icon="mdi-open-in-new"
-                                            >
-                                                Otvoriť náhľad
-                                            </v-btn>
-                                            <v-btn
-                                                v-if="docUrl(docs.contract)"
-                                                :href="docUrl(docs.contract)"
-                                                :download="docName(docs.contract)"
-                                                variant="text"
-                                                prepend-icon="mdi-download"
-                                            >   
-                                                Stiahnuť
-                                            </v-btn>
-                                        </div>
-                                    </template>
-
-                                    <template v-else>
-                                        <v-alert type="warning" variant="tonal" title="Neodovzdané" text="Zmluva zatiaľ nie je nahratá." />
-                                    </template>
-                                </v-card-text>
-                            </v-card>
-                        </v-col>
-
-                        <!-- Výkaz -->
-                        <v-col cols="12" md="6">
-                            <v-card variant="outlined">
-                                <v-card-title class="d-flex align-center ga-2">
-                                    <v-icon icon="mdi-file-clock-outline" />
-                                    Výkaz
-                                </v-card-title>
-                                <v-card-text>
-                                    <template v-if="docs.report">
-                                        <div><strong>Súbor:</strong> {{ docName(docs.report) }}</div>
-                                        <div v-if="docDate(docs.report)"><strong>Nahrané:</strong> {{ docDate(docs.report) }}</div>
-                                        <div v-if="docBy(docs.report)"><strong>Nahral:</strong> {{ docBy(docs.report) }}</div>
-                                        <div v-if="docSize(docs.report)"><strong>Veľkosť:</strong> {{ docSize(docs.report) }}</div>
-
-                                        <div class="mt-3 d-flex ga-2">
-                                            <v-btn
-                                                v-if="docUrl(docs.report)"
-                                                :href="docUrl(docs.report)"
-                                                target="_blank"
-                                                variant="tonal"
-                                                prepend-icon="mdi-open-in-new"
-                                            >
-                                                Otvoriť náhľad
-                                            </v-btn>
-                                            <v-btn
-                                                v-if="docUrl(docs.report)"
-                                                :href="docUrl(docs.report)"
-                                                :download="docName(docs.report)"
-                                                variant="text"
-                                                prepend-icon="mdi-download"
-                                            >
-                                                Stiahnuť
-                                            </v-btn>
-                                        </div>
-                                    </template>
-
-                                    <template v-else>
-                                        <v-alert type="info" variant="tonal" title="Neodovzdané" text="Výkaz zatiaľ nie je nahratý." />
-                                    </template>
-                                </v-card-text>
-                            </v-card>
-                        </v-col>
-                    </v-row>
+                    <InternshipDocumentViewer :internship="data!" />
                 </div>
             </div>
         </v-card>

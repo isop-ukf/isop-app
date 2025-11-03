@@ -13,6 +13,8 @@ export interface Internship {
     semester: string;
     position_description: string;
     agreement?: Uint8Array;
+    report?: Uint8Array;
+    report_confirmed: boolean;
     status: InternshipStatusData;
 };
 
