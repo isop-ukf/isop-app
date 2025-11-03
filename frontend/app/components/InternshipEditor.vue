@@ -77,7 +77,7 @@ function triggerSubmit() {
         start: dateTimeFixup(form.value.start as any),
         end: dateTimeFixup(form.value.end as any),
         year_of_study: form.value.year_of_study,
-        semester: form.value.semester === "Zimný" ? "WINTER" : "SUMMER",
+        semester: form.value.semester,
         position_description: form.value.description
     };
 
