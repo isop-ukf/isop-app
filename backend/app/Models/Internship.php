@@ -24,5 +24,19 @@ class Internship extends Model
         'semester',
         'position_description',
         'agreement',
+        'report',
+        'report_confirmed',
     ];
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'report_confirmed' => 'boolean',
+        ];
+    }
 }
