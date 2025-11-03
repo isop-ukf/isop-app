@@ -135,6 +135,56 @@ class InternshipController extends Controller
         return response()->json($internship);
     }
 
+    public function get_agreement(int $id) {
+        $user = auth()->user();
+        $internship = Internship::find($id);
+        
+        if(!$internship) {
+            return response()->json([
+                'message' => 'No such internship exists.'
+            ], 400);
+        }
+
+        if(!$internship->agreement) {
+            return response()->json([
+                'message' => 'No agreement file exists for this internship.'
+            ], 404);
+        }
+
+        if($user->role !== 'ADMIN' && $internship->user_id !== $user->id && $user->id !== $internship->company->contact) {
+            abort(403, 'Unauthorized');
+        }
+
+        return response($internship->agreement, 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'attachment; filename="agreement_' . $id . '.pdf"');
+    }
+
+    public function get_report(int $id) {
+        $user = auth()->user();
+        $internship = Internship::find($id);
+        
+        if(!$internship) {
+            return response()->json([
+                'message' => 'No such internship exists.'
+            ], 400);
+        }
+
+        if(!$internship->report) {
+            return response()->json([
+                'message' => 'No report file exists for this internship.'
+            ], 404);
+        }
+
+        if($user->role !== 'ADMIN' && $internship->user_id !== $user->id && $user->id !== $internship->company->contact) {
+            abort(403, 'Unauthorized');
+        }
+
+        return response($internship->report, 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'attachment; filename="report_' . $id . '.pdf"');
+    }
+
     /**
      * Display a listing of the resource.
      */

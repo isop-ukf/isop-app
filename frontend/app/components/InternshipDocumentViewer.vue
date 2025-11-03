@@ -4,6 +4,28 @@ import type { Internship } from '~/types/internships';
 const props = defineProps<{
     internship: Internship
 }>();
+
+const client = useSanctumClient();
+
+function triggerDownload(file: Blob, file_name: string) {
+    const url = window.URL.createObjectURL(file);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${file_name}.pdf`;
+    link.target = "_blank";
+    link.click();
+    window.URL.revokeObjectURL(url);
+}
+
+async function downloadAgreement() {
+    const agreement: Blob = await client(`/api/internships/${props.internship.id}/agreement`);
+    triggerDownload(agreement, `agreement-${props.internship.id}`);
+}
+
+async function downloadReport() {
+    const report: Blob = await client(`/api/internships/${props.internship.id}/report`);
+    triggerDownload(report, `report-${props.internship.id}`);
+}
 </script>
 
 <template>
@@ -23,7 +45,8 @@ const props = defineProps<{
                         <div v-else>
                             <v-alert type="success" variant="tonal" title="Odovzdané" text="Zmluva bola nahratá." />
 
-                            <v-btn prepend-icon="mdi-download" color="blue" class="mr-2 mt-2" to="/" block>
+                            <v-btn prepend-icon="mdi-download" color="blue" class="mr-2 mt-2" block
+                                @click="downloadAgreement">
                                 Stiahnuť
                             </v-btn>
                         </div>
@@ -49,7 +72,8 @@ const props = defineProps<{
                             <v-alert v-else type="success" variant="tonal" title="Potvrdené"
                                 text="Výkaz bol nahratý, aj potvrdený firmou." />
 
-                            <v-btn prepend-icon="mdi-download" color="blue" class="mr-2 mt-2" to="/" block>
+                            <v-btn prepend-icon="mdi-download" color="blue" class="mr-2 mt-2" block
+                                @click="downloadReport">
                                 Stiahnuť
                             </v-btn>
                         </div>

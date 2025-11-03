@@ -25,6 +25,26 @@ const report_confirmed = ref(props.internship.report_confirmed);
 const client = useSanctumClient();
 const user = useSanctumUser<User>();
 
+function triggerDownload(file: Blob, file_name: string) {
+    const url = window.URL.createObjectURL(file);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${file_name}.pdf`;
+    link.target = "_blank";
+    link.click();
+    window.URL.revokeObjectURL(url);
+}
+
+async function downloadAgreement() {
+    const agreement: Blob = await client(`/api/internships/${props.internship.id}/agreement`);
+    triggerDownload(agreement, `agreement-${props.internship.id}`);
+}
+
+async function downloadReport() {
+    const report: Blob = await client(`/api/internships/${props.internship.id}/report`);
+    triggerDownload(report, `report-${props.internship.id}`);
+}
+
 async function onSubmit() {
     error.value = null;
     loading.value = true;
@@ -72,7 +92,14 @@ async function onSubmit() {
 
                 <v-alert v-if="props.internship.agreement" class="mb-2" type="warning" variant="tonal"
                     title="Existujúci dokument"
-                    text="V systéme je už nahratá zmluva/dohoda. Ak chcete nahradiť existujúcu verziu, vyberte súbor, alebo v opačnom prípade nechajte toto pole nevyplnené." />
+                    text="V systéme je už nahratá zmluva/dohoda. Ak chcete nahradiť existujúcu verziu, vyberte súbor, alebo v opačnom prípade nechajte toto pole nevyplnené.">
+
+                    <br />
+
+                    <v-btn prepend-icon="mdi-download" color="blue" class="mr-2 mt-2" @click="downloadAgreement">
+                        Stiahnuť
+                    </v-btn>
+                </v-alert>
 
                 <v-file-input v-model="agreement" :rules="[rules.isPdf, rules.maxSize]" accept=".pdf,application/pdf"
                     prepend-icon="mdi-handshake" label="Nahrať PDF zmluvu" variant="outlined" show-size clearable
@@ -86,18 +113,28 @@ async function onSubmit() {
 
                 <v-alert v-if="props.internship.report" class="mb-2" type="warning" variant="tonal"
                     title="Existujúci dokument"
-                    text="V systéme je už nahratý výkaz. Ak chcete nahradiť existujúcu verziu, vyberte súbor, alebo v opačnom prípade nechajte toto pole nevyplnené." />
+                    text="V systéme je už nahratý výkaz. Ak chcete nahradiť existujúcu verziu, vyberte súbor, alebo v opačnom prípade nechajte toto pole nevyplnené.">
+
+                    <br />
+
+                    <v-btn prepend-icon="mdi-download" color="blue" class="mr-2 mt-2" @click="downloadReport">
+                        Stiahnuť
+                    </v-btn>
+                </v-alert>
 
                 <v-file-input v-model="report" :rules="[rules.isPdf, rules.maxSize]" accept=".pdf,application/pdf"
                     prepend-icon="mdi-chart-box-outline" label="Nahrať PDF výkaz" variant="outlined" show-size clearable
                     hint="Povolené: PDF, max 10 MB" persistent-hint />
-                
-                <v-checkbox v-if="user?.role === Role.EMPLOYER" :disabled="!props.internship.agreement || !props.internship.report" v-model="report_confirmed" label="Výkaz je správny"></v-checkbox>
+
+                <v-checkbox v-if="user?.role === Role.EMPLOYER"
+                    :disabled="!props.internship.agreement || !props.internship.report" v-model="report_confirmed"
+                    label="Výkaz je správny"></v-checkbox>
             </div>
 
             <br />
 
-            <v-btn type="submit" color="success" size="large" block :disabled="!agreement && !report && (!props.internship.agreement || !props.internship.report)">
+            <v-btn type="submit" color="success" size="large" block
+                :disabled="!agreement && !report && (!props.internship.agreement || !props.internship.report)">
                 Uloziť
             </v-btn>
         </v-form>
