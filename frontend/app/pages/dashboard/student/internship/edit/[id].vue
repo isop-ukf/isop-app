@@ -25,9 +25,7 @@ const { data, refresh } = await useSanctumFetch<Internship>(`/api/internships/${
             <v-alert v-if="data?.status.status !== InternshipStatus.CONFIRMED" type="error" variant="tonal"
                 title="Blokované" text='Vaša prax nie je v stave "Schválená" a teda nemôžete nahrať dokumenty.' />
 
-            <br />
-
-            <InternshipDocumentEditor :internship="data!" @successful-submit="refresh" />
+            <InternshipDocumentEditor v-else :internship="data!" @successful-submit="refresh" />
         </v-card>
     </v-container>
 </template>
