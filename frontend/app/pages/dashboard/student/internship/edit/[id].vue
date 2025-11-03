@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { InternshipStatus } from '~/types/internship_status';
-import type { Internship } from '~/types/internships';
+import { InternshipStatus, prettyInternshipStatus } from '~/types/internship_status';
+import type { Internship, NewInternship } from '~/types/internships';
+import { FetchError } from 'ofetch';
 
 definePageMeta({
     middleware: ['sanctum:auth', 'student-only'],
@@ -14,18 +15,83 @@ useSeoMeta({
 });
 
 const route = useRoute();
+const client = useSanctumClient();
+
+const loading = ref(false);
+const action_error = ref(null as null | string);
+
 const { data, refresh } = await useSanctumFetch<Internship>(`/api/internships/${route.params.id}`);
+
+async function handleUpdateOfBasicInfo(internship: NewInternship) {
+    action_error.value = null;
+    loading.value = true;
+
+    try {
+        await client(`/api/internships/${route.params.id}/basic`, {
+            method: 'POST',
+            body: internship
+        });
+
+        navigateTo("/dashboard/student");
+    } catch (e) {
+        if (e instanceof FetchError) {
+            action_error.value = e.response?._data.message;
+        }
+    } finally {
+        loading.value = false;
+    }
+}
 </script>
 
 <template>
     <v-container fluid>
         <v-card id="page-container-card">
-            <h1 class>Nahratie dokumentov</h1>
+            <h1>Edit praxe</h1>
 
-            <v-alert v-if="data?.status.status !== InternshipStatus.CONFIRMED" type="error" variant="tonal"
-                title="Blokované" text='Vaša prax nie je v stave "Schválená" a teda nemôžete nahrať dokumenty.' />
+            <!-- spacer -->
+            <div style="height: 40px;"></div>
 
-            <InternshipDocumentEditor v-else :internship="data!" @successful-submit="refresh" />
+            <!-- Čakajúca hláška -->
+            <v-alert v-if="loading" density="compact" text="Prosím čakajte..." title="Spracovávam" type="info"
+                class="mx-auto alert"></v-alert>
+
+            <!-- Chybová hláška -->
+            <v-alert v-if="action_error !== null" density="compact" :text="action_error" title="Chyba" type="error"
+                class="mx-auto alert"></v-alert>
+
+            <div>
+                <h2>Základné informácie</h2>
+                <v-alert v-if="data?.status.status !== InternshipStatus.SUBMITTED" density="compact"
+                    text='Vaša prax nie je v stave "Zadaná" a teda nemôžete meniť údaje.' title="Blokované" type="error"
+                    class="mx-auto alert"></v-alert>
+                <InternshipEditor v-else :internship="data!" :submit="handleUpdateOfBasicInfo" />
+            </div>
+
+            <hr />
+
+            <div>
+                <h2>Stav</h2>
+                <h4>Aktuálny stav</h4>
+                <p>{{ prettyInternshipStatus(data?.status.status!) }}</p>
+                <p>Poznámka: <em>{{ data?.status.note }}</em></p>
+                <p>Posledná zmena: <em>{{ data?.status.changed }}, {{ data?.status.modified_by.name }}</em></p>
+
+                <br />
+
+                <h4>História</h4>
+                <InternshipStatusHistoryView :internship="data!" />
+            </div>
+
+            <hr />
+
+            <div>
+                <h2>Nahratie dokumentov</h2>
+
+                <v-alert v-if="data?.status.status !== InternshipStatus.CONFIRMED" type="error" variant="tonal"
+                    title="Blokované" text='Vaša prax nie je v stave "Schválená" a teda nemôžete nahrať dokumenty.' />
+
+                <InternshipDocumentEditor v-else :internship="data!" @successful-submit="refresh" />
+            </div>
         </v-card>
     </v-container>
 </template>
@@ -35,5 +101,10 @@ const { data, refresh } = await useSanctumFetch<Internship>(`/api/internships/${
     padding-left: 10px;
     padding-right: 10px;
     padding-bottom: 10px;
+}
+
+hr {
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 </style>
