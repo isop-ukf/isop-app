@@ -15,7 +15,8 @@ const loading = ref(true);
 const saving = ref(false);
 
 const form = ref({
-    name: '',
+    first_name: '',
+    last_name: '',
     email: '',
     phone: '',
     student_data: {
@@ -24,27 +25,25 @@ const form = ref({
         address: ''
     }
 });
+
 const { data } = await useSanctumFetch<User>(`/api/students/${studentId}`);
+
 // Načítanie dát študenta
 watch(data, (newData) => {
     if (newData) {
         student.value = newData;
 
-        form.value = {
-            name: newData.name || '',
-            email: newData.email || '',
-            phone: newData.phone || '',
-            student_data: {
-                study_field: newData.student_data?.study_field || '',
-                personal_email: newData.student_data?.personal_email || '',
-                address: newData.student_data?.address || ''
-            }
-        };
+        form.value.first_name = newData.first_name;
+        form.value.last_name = newData.last_name;
+        form.value.email = newData.email;
+        form.value.phone = newData.phone;
+        form.value.student_data.study_field = newData.student_data!.study_field;
+        form.value.student_data.personal_email = newData.student_data!.personal_email;
+        form.value.student_data.address = newData.student_data!.address;
     }
 
     navigateTo('/dashboard/admin/students');
-}
-);
+});
 
 // Uloženie zmien
 async function saveChanges() {
@@ -91,7 +90,10 @@ function cancel() {
                         <v-card-title>Základné údaje</v-card-title>
                         <v-card-text>
                             <v-form>
-                                <v-text-field v-model="form.name" label="Meno a priezvisko" required variant="outlined"
+                                <v-text-field v-model="form.first_name" label="Meno" required variant="outlined"
+                                    class="mb-3"></v-text-field>
+
+                                <v-text-field v-model="form.last_name" label="Priezvisko" required variant="outlined"
                                     class="mb-3"></v-text-field>
 
                                 <v-text-field v-model="form.email" label="E-mail (prihlasovací)" type="email" required

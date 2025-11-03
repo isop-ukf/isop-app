@@ -19,7 +19,8 @@ const form = ref({
     ico: 0,
     hiring: false,
     contact: {
-        name: '',
+        first_name: '',
+        last_name: '',
         email: '',
         phone: ''
     }
@@ -34,7 +35,8 @@ watch(data, (newData) => {
         form.value.address = newData.address;
         form.value.ico = newData.ico;
         form.value.hiring = !!newData.hiring;
-        form.value.contact.name = newData.contact?.name;
+        form.value.contact.first_name = newData.contact?.first_name;
+        form.value.contact.last_name = newData.contact?.last_name;
         form.value.contact.email = newData.contact?.email;
         form.value.contact.phone = newData.contact?.phone;
         loading.value = false;
@@ -102,7 +104,10 @@ function cancel() {
 
                                 <h3 class="mb-3">Kontaktná osoba</h3>
 
-                                <v-text-field v-model="form.contact.name" label="Meno a priezvisko" required
+                                <v-text-field v-model="form.contact.first_name" label="Meno" required variant="outlined"
+                                    class="mb-3"></v-text-field>
+
+                                <v-text-field v-model="form.contact.last_name" label="Priezvisko" required
                                     variant="outlined" class="mb-3"></v-text-field>
 
                                 <v-text-field v-model="form.contact.email" label="E-mail" type="email" required

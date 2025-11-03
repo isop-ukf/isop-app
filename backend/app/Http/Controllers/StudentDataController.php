@@ -84,7 +84,8 @@ class StudentDataController extends Controller
 
         // Validácia dát
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email,' . $id],
             'phone' => ['nullable', 'string', 'max:20'],
             'student_data.study_field' => ['nullable', 'string', 'max:255'],
@@ -94,7 +95,9 @@ class StudentDataController extends Controller
 
         // Aktualizácia User údajov
         $student->update([
-            'name' => $request->name,
+            'name' => $request->first_name . ' ' . $request->last_name,
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
             'email' => $request->email,
             'phone' => $request->phone,
         ]);

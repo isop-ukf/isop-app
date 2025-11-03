@@ -68,7 +68,8 @@ class CompanyController extends Controller
             'address' => ['required', 'string', 'max:500'],
             'ico' => ['required', 'integer'],
             'hiring' => ['required', 'boolean'],
-            'contact.name' => ['required', 'string', 'max:255'],
+            'contact.first_name' => ['required', 'string', 'max:255'],
+            'contact.last_name' => ['required', 'string', 'max:255'],
             'contact.email' => ['required', 'email', 'max:255', 'unique:users,email,' . $company->contact],
             'contact.phone' => ['nullable', 'string', 'max:20'],
         ]);
@@ -87,7 +88,9 @@ class CompanyController extends Controller
 
             if ($contactPerson) {
                 $contactPerson->update([
-                    'name' => $request->contact['name'],
+                    'first_name' => $request->contact['first_name'],
+                    'last_name' => $request->contact['last_name'],
+                    'name' => $request->contact['first_name'] . ' ' . $request->contact['last_name'],
                     'email' => $request->contact['email'],
                     'phone' => $request->contact['phone'] ?? null,
                 ]);
