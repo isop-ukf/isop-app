@@ -4,7 +4,7 @@ import type { Internship, NewInternship } from '~/types/internships';
 import { FetchError } from 'ofetch';
 
 definePageMeta({
-    middleware: ['sanctum:auth', 'student-only'],
+    middleware: ['sanctum:auth', 'company-only'],
 });
 
 useSeoMeta({
@@ -19,6 +19,7 @@ const client = useSanctumClient();
 
 const loading = ref(false);
 const action_error = ref(null as null | string);
+const refreshKey = ref(0);
 
 const { data, refresh } = await useSanctumFetch<Internship>(`/api/internships/${route.params.id}`);
 
@@ -32,7 +33,7 @@ async function handleUpdateOfBasicInfo(internship: NewInternship) {
             body: internship
         });
 
-        navigateTo("/dashboard/student");
+        navigateTo("/dashboard/company/internships");
     } catch (e) {
         if (e instanceof FetchError) {
             action_error.value = e.response?._data.message;
@@ -80,6 +81,11 @@ async function handleUpdateOfBasicInfo(internship: NewInternship) {
 
                 <h4>História</h4>
                 <InternshipStatusHistoryView :internship="data!" />
+
+                <br />
+
+                <h4>Zmena stavu</h4>
+                <InternshipStatusEditor :internship="data!" @successful-submit="() => { refresh(); refreshKey++; }" />
             </div>
 
             <hr />

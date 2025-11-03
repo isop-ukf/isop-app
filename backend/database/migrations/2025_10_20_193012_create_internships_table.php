@@ -21,6 +21,8 @@ return new class extends Migration
             $table->enum("semester", ["WINTER", "SUMMER"])->nullable(false);
             $table->string("position_description")->nullable(false);
             $table->binary("agreement")->nullable(true);
+            $table->binary("report")->nullable(true);
+            $table->boolean("report_confirmed")->nullable(false)->default(false);
             $table->timestamps();
         });
     }

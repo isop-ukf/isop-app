@@ -28,6 +28,8 @@ class InternshipFactory extends Factory
             'semester' => fake()->randomElement(["WINTER", "SUMMER"]),
             'position_description' => fake()->jobTitle(),
             'agreement' => null,
+            'report' => null,
+            'report_confirmed' => false,
         ];
     }
 }

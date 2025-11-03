@@ -94,8 +94,7 @@ const { data, error, refresh } = await useSanctumFetch<Internship>(`/api/interns
                     <hr />
 
                     <h2>Dokumenty</h2>
-                    <p>...</p>
-                    <hr />
+                    <InternshipDocumentViewer :internship="data!" />
                 </div>
             </div>
         </v-card>
