@@ -39,4 +39,9 @@ class Internship extends Model
             'report_confirmed' => 'boolean',
         ];
     }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class, 'company_id');
+    }
 }
