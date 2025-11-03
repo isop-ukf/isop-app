@@ -40,10 +40,10 @@ watch(data, (newData) => {
         form.value.student_data.study_field = newData.student_data!.study_field;
         form.value.student_data.personal_email = newData.student_data!.personal_email;
         form.value.student_data.address = newData.student_data!.address;
-    }
 
-    navigateTo('/dashboard/admin/students');
-});
+        loading.value = false;
+    }
+}, { immediate: true });
 
 // Uloženie zmien
 async function saveChanges() {
