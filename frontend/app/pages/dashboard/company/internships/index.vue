@@ -66,7 +66,7 @@ const students = ref<Student[]>([
     {
         id: 2,
         name: 'Petra Kováčová',
-        existingReport: null, 
+        existingReport: null,
         reportFile: null,
         localPreviewUrl: null,
         decision: null,
@@ -181,26 +181,13 @@ async function submitFor(s: Student) {
 
                                 <div class="student-actions">
                                     <!-- existujúci výkaz  -->
-                                    <v-btn
-                                        v-if="s.existingReport?.url"
-                                        :href="s.existingReport.url"
-                                        target="_blank"
-                                        variant="tonal"
-                                        size="small"
-                                        prepend-icon="mdi-open-in-new"
-                                    >
+                                    <v-btn v-if="s.existingReport?.url" :href="s.existingReport.url" target="_blank"
+                                        variant="tonal" size="small" prepend-icon="mdi-open-in-new">
                                         Otvoriť
                                     </v-btn>
 
-                                    <v-btn
-                                        v-if="s.existingReport?.url"
-                                        :href="s.existingReport.url"
-                                        target="_blank"
-                                        download
-                                        variant="text"
-                                        size="small"
-                                        prepend-icon="mdi-download"
-                                    >
+                                    <v-btn v-if="s.existingReport?.url" :href="s.existingReport.url" target="_blank"
+                                        download variant="text" size="small" prepend-icon="mdi-download">
                                         Stiahnuť
                                     </v-btn>
                                 </div>
@@ -210,43 +197,33 @@ async function submitFor(s: Student) {
 
                             <v-card-text>
                                 <!-- info o existujúcom výkaze -->
-                                <v-alert
-                                    v-if="s.existingReport"
-                                    type="success"
-                                    variant="tonal"
-                                    class="mb-4"
-                                    :title="`Výkaz existuje (${s.existingReport.uploadedBy === 'STUDENT' ? 'nahral študent' : 'nahrala firma'})`"
-                                >
-                                    <div><strong>Súbor:</strong> {{ s.existingReport.fileName }} ({{ formatSize(s.existingReport.size) }})</div>
-                                    <div><strong>Nahraté:</strong> {{ new Date(s.existingReport.uploadedAt).toLocaleString() }}</div>
+                                <v-alert v-if="s.existingReport" type="success" variant="tonal" class="mb-4"
+                                    :title="`Výkaz existuje (${s.existingReport.uploadedBy === 'STUDENT' ? 'nahral študent' : 'nahrala firma'})`">
+                                    <div><strong>Súbor:</strong> {{ s.existingReport.fileName }} ({{
+                                        formatSize(s.existingReport.size) }})</div>
+                                    <div><strong>Nahraté:</strong> {{ new
+                                        Date(s.existingReport.uploadedAt).toLocaleString() }}</div>
                                 </v-alert>
 
                                 <v-form :ref="el => (s.formRef = el)" @submit.prevent="submitFor(s)">
                                     <v-row>
                                         <v-col cols="12" md="6">
                                             <h4 class="section-title">Výkaz</h4>
-                                            <v-file-input
-                                                class="no-left-gap"
-                                                :model-value="s.reportFile"
+                                            <v-file-input class="no-left-gap" :model-value="s.reportFile"
                                                 @update:model-value="onReportChange(s, $event as any)"
                                                 :rules="[rules.reportRequiredIfMissing(s), rules.isPdf, rules.maxSize]"
-                                                accept=".pdf,application/pdf"
-                                                prepend-icon=""
-                                                label="Nahrať PDF výkaz"
-                                                variant="outlined"
-                                                show-size
-                                                clearable
-                                                :disabled="s.loading"
-                                                hint="Povolené: PDF, max 10 MB"
-                                                persistent-hint
-                                            />
+                                                accept=".pdf,application/pdf" prepend-icon="" label="Nahrať PDF výkaz"
+                                                variant="outlined" show-size clearable :disabled="s.loading"
+                                                hint="Povolené: PDF, max 10 MB" persistent-hint />
 
                                             <!-- lokálny náhľad/stiahnutie súboru -->
                                             <div v-if="s.localPreviewUrl" class="mt-2 d-flex ga-2">
-                                                <v-btn :href="s.localPreviewUrl" target="_blank" variant="tonal" prepend-icon="mdi-open-in-new">
+                                                <v-btn :href="s.localPreviewUrl" target="_blank" variant="tonal"
+                                                    prepend-icon="mdi-open-in-new">
                                                     Otvoriť náhľad
                                                 </v-btn>
-                                                <v-btn :href="s.localPreviewUrl" :download="s.reportFile?.name" variant="text" prepend-icon="mdi-download">
+                                                <v-btn :href="s.localPreviewUrl" :download="s.reportFile?.name"
+                                                    variant="text" prepend-icon="mdi-download">
                                                     Stiahnuť vybraný súbor
                                                 </v-btn>
                                             </div>
@@ -254,20 +231,15 @@ async function submitFor(s: Student) {
 
                                         <v-col cols="12" md="6">
                                             <h4 class="section-title">Rozhodnutie</h4>
-                                            <v-radio-group v-model="s.decision" :rules="[rules.decisionRequired]" inline>
+                                            <v-radio-group v-model="s.decision" :rules="[rules.decisionRequired]"
+                                                inline>
                                                 <v-radio label="Potvrdiť" value="APPROVE" />
                                                 <v-radio label="Zamietnuť" value="REJECT" />
                                             </v-radio-group>
 
-                                            <v-textarea
-                                                v-if="s.decision === 'REJECT'"
-                                                v-model="s.rejectNote"
-                                                label="Dôvod zamietnutia (nepovinné)"
-                                                variant="outlined"
-                                                rows="3"
-                                                auto-grow
-                                                :disabled="s.loading"
-                                            />
+                                            <v-textarea v-if="s.decision === 'REJECT'" v-model="s.rejectNote"
+                                                label="Dôvod zamietnutia (nepovinné)" variant="outlined" rows="3"
+                                                auto-grow :disabled="s.loading" />
                                         </v-col>
                                     </v-row>
 
@@ -277,20 +249,9 @@ async function submitFor(s: Student) {
                                         </v-btn>
                                     </div>
 
-                                    <v-alert
-                                        v-if="s.success"
-                                        type="success"
-                                        class="mt-3"
-                                        title="Odoslané"
-                                        text="Rozhodnutie bolo zaznamenané."
-                                    />
-                                    <v-alert
-                                        v-if="s.error"
-                                        type="error"
-                                        class="mt-3"
-                                        title="Chyba"
-                                        :text="s.error"
-                                    />
+                                    <v-alert v-if="s.success" type="success" class="mt-3" title="Odoslané"
+                                        text="Rozhodnutie bolo zaznamenané." />
+                                    <v-alert v-if="s.error" type="error" class="mt-3" title="Chyba" :text="s.error" />
                                 </v-form>
                             </v-card-text>
                         </v-card>
@@ -302,57 +263,64 @@ async function submitFor(s: Student) {
 </template>
 
 <style scoped>
-
 .page-container {
-  max-width: 1120px;
-  margin: 0 auto;
-  padding-left: 24px;
-  padding-right: 24px;
-}
-.form-left {
-  padding-left: 24px;
-  padding-right: 24px;
-}
-.page-title {
-  font-size: 32px;
-  line-height: 1.2;
-  font-weight: 700;
-  margin: 16px 0 8px;
-  color: #1f1f1f;
-}
-.page-lead {
-  margin: 0 0 24px 0;
-  color: #6b6b6b;
-}
-.section-title {
-  font-size: 18px;
-  font-weight: 700;
-  margin: 8px 0 8px;
-  color: #1f1f1f;
-}
-.student-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 16px;
-}
-.student-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.student-name {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0;
-}
-.student-actions {
-  display: flex;
-  gap: 8px;
-}
-.actions {
-  margin-top: 12px;
-  margin-bottom: 8px;
+    max-width: 1120px;
+    margin: 0 auto;
+    padding-left: 24px;
+    padding-right: 24px;
 }
 
+.form-left {
+    padding-left: 24px;
+    padding-right: 24px;
+}
+
+.page-title {
+    font-size: 32px;
+    line-height: 1.2;
+    font-weight: 700;
+    margin: 16px 0 8px;
+    color: #1f1f1f;
+}
+
+.page-lead {
+    margin: 0 0 24px 0;
+    color: #6b6b6b;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 8px 0 8px;
+    color: #1f1f1f;
+}
+
+.student-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+}
+
+.student-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.student-name {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.student-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.actions {
+    margin-top: 12px;
+    margin-bottom: 8px;
+}
 </style>
