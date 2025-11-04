@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Mail\UserAccountActivated;
 use App\Mail\UserPasswordReset;
 use App\Mail\UserRegistrationCompleted;
 use App\Models\Company;
@@ -25,6 +26,7 @@ class RegisteredUserController extends Controller
     public function store(Request $request): Response
     {
         $password = bin2hex(random_bytes(16));
+        $activation_token = bin2hex(random_bytes(16));
 
         $request->validate([
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
@@ -58,6 +60,7 @@ class RegisteredUserController extends Controller
                 'phone' => $request->phone,
                 'role' => $request->role,
                 'password' => Hash::make($password),
+                'activation_token' => $activation_token
             ]);
 
             if ($user->role === "STUDENT") {
@@ -83,9 +86,30 @@ class RegisteredUserController extends Controller
             throw $e;
         }
 
-        Mail::to($user)->sendNow(new UserRegistrationCompleted($user->name, $password));
+        Mail::to($user)->sendNow(new UserRegistrationCompleted($user->name, $activation_token));
         event(new Registered($user));
 
+        return response()->noContent();
+    }
+
+    public function activate(Request $request) {
+        $request->validate([
+            'token' => ['required', 'string', 'exists:users,activation_token'],
+            'password' => ['required', 'string', 'min:8'],
+        ]);
+
+        $user = User::where('activation_token', '=', $request->token)->first();
+                
+        if (!$user) {
+            return response()->json(['message' => 'Invalid activation token'], 400);
+        }
+
+        $user->active = true;
+        $user->activation_token = null;
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        Mail::to($user)->sendNow(new UserAccountActivated($user->name));
         return response()->noContent();
     }
 
