@@ -169,6 +169,7 @@ class CompanyController extends Controller
         }
 
         $company = Company::find($id);
+        $company_contact = User::find($company->contact);
 
         if (!$company) {
             return response()->json([
@@ -176,46 +177,26 @@ class CompanyController extends Controller
             ], 400);
         }
 
-        try {
-            DB::beginTransaction();
+        DB::beginTransaction();
 
-            // 1. Získaj všetky internship IDs firmy
-            $internshipIds = Internship::where('company_id', $company->id)
-                ->pluck('id')
-                ->toArray();
+        $internships = Internship::whereCompanyId($company->id);
 
-            // 2. Vymaž všetky internship statuses
-            if (!empty($internshipIds)) {
-                InternshipStatus::whereIn('internship_id', $internshipIds)->delete();
-            }
+        // mazanie statusov
+        $internships->each(function ($internship) {
+            InternshipStatus::whereInternshipId($internship->id)->delete();
+        });
 
-            // 3. Vymaž všetky internships firmy
-            Internship::where('company_id', $company->id)->delete();
+        // mazanie praxov
+        $internships->delete();
 
-            // 4. Získaj contact usera
-            $contactUser = User::find($company->contact);
+        // mazanie firmy
+        Company::whereContact($company_contact->id);
 
-            // 5. Vymaž company
-            $company->delete();
+        // mazanie účtu firmy
+        $company_contact->delete();
 
-            // 6. Vymaž contact usera (EMPLOYER)
-            if ($contactUser && $contactUser->role === 'EMPLOYER') {
-                $contactUser->delete();
-            }
+        DB::commit();
 
-            DB::commit();
-
-            return response()->json([
-                'message' => 'Company successfully deleted.'
-            ], 200);
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-
-            return response()->json([
-                'message' => 'Error deleting company.',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+        return response()->noContent();
     }
 }

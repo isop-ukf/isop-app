@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { User } from '~/types/user';
+import { FetchError } from 'ofetch';
 
 definePageMeta({
     middleware: ['sanctum:auth', 'admin-only'],
@@ -25,14 +26,13 @@ const headers = [
 const client = useSanctumClient();
 
 // Načítame všetkých študentov
-const { data: students, error } = await useSanctumFetch<User[]>('/api/students');
+const { data: students, error, refresh } = await useSanctumFetch<User[]>('/api/students');
 
 // State pre delete dialog
 const deleteDialog = ref(false);
 const studentToDelete = ref<User | null>(null);
 const deleteLoading = ref(false);
 const deleteError = ref<string | null>(null);
-const deleteSuccess = ref(false);
 
 // Funkcia na otvorenie delete dialogu
 const openDeleteDialog = (student: User) => {
@@ -46,7 +46,6 @@ const closeDeleteDialog = () => {
     deleteDialog.value = false;
     studentToDelete.value = null;
     deleteError.value = null;
-    deleteSuccess.value = false;
 };
 
 // Funkcia na vymazanie študenta
@@ -61,23 +60,13 @@ const deleteStudent = async () => {
             method: 'DELETE'
         });
 
-        // Odstránime študenta zo zoznamu
-        if (students.value) {
-            const index = students.value.findIndex(s => s.id === studentToDelete.value!.id);
-            if (index > -1) {
-                students.value.splice(index, 1);
-            }
+        refresh();
+        closeDeleteDialog();
+
+    } catch (err) {
+        if (err instanceof FetchError) {
+            deleteError.value = err.data?.message;
         }
-
-        deleteSuccess.value = true;
-
-        // Zavri dialog po 1.5 sekundách
-        setTimeout(() => {
-            closeDeleteDialog();
-        }, 1500);
-
-    } catch (err: any) {
-        deleteError.value = err.data?.message || 'Chyba pri mazaní študenta.';
     } finally {
         deleteLoading.value = false;
     }
@@ -140,10 +129,10 @@ const deleteStudent = async () => {
                     Potvrdiť vymazanie
                 </v-card-title>
                 <v-card-text>
-                    <p v-if="!deleteSuccess">
+                    <p>
                         Naozaj chcete vymazať študenta <strong>{{ studentToDelete?.name }}</strong>?
                     </p>
-                    <p v-if="!deleteSuccess" class="text-error mt-2">
+                    <p class="text-error mt-2">
                         Táto akcia vymaže aj všetky súvisiace dáta (praxe, statusy, atď.) a <strong>nie je možné ju
                             vrátiť späť</strong>.
                     </p>
@@ -152,19 +141,13 @@ const deleteStudent = async () => {
                     <v-alert v-if="deleteError" type="error" density="compact" class="mt-3">
                         {{ deleteError }}
                     </v-alert>
-
-                    <!-- Success message -->
-                    <v-alert v-if="deleteSuccess" type="success" density="compact" class="mt-3">
-                        Študent bol úspešne vymazaný.
-                    </v-alert>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn color="grey" variant="text" @click="closeDeleteDialog" :disabled="deleteLoading">
                         Zrušiť
                     </v-btn>
-                    <v-btn color="red" variant="text" @click="deleteStudent" :loading="deleteLoading"
-                        :disabled="deleteSuccess">
+                    <v-btn color="red" variant="text" @click="deleteStudent" :loading="deleteLoading">
                         Vymazať
                     </v-btn>
                 </v-card-actions>

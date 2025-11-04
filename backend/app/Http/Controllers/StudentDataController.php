@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Internship;
 use App\Models\StudentData;
 use App\Models\User;
 use App\Models\InternshipStatus;
@@ -197,41 +198,27 @@ class StudentDataController extends Controller
             ], 400);
         }
 
-        try {
-            DB::beginTransaction();
+        DB::beginTransaction();
 
-            // 1. Získaj internship IDs
-            $internshipIds = $student->internships()->pluck('id')->toArray();
+        // mazanie praxov
+        $internships = Internship::whereUserId($student->id);
 
-            // 2. Vymaž internship statuses
-            if (!empty($internshipIds)) {
-                InternshipStatus::whereIn('internship_id', $internshipIds)->delete();
-            }
+        // mazanie statusov
+        $internships->each(function ($internship) {
+            InternshipStatus::whereInternshipId($internship->id)->delete();
+        });
 
-            // 3. Vymaž internships
-            $student->internships()->delete();
+        // mazanie praxov
+        $internships->delete();
 
-            // 4. Vymaž student_data
-            if ($student->studentData) {
-                $student->studentData()->delete();
-            }
+        // mazanie firmy
+        StudentData::whereUserId($student->id);
 
-            // 5. Vymaž usera
-            $student->delete();
+        // mazanie účtu firmy
+        $student->delete();
 
-            DB::commit();
+        DB::commit();
 
-            return response()->json([
-                'message' => 'Student successfully deleted.'
-            ], 200);
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-
-            return response()->json([
-                'message' => 'Error deleting student.',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+        return response()->noContent();
     }
 }

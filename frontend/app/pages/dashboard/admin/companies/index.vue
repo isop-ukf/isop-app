@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { CompanyData } from '~/types/company_data';
+import { FetchError } from 'ofetch';
 
 definePageMeta({
     middleware: ['sanctum:auth', 'admin-only'],
@@ -24,14 +25,13 @@ const headers = [
 
 const client = useSanctumClient();
 
-const { data, error } = await useSanctumFetch<CompanyData[]>('/api/companies/simple');
+const { data, error, refresh } = await useSanctumFetch<CompanyData[]>('/api/companies/simple');
 
 // State pre delete dialog
 const deleteDialog = ref(false);
 const companyToDelete = ref<CompanyData | null>(null);
 const deleteLoading = ref(false);
 const deleteError = ref<string | null>(null);
-const deleteSuccess = ref(false);
 
 // Funkcia na otvorenie delete dialogu
 const openDeleteDialog = (company: CompanyData) => {
@@ -45,7 +45,6 @@ const closeDeleteDialog = () => {
     deleteDialog.value = false;
     companyToDelete.value = null;
     deleteError.value = null;
-    deleteSuccess.value = false;
 };
 
 // Funkcia na vymazanie firmy
@@ -60,22 +59,13 @@ const deleteCompany = async () => {
             method: 'DELETE'
         });
 
-        // Odstránime firmu zo zoznamu
-        if (data.value) {
-            const index = data.value.findIndex(c => c.id === companyToDelete.value!.id);
-            if (index > -1) {
-                data.value.splice(index, 1);
-            }
+        refresh();
+        closeDeleteDialog();
+
+    } catch (err) {
+        if (err instanceof FetchError) {
+            deleteError.value = err.data?.message;
         }
-
-        deleteSuccess.value = true;
-
-        setTimeout(() => {
-            closeDeleteDialog();
-        }, 1500);
-
-    } catch (err: any) {
-        deleteError.value = err.data?.message || 'Chyba pri mazaní firmy.';
     } finally {
         deleteLoading.value = false;
     }
@@ -136,10 +126,10 @@ const deleteCompany = async () => {
                     Potvrdiť vymazanie
                 </v-card-title>
                 <v-card-text>
-                    <p v-if="!deleteSuccess">
+                    <p>
                         Naozaj chcete vymazať firmu <strong>{{ companyToDelete?.name }}</strong>?
                     </p>
-                    <p v-if="!deleteSuccess" class="text-error mt-2">
+                    <p class="text-error mt-2">
                         Táto akcia vymaže aj kontaktnú osobu (EMPLOYER), všetky praxe a statusy spojené s touto firmou a
                         <strong>nie je možné ju vrátiť späť</strong>.
                     </p>
@@ -148,19 +138,13 @@ const deleteCompany = async () => {
                     <v-alert v-if="deleteError" type="error" density="compact" class="mt-3">
                         {{ deleteError }}
                     </v-alert>
-
-                    <!-- Success message -->
-                    <v-alert v-if="deleteSuccess" type="success" density="compact" class="mt-3">
-                        Firma bola úspešne vymazaná.
-                    </v-alert>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn color="grey" variant="text" @click="closeDeleteDialog" :disabled="deleteLoading">
                         Zrušiť
                     </v-btn>
-                    <v-btn color="red" variant="text" @click="deleteCompany" :loading="deleteLoading"
-                        :disabled="deleteSuccess">
+                    <v-btn color="red" variant="text" @click="deleteCompany" :loading="deleteLoading">
                         Vymazať
                     </v-btn>
                 </v-card-actions>
