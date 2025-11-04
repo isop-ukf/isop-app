@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Internship;
 use App\Models\StudentData;
 use App\Models\User;
+use App\Models\InternshipStatus;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class StudentDataController extends Controller
 {
@@ -170,5 +173,55 @@ class StudentDataController extends Controller
     public function destroy(StudentData $studentData)
     {
         //
+    }
+
+    /**
+     * Delete a student and all related data.
+     */
+    public function delete(int $id)
+    {
+        $user = auth()->user();
+
+        // Admin kontrola
+        if ($user->role !== 'ADMIN') {
+            abort(403, 'Unauthorized');
+        }
+
+        $student = User::find($id);
+
+        if (!$student) {
+            return response()->json([
+                'message' => 'No such student exists.'
+            ], 400);
+        }
+
+        if ($student->role !== 'STUDENT') {
+            return response()->json([
+                'message' => 'User is not a student.'
+            ], 400);
+        }
+
+        DB::beginTransaction();
+
+        // mazanie praxov
+        $internships = Internship::whereUserId($student->id);
+
+        // mazanie statusov
+        $internships->each(function ($internship) {
+            InternshipStatus::whereInternshipId($internship->id)->delete();
+        });
+
+        // mazanie praxov
+        $internships->delete();
+
+        // mazanie firmy
+        StudentData::whereUserId($student->id);
+
+        // mazanie účtu firmy
+        $student->delete();
+
+        DB::commit();
+
+        return response()->noContent();
     }
 }

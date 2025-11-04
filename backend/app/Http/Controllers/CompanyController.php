@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Company;
 use App\Models\User;
+use App\Models\Internship;
+use App\Models\InternshipStatus;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CompanyController extends Controller
 {
@@ -154,5 +157,49 @@ class CompanyController extends Controller
     public function destroy(Company $company)
     {
         //
+    }
+
+    /**
+     * Delete a company, its contact person and all related data.
+     */
+    public function delete(int $id)
+    {
+        $user = auth()->user();
+
+        // Admin kontrola
+        if ($user->role !== 'ADMIN') {
+            abort(403, 'Unauthorized');
+        }
+
+        $company = Company::find($id);
+        $company_contact = User::find($company->contact);
+
+        if (!$company) {
+            return response()->json([
+                'message' => 'No such company exists.'
+            ], 400);
+        }
+
+        DB::beginTransaction();
+
+        $internships = Internship::whereCompanyId($company->id);
+
+        // mazanie statusov
+        $internships->each(function ($internship) {
+            InternshipStatus::whereInternshipId($internship->id)->delete();
+        });
+
+        // mazanie praxov
+        $internships->delete();
+
+        // mazanie firmy
+        Company::whereContact($company_contact->id);
+
+        // mazanie účtu firmy
+        $company_contact->delete();
+
+        DB::commit();
+
+        return response()->noContent();
     }
 }

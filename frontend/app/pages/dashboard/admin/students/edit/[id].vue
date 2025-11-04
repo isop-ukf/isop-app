@@ -14,6 +14,12 @@ const student = ref<User | null>(null);
 const loading = ref(true);
 const saving = ref(false);
 
+// Delete state
+const deleteDialog = ref(false);
+const deleteLoading = ref(false);
+const deleteError = ref<string | null>(null);
+const deleteSuccess = ref(false);
+
 const form = ref({
     first_name: '',
     last_name: '',
@@ -69,6 +75,49 @@ async function saveChanges() {
 function cancel() {
     navigateTo('/dashboard/admin/students');
 }
+
+// Funkcia na otvorenie delete dialogu
+const openDeleteDialog = () => {
+    deleteDialog.value = true;
+    deleteError.value = null;
+};
+
+// Funkcia na zatvorenie dialogu
+const closeDeleteDialog = () => {
+    deleteDialog.value = false;
+    deleteError.value = null;
+    deleteSuccess.value = false;
+};
+
+// Funkcia na vymazanie študenta
+const deleteStudent = async () => {
+    if (!studentId) return;
+
+    deleteLoading.value = true;
+    deleteError.value = null;
+
+    try {
+        await client(`/api/students/${studentId}`, {
+            method: 'DELETE'
+        });
+
+        deleteSuccess.value = true;
+
+        // Presmeruj na zoznam po 1.5 sekundách
+        setTimeout(() => {
+            navigateTo('/dashboard/admin/students');
+        }, 1500);
+
+    } catch (e) {
+        if (e instanceof FetchError) {
+            deleteError.value = e.response?._data?.message || 'Chyba pri mazaní študenta.';
+        } else {
+            deleteError.value = 'Neznáma chyba pri mazaní študenta.';
+        }
+    } finally {
+        deleteLoading.value = false;
+    }
+};
 </script>
 
 <template>
@@ -124,11 +173,53 @@ function cancel() {
                             <v-btn @click="cancel" :disabled="saving">
                                 Zrušiť
                             </v-btn>
+                            <v-spacer></v-spacer>
+                            <v-btn color="red" variant="outlined" @click="openDeleteDialog" :disabled="saving">
+                                Vymazať študenta
+                            </v-btn>
                         </v-card-actions>
                     </v-card>
                 </v-col>
             </v-row>
         </div>
+
+        <!-- Delete Confirmation Dialog -->
+        <v-dialog v-model="deleteDialog" max-width="500px">
+            <v-card>
+                <v-card-title class="text-h5">
+                    Potvrdiť vymazanie
+                </v-card-title>
+                <v-card-text>
+                    <p v-if="!deleteSuccess">
+                        Naozaj chcete vymazať študenta <strong>{{ student?.name }}</strong>?
+                    </p>
+                    <p v-if="!deleteSuccess" class="text-error mt-2">
+                        Táto akcia vymaže aj všetky súvisiace dáta (praxe, statusy, atď.) a <strong>nie je možné ju
+                            vrátiť späť</strong>.
+                    </p>
+
+                    <!-- Error message -->
+                    <v-alert v-if="deleteError" type="error" density="compact" class="mt-3">
+                        {{ deleteError }}
+                    </v-alert>
+
+                    <!-- Success message -->
+                    <v-alert v-if="deleteSuccess" type="success" density="compact" class="mt-3">
+                        Študent bol úspešne vymazaný. Presmerovanie...
+                    </v-alert>
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="grey" variant="text" @click="closeDeleteDialog" :disabled="deleteLoading">
+                        Zrušiť
+                    </v-btn>
+                    <v-btn color="red" variant="text" @click="deleteStudent" :loading="deleteLoading"
+                        :disabled="deleteSuccess">
+                        Vymazať
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
     </v-container>
 </template>
 
