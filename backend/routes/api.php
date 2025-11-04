@@ -22,6 +22,10 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $user;
 });
 
+Route::prefix('/account')->group(function () {
+    Route::post("/activate", [RegisteredUserController::class, 'activate']);
+});
+
 Route::middleware(['auth:sanctum'])->prefix('/students')->group(function () {
     Route::get('/', [StudentDataController::class, 'all']);
     Route::get('/{id}', [StudentDataController::class, 'get']);
