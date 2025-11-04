@@ -126,4 +126,22 @@ class RegisteredUserController extends Controller
 
         return response()->noContent();
     }
+
+    public function change_password(Request $request)
+    {
+        $user = auth()->user();
+
+        if ($user->role !== 'STUDENT') {
+            return response()->json(['message' => 'Only students...'], 403);
+        }
+
+        $request->validate([
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return response()->json(['message' => 'Password successfully changed.']);
+    }
 }

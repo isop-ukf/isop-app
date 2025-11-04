@@ -23,11 +23,12 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 });
 
 Route::middleware(['auth:sanctum'])->prefix('/students')->group(function () {
+    Route::post('/change-password', [RegisteredUserController::class, 'change_password']);
     Route::get('/', [StudentDataController::class, 'all']);
     Route::get('/{id}', [StudentDataController::class, 'get']);
     Route::post('/{id}', [StudentDataController::class, 'update_all']);
     Route::delete('/{id}', [StudentDataController::class, 'delete']);
-    Route::post('/students/change-password', [StudentDataController::class, 'change_password']);
+
 });
 
 Route::post('/password-reset', [RegisteredUserController::class, 'reset_password'])
