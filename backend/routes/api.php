@@ -24,10 +24,10 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 
 Route::prefix('/account')->group(function () {
     Route::post("/activate", [RegisteredUserController::class, 'activate']);
+    Route::post('/change-password', [RegisteredUserController::class, 'change_password']);
 });
 
 Route::middleware(['auth:sanctum'])->prefix('/students')->group(function () {
-    Route::post('/change-password', [RegisteredUserController::class, 'change_password']);
     Route::get('/', [StudentDataController::class, 'all']);
     Route::get('/{id}', [StudentDataController::class, 'get']);
     Route::post('/{id}', [StudentDataController::class, 'update_all']);
