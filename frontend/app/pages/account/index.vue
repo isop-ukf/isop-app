@@ -80,7 +80,7 @@ const user = useSanctumUser<User>();
 
             <v-list density="compact" class="readonly-list">
                 <v-list-item>
-                    <v-btn prepend-icon="mdi mdi-pencil" color="orange">
+                    <v-btn prepend-icon="mdi mdi-pencil" color="orange" to="/account/change-password">
                         Zmeniť heslo
                     </v-btn>
                 </v-list-item>
