@@ -78,7 +78,7 @@ const user = useSanctumUser<User>();
                             </v-list-item>
 
                             <v-list-item class="mt-4">
-                                <v-btn prepend-icon="mdi mdi-pencil" color="blue" class="mr-2" to="/dashboard/company/profile">
+                                <v-btn prepend-icon="mdi mdi-pencil" color="blue" class="mr-2">
                                     Zmeniť heslo
                                 </v-btn>
                             </v-list-item>
@@ -97,12 +97,14 @@ const user = useSanctumUser<User>();
 </template>
 
 <style scoped>
+
 .page-container {
-  max-width: 1120px;
-  margin: 0 auto;
-  padding-left: 24px;
-  padding-right: 24px;
+    max-width: 1120px;
+    margin: 0 auto;
+    padding-left: 24px;
+    padding-right: 24px;
 }
+
 #profile-card { padding: 16px; }
 .header { display: flex; align-items: center; }
 .title { font-size: 24px; font-weight: 700; margin: 0; }
@@ -110,18 +112,18 @@ const user = useSanctumUser<User>();
 .section-title { font-size: 16px; font-weight: 700; margin: 8px 0 8px; }
 
 .readonly-list {
-  --v-list-padding-start: 0px;
+    --v-list-padding-start: 0px;
 }
 .readonly-list :deep(.v-list-item) {
-  --v-list-item-padding-start: 0px;
-  padding-left: 0 !important;   
+    --v-list-item-padding-start: 0px;
+    padding-left: 0 !important;   
 }
 .readonly-list :deep(.v-list-item__content) {
-  padding-left: 0 !important;   
+    padding-left: 0 !important;   
 }
 
 .readonly-list :deep(.v-list-item-subtitle) {
-  white-space: pre-line;
+    white-space: pre-line;
 }
 
 .readonly-list :deep(.v-list-item-title) { font-weight: 600; }
