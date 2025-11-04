@@ -47,7 +47,7 @@ class RegisteredUserController extends Controller
             'company_data.hiring' => ['required_if:role,EMPLOYER', 'boolean'],
         ]);
 
-        DB::createTransaction();
+        DB::beginTransaction();
 
         try {
             $user = User::create([
