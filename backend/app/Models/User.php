@@ -25,6 +25,9 @@ class User extends Authenticatable
         'email',
         'role',
         'password',
+        'active',
+        'needs_password_change',
+        'activation_token',
     ];
 
     /**
@@ -35,6 +38,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'activation_token',
     ];
 
     /**
@@ -47,6 +51,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'active' => 'boolean',
+            'needs_password_change' => 'boolean'
         ];
     }
 

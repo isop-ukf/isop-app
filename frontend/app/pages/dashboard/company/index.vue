@@ -24,11 +24,11 @@ const user = useSanctumUser<User>();
             <!-- spacer -->
             <div style="height: 40px;"></div>
 
-            <v-btn prepend-icon="mdi-account-circle" color="blue" class="mr-2">
-                Môj profil
-            </v-btn>
             <v-btn prepend-icon="mdi-briefcase" color="blue" class="mr-2" to="/dashboard/company/internships">
                 Praxe
+            </v-btn>
+            <v-btn prepend-icon="mdi-account-circle" color="blue" class="mr-2" to="/account">
+                Môj profil
             </v-btn>
 
             <!-- spacer -->

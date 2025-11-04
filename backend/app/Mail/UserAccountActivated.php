@@ -3,26 +3,24 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Mail\Mailables\Address;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class UserRegistrationCompleted extends Mailable
+class UserAccountActivated extends Mailable
 {
     use Queueable, SerializesModels;
 
     private string $name;
-    private string $activation_token;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(string $name, string $activation_token)
+    public function __construct(string $name)
     {
         $this->name = $name;
-        $this->activation_token = $activation_token;
     }
 
     /**
@@ -31,7 +29,7 @@ class UserRegistrationCompleted extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: '[ISOP] Účet vytvorený',
+            subject: 'User Account Activated',
         );
     }
 
@@ -41,10 +39,9 @@ class UserRegistrationCompleted extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'mail.registration.completed',
+            view: 'mail.activation.completed',
             with: [
                 "name" => $this->name,
-                "activation_token" => $this->activation_token
             ]
         );
     }

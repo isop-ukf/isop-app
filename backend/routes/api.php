@@ -22,6 +22,10 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $user;
 });
 
+Route::prefix('/account')->group(function () {
+    Route::post("/activate", [RegisteredUserController::class, 'activate']);
+});
+
 Route::middleware(['auth:sanctum'])->prefix('/students')->group(function () {
     Route::post('/change-password', [RegisteredUserController::class, 'change_password']);
     Route::get('/', [StudentDataController::class, 'all']);
