@@ -92,14 +92,15 @@ class RegisteredUserController extends Controller
         return response()->noContent();
     }
 
-    public function activate(Request $request) {
+    public function activate(Request $request)
+    {
         $request->validate([
             'token' => ['required', 'string', 'exists:users,activation_token'],
             'password' => ['required', 'string', 'min:8'],
         ]);
 
         $user = User::where('activation_token', '=', $request->token)->first();
-                
+
         if (!$user) {
             return response()->json(['message' => 'Invalid activation token'], 400);
         }
@@ -155,17 +156,13 @@ class RegisteredUserController extends Controller
     {
         $user = auth()->user();
 
-        if ($user->role !== 'STUDENT') {
-            return response()->json(['message' => 'Only students...'], 403);
-        }
-
         $request->validate([
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'password' => ['required', 'string', 'min:8'],
         ]);
 
         $user->password = Hash::make($request->password);
         $user->save();
 
-        return response()->json(['message' => 'Password successfully changed.']);
+        return response()->noContent();
     }
 }
