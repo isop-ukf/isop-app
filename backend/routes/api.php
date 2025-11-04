@@ -27,6 +27,7 @@ Route::middleware(['auth:sanctum'])->prefix('/students')->group(function () {
     Route::get('/{id}', [StudentDataController::class, 'get']);
     Route::post('/{id}', [StudentDataController::class, 'update_all']);
     Route::delete('/{id}', [StudentDataController::class, 'delete']);
+    Route::post('/students/change-password', [StudentDataController::class, 'change_password']);
 });
 
 Route::post('/password-reset', [RegisteredUserController::class, 'reset_password'])
