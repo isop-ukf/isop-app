@@ -8,6 +8,7 @@ use App\Mail\UserRegistrationCompleted;
 use App\Models\Company;
 use App\Models\StudentData;
 use App\Models\User;
+use DB;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -46,31 +47,40 @@ class RegisteredUserController extends Controller
             'company_data.hiring' => ['required_if:role,EMPLOYER', 'boolean'],
         ]);
 
-        $user = User::create([
-            'email' => $request->email,
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'name' => "{$request->first_name} {$request->last_name}",
-            'phone' => $request->phone,
-            'role' => $request->role,
-            'password' => Hash::make($password),
-        ]);
+        DB::createTransaction();
 
-        if ($user->role === "STUDENT") {
-            StudentData::create([
-                'user_id' => $user->id,
-                'address' => $request->student_data['address'],
-                'personal_email' => $request->student_data['personal_email'],
-                'study_field' => $request->student_data['study_field'],
+        try {
+            $user = User::create([
+                'email' => $request->email,
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'name' => "{$request->first_name} {$request->last_name}",
+                'phone' => $request->phone,
+                'role' => $request->role,
+                'password' => Hash::make($password),
             ]);
-        } else if ($user->role === "EMPLOYER") {
-            Company::create([
-                'name' => $request->company_data['name'],
-                'address' => $request->company_data['address'],
-                'ico' => $request->company_data['ico'],
-                'contact' => $user->id,
-                'hiring' => $request->company_data['hiring'],
-            ]);
+
+            if ($user->role === "STUDENT") {
+                StudentData::create([
+                    'user_id' => $user->id,
+                    'address' => $request->student_data['address'],
+                    'personal_email' => $request->student_data['personal_email'],
+                    'study_field' => $request->student_data['study_field'],
+                ]);
+            } else if ($user->role === "EMPLOYER") {
+                Company::create([
+                    'name' => $request->company_data['name'],
+                    'address' => $request->company_data['address'],
+                    'ico' => $request->company_data['ico'],
+                    'contact' => $user->id,
+                    'hiring' => $request->company_data['hiring'],
+                ]);
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
         }
 
         Mail::to($user)->sendNow(new UserRegistrationCompleted($user->name, $password));
