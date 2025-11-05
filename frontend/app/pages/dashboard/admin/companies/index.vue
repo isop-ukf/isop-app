@@ -134,7 +134,7 @@ const deleteCompany = async () => {
                     </p>
 
                     <!-- Error message -->
-                    <ErrorAlert v-if="deleteError" :error="error" />
+                    <ErrorAlert v-if="deleteError" :error="deleteError" />
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>

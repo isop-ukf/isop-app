@@ -58,7 +58,7 @@ const changePassword = async () => {
             <ErrorAlert v-if="error" :error="error" />
 
             <!-- Success alert -->
-            <SuccessAlert v-else-if="success" text=" Heslo bolo úspešne zmenené." />
+            <SuccessAlert v-else-if="success" title="Heslo aktualizované" text="Heslo bolo úspešne zmenené." />
 
             <v-form v-else :disabled="loading" @submit.prevent="changePassword">
                 <!-- Nové heslo -->
