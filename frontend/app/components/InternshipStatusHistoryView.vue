@@ -23,12 +23,10 @@ watch(() => props.internship, () => {
 <template>
     <div>
         <!-- Čakajúca hláška -->
-        <v-alert v-if="pending" density="compact" text="Prosím čakajte..." title="Spracovávam" type="info"
-            class="mx-auto alert"></v-alert>
+        <LoadingAlert v-if="pending" />
 
         <!-- Chybová hláška -->
-        <v-alert v-if="error" density="compact" :text="error?.message" title="Chyba" type="error"
-            class="mx-auto alert"></v-alert>
+        <ErrorAlert v-if="error" :error="error?.message" />
 
         <v-table v-else>
             <thead>

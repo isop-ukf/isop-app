@@ -53,17 +53,14 @@ const { data, error, refresh } = await useSanctumFetch<Internship>(`/api/interns
             <div style="height: 40px;"></div>
 
             <!-- Čakajúca hláška -->
-            <v-alert v-if="loading" density="compact" text="Prosím čakajte..." title="Spracovávam" type="info"
-                class="mx-auto alert"></v-alert>
+            <LoadingAlert v-if="loading" />
 
             <!-- Chybová hláška -->
-            <v-alert v-if="action_error !== null" density="compact" :text="action_error" title="Chyba" type="error"
-                class="mx-auto alert"></v-alert>
+            <ErrorAlert v-if="action_error" :error="action_error" />
 
             <div v-else>
                 <!-- Chybová hláška -->
-                <v-alert v-if="error" density="compact" :text="error?.message" title="Chyba" type="error"
-                    class="mx-auto alert"></v-alert>
+                <ErrorAlert v-if="error" :error="error?.message" />
 
                 <div v-else>
                     <div>

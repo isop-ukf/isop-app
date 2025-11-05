@@ -80,26 +80,23 @@ async function onSubmit() {
 <template>
     <div>
         <!-- Čakajúca hláška -->
-        <v-alert v-if="loading" density="compact" text="Prosím čakajte..." title="Spracovávam" type="info"
-            class="mx-auto mb-2"></v-alert>
+        <LoadingAlert v-if="loading" />
 
         <!-- Chybová hláška -->
-        <v-alert v-if="error" density="compact" :text="error" title="Chyba" type="error" class="mx-auto mb-2"></v-alert>
+        <ErrorAlert v-if="error" :error="error" />
 
         <v-form @submit.prevent="onSubmit" :disabled="loading">
             <div>
                 <h4 class="mb-2">Podpísaná zmluva / dohoda</h4>
 
-                <v-alert v-if="props.internship.agreement" class="mb-2" type="warning" variant="tonal"
-                    title="Existujúci dokument"
+                <WarningAlert v-if="props.internship.agreement" title="Existujúci dokument"
                     text="V systéme je už nahratá zmluva/dohoda. Ak chcete nahradiť existujúcu verziu, vyberte súbor, alebo v opačnom prípade nechajte toto pole nevyplnené.">
-
                     <br />
 
                     <v-btn prepend-icon="mdi-download" color="blue" class="mr-2 mt-2" @click="downloadAgreement">
                         Stiahnuť
                     </v-btn>
-                </v-alert>
+                </WarningAlert>
 
                 <v-file-input v-model="agreement" :rules="[rules.isPdf, rules.maxSize]" accept=".pdf,application/pdf"
                     prepend-icon="mdi-handshake" label="Nahrať PDF zmluvu" variant="outlined" show-size clearable
@@ -111,8 +108,7 @@ async function onSubmit() {
             <div>
                 <h4 class="mb-2">Výkaz</h4>
 
-                <v-alert v-if="props.internship.report" class="mb-2" type="warning" variant="tonal"
-                    title="Existujúci dokument"
+                <WarningAlert v-if="props.internship.agreement" title="Existujúci dokument"
                     text="V systéme je už nahratý výkaz. Ak chcete nahradiť existujúcu verziu, vyberte súbor, alebo v opačnom prípade nechajte toto pole nevyplnené.">
 
                     <br />
@@ -120,7 +116,7 @@ async function onSubmit() {
                     <v-btn prepend-icon="mdi-download" color="blue" class="mr-2 mt-2" @click="downloadReport">
                         Stiahnuť
                     </v-btn>
-                </v-alert>
+                </WarningAlert>
 
                 <v-file-input v-model="report" :rules="[rules.isPdf, rules.maxSize]" accept=".pdf,application/pdf"
                     prepend-icon="mdi-chart-box-outline" label="Nahrať PDF výkaz" variant="outlined" show-size clearable

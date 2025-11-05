@@ -77,12 +77,10 @@ async function handleRegistration() {
             <h4 class="page-title">Registrácia firmy</h4>
 
             <!-- Chybová hláška -->
-            <v-alert v-if="error !== null" density="compact" :text="error" title="Chyba" type="error"
-                id="login-error-alert" class="mx-auto"></v-alert>
+            <ErrorAlert v-if=error :error="error" />
 
             <!-- Čakajúca hláška -->
-            <v-alert v-if="loading" density="compact" text="Prosím čakajte..." title="Spracovávam" type="info"
-                id="login-error-alert" class="mx-auto"></v-alert>
+            <LoadingAlert v-if="loading" />
 
             <v-form v-else v-model="isValid" @submit.prevent="handleRegistration">
                 <v-text-field v-model="form.name" :rules="[rules.required]" label="Názov firmy:" variant="outlined"

@@ -57,20 +57,17 @@ async function handleLogin() {
         <v-card id="page-container-card">
             <h2 class="page-title">Aktivácia účtu</h2>
 
-            <!-- Chybová hláška -->
-            <v-alert v-show="success" density="compact" title="Aktivácia ukončená" type="success" class="mx-auto alert">
+            <SuccessAlert v-show="success" title="Aktivácia ukončená">
                 <p>Váš účet bol úspešne aktivovaný! Prihláste sa <NuxtLink to="/login">tu</NuxtLink>.
                 </p>
-            </v-alert>
+            </SuccessAlert>
 
             <div v-show="!success">
                 <!-- Chybová hláška -->
-                <v-alert v-if="error !== null" density="compact" :text="error" title="Chyba" type="error"
-                    class="mx-auto alert"></v-alert>
+                <ErrorAlert v-if="error" :error="error" />
 
                 <!-- Čakajúca hláška -->
-                <v-alert v-if="loading" density="compact" text="Prosím čakajte..." title="Spracovávam" type="info"
-                    class="mx-auto alert"></v-alert>
+                <LoadingAlert v-if="loading" />
 
                 <v-form v-else v-model="isValid" @submit.prevent="handleLogin">
                     <v-text-field v-model="password" :rules="[rules.required]"

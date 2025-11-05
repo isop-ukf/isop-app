@@ -41,12 +41,10 @@ async function handleInternshipRegistration(internship: NewInternship) {
             <br />
 
             <!-- Čakajúca hláška -->
-            <v-alert v-show="loading" density="compact" text="Prosím čakajte..." title="Spracovávam" type="info"
-                id="data-error-alert" class="mx-auto alert"></v-alert>
+            <LoadingAlert />
 
             <!-- Chybová hláška -->
-            <v-alert v-if="error" density="compact" :text="error" title="Chyba" type="error" id="data-error-alert"
-                class="mx-auto alert"></v-alert>
+            <ErrorAlert v-if="error" :error="error" />
 
             <InternshipEditor v-show="!loading" :submit="handleInternshipRegistration" />
         </v-card>

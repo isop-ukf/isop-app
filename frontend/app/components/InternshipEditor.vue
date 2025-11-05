@@ -113,12 +113,10 @@ const { data, error } = await useSanctumFetch<CompanyData[]>('/api/companies/sim
         <!-- Výber firmy -->
 
         <!-- Čakajúca hláška -->
-        <v-alert v-if="!data && !error" density="compact" text="Prosím čakajte..." title="Spracovávam" type="info"
-            id="data-error-alert" class="mx-auto alert"></v-alert>
+        <LoadingAlert v-if="!data && !error" />
 
         <!-- Chybová hláška -->
-        <v-alert v-else-if="error" density="compact" :text="error.message" title="Chyba" type="error"
-            id="data-error-alert" class="mx-auto alert"></v-alert>
+        <ErrorAlert v-else-if="error" :error="error.message" />
 
         <v-select v-else v-model="form.company_id" clearable label="Firma" :items="data" :item-props="companyListProps"
             item-value="id" :rules="[rules.required]"></v-select>

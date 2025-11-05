@@ -83,8 +83,7 @@ const deleteStudent = async () => {
             <div style="height: 40px;"></div>
 
             <!-- Chybová hláška -->
-            <v-alert v-if="error" density="compact" :text="error?.message" title="Chyba" type="error"
-                id="login-error-alert" class="mx-auto alert"></v-alert>
+            <ErrorAlert v-if="error" :error="error?.message" />
 
             <div v-else>
                 <p>Aktuálne evidujeme {{ students?.length || 0 }} študentov.</p>
@@ -117,8 +116,7 @@ const deleteStudent = async () => {
                     </tbody>
                 </v-table>
 
-                <v-alert v-else density="compact" text="Zatiaľ nie sú zaregistrovaní žiadni študenti." type="info"
-                    class="mt-4"></v-alert>
+                <InfoAlert v-else text="Zatiaľ nie sú zaregistrovaní žiadni študenti." />
             </div>
         </v-card>
 
@@ -138,9 +136,7 @@ const deleteStudent = async () => {
                     </p>
 
                     <!-- Error message -->
-                    <v-alert v-if="deleteError" type="error" density="compact" class="mt-3">
-                        {{ deleteError }}
-                    </v-alert>
+                    <ErrorAlert v-if="deleteError" :error="deleteError" />
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>

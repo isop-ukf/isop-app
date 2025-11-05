@@ -55,14 +55,10 @@ const changePassword = async () => {
             <h1>Zmena hesla</h1>
 
             <!-- Error alert -->
-            <v-alert v-if="error" type="error" density="compact" class="mb-3">
-                {{ error }}
-            </v-alert>
+            <ErrorAlert v-if="error" :error="error" />
 
             <!-- Success alert -->
-            <v-alert v-else-if="success" type="success" density="compact" class="mb-3">
-                Heslo bolo úspešne zmenené.
-            </v-alert>
+            <SuccessAlert v-else-if="success" text=" Heslo bolo úspešne zmenené." />
 
             <v-form v-else :disabled="loading" @submit.prevent="changePassword">
                 <!-- Nové heslo -->

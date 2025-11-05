@@ -23,7 +23,7 @@ const loading = ref(false);
 const save_error = ref(null as null | string);
 
 const client = useSanctumClient();
-const { data, refresh } = await useSanctumFetch(`/api/internships/${props.internship.id}/next-statuses`, undefined, {
+const { data, error: load_error, refresh } = await useSanctumFetch(`/api/internships/${props.internship.id}/next-statuses`, undefined, {
     transform: (statuses: InternshipStatus[]) => statuses.map((state) => ({
         title: prettyInternshipStatus(state),
         value: state
@@ -62,14 +62,12 @@ async function submit() {
 <template>
     <div>
         <!-- Chybová hláška -->
-        <v-alert v-if="save_error !== null" density="compact" :text="`Nepodarilo uložiť: ${save_error}`" title="Chyba"
-            type="error" class="mx-auto alert"></v-alert>
+        <ErrorAlert v-if="save_error" :error="`Nepodarilo uložiť: ${save_error}`" />
 
         <!-- Chybová hláška -->
-        <v-alert v-if="save_error !== null" density="compact" :text="`Nepodarilo sa načítať stavy: ${save_error}`"
-            title="Chyba" type="error" class="mx-auto alert"></v-alert>
+        <ErrorAlert v-if="load_error" :error="`Nepodarilo sa načítať stavy: ${save_error}`" />
 
-        <v-form v-model="isValid" @submit.prevent="submit" :disabled="loading">
+        <v-form v-else v-model="isValid" @submit.prevent="submit" :disabled="loading">
             <v-select v-model="new_state" label="Stav" :items="data" item-value="value"></v-select>
             <v-text-field v-model="note" :rules="[rules.required]" label="Poznámka"></v-text-field>
 

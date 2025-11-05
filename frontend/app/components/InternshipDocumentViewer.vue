@@ -39,11 +39,11 @@ async function downloadReport() {
                         Podpísaná zmluva / dohoda
                     </v-card-title>
                     <v-card-text>
-                        <v-alert v-if="!props.internship.agreement" type="warning" variant="tonal" title="Neodovzdané"
+                        <WarningAlert v-if="!props.internship.agreement" title="Neodovzdané"
                             text="Zmluva zatiaľ nebola nahratá." />
 
                         <div v-else>
-                            <v-alert type="success" variant="tonal" title="Odovzdané" text="Zmluva bola nahratá." />
+                            <SuccessAlert title="Odovzdané" text="Zmluva bola nahratá." />
 
                             <v-btn prepend-icon="mdi-download" color="blue" class="mr-2 mt-2" block
                                 @click="downloadAgreement">
@@ -62,15 +62,14 @@ async function downloadReport() {
                         Výkaz
                     </v-card-title>
                     <v-card-text>
-                        <v-alert v-if="!props.internship.report" type="info" variant="tonal" title="Neodovzdané"
+                        <InfoAlert v-if="!props.internship.report" title="Neodovzdané"
                             text="Výkaz zatiaľ nebol nahratý." />
 
                         <div v-else>
-                            <v-alert v-if="!props.internship.report_confirmed" type="error" variant="tonal"
-                                title="Nepotvrdené" text="Výkaz bol nahratý, ale zatiaľ nebol potvrdený firmou." />
+                            <ErrorAlert v-if="!props.internship.report_confirmed" title="Nepotvrdené"
+                                error="Výkaz bol nahratý, ale zatiaľ nebol potvrdený firmou." />
 
-                            <v-alert v-else type="success" variant="tonal" title="Potvrdené"
-                                text="Výkaz bol nahratý, aj potvrdený firmou." />
+                            <SuccessAlert v-else title="Potvrdené" text="Výkaz bol nahratý, aj potvrdený firmou." />
 
                             <v-btn prepend-icon="mdi-download" color="blue" class="mr-2 mt-2" block
                                 @click="downloadReport">

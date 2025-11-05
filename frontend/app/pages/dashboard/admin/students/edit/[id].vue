@@ -199,14 +199,10 @@ const deleteStudent = async () => {
                     </p>
 
                     <!-- Error message -->
-                    <v-alert v-if="deleteError" type="error" density="compact" class="mt-3">
-                        {{ deleteError }}
-                    </v-alert>
+                    <ErrorAlert v-if="deleteError" :error="deleteError" />
 
                     <!-- Success message -->
-                    <v-alert v-if="deleteSuccess" type="success" density="compact" class="mt-3">
-                        Študent bol úspešne vymazaný. Presmerovanie...
-                    </v-alert>
+                    <SuccessAlert v-if="deleteSuccess" text="Študent bol úspešne vymazaný." />
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>

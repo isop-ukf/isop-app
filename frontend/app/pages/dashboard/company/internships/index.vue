@@ -35,8 +35,7 @@ const { data, error } = await useSanctumFetch<Internship[]>('/api/internships/my
             <div style="height: 40px;"></div>
 
             <!-- Chybová hláška -->
-            <v-alert v-if="error" density="compact" :text="error?.message" title="Chyba" type="error"
-                id="login-error-alert" class="mx-auto alert"></v-alert>
+            <ErrorAlert v-if="error" :error="error?.message" />
 
             <v-table v-else>
                 <thead>
