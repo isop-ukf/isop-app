@@ -22,33 +22,7 @@ class InternshipController extends Controller
         $internships = Internship::all()->makeHidden(['created_at', 'updated_at']);
 
         $internships->each(function ($internship) {
-            $internship->user = User::find($internship->user_id)->makeHidden(['created_at', 'updated_at', 'email_verified_at']);
-            unset($internship->user_id);
-        });
-        
-        $internships->each(function ($internship) {
-            $internship->company = Company::find($internship->company_id)->makeHidden(['created_at', 'updated_at']);
-            unset($internship->company_id);
-        });
-
-        $internships->each(function ($internship) {
-            $internship->contact = User::find($internship->company->contact)->makeHidden(['created_at', 'updated_at', 'email_verified_at']);
-            unset($internship->company->contact);
-        });
-
-        $internships->each(function ($internship) {
-            $internship->status = InternshipStatus::whereInternshipId($internship->id)->orderByDesc('changed')->get()->first()->makeHidden(['created_at', 'updated_at', 'id']);
-            $internship->status->modified_by = User::find($internship->status->modified_by)->makeHidden(['created_at', 'updated_at', 'email_verified_at']);
-        });
-
-        $internships->each(function ($internship) {
-            $internship->start = Carbon::parse($internship->start)->format('d.m.Y');
-            $internship->end = Carbon::parse($internship->end)->format('d.m.Y');
-        });
-
-        $internships->each(function ($internship) {
-            $internship->agreement = $internship->agreement !== null;
-            $internship->report = $internship->report !== null;
+            $this->expandInternship($internship, true, true);
         });
 
         return response()->json($internships);
@@ -70,88 +44,52 @@ class InternshipController extends Controller
             abort(403, 'Unauthorized');
         }
 
-        if($user->role === "EMPLOYER") {
-            $internships->each(function ($internship) {
-                $internship->user = User::find($internship->user_id)->makeHidden(['created_at', 'updated_at', 'email_verified_at']);
-                unset($internship->user_id);
-            });
-        }
-        
-        $internships->each(function ($internship) {
-            $internship->company = Company::find($internship->company_id)->makeHidden(['created_at', 'updated_at']);
-            unset($internship->company_id);
-        });
-
-        $internships->each(function ($internship) {
-            $internship->contact = User::find($internship->company->contact)->makeHidden(['created_at', 'updated_at', 'email_verified_at']);
-            unset($internship->company->contact);
-        });
-
-        $internships->each(function ($internship) {
-            $internship->status = InternshipStatus::whereColumn('internship_id', '=', $internship->id)->orderByDesc('changed')->get()->first()->makeHidden(['created_at', 'updated_at', 'id']);
-            $internship->status->modified_by = User::find($internship->status->modified_by)->makeHidden(['created_at', 'updated_at', 'email_verified_at']);
-        });
-
-        $internships->each(function ($internship) {
-            $internship->start = Carbon::parse($internship->start)->format('d.m.Y');
-            $internship->end = Carbon::parse($internship->end)->format('d.m.Y');
-        });
-
-        $internships->each(function ($internship) {
-            $internship->agreement = $internship->agreement !== null;
-            $internship->report = $internship->report !== null;
+        $internships->each(function ($internship) use ($user) {
+            $this->expandInternship($internship, $user->role === "EMPLOYER", true);
         });
 
         return response()->json($internships);
     }
 
-    public function get(int $id) {
+    public function get(int $id)
+    {
         $user = auth()->user();
 
         $internship = Internship::find($id);
-        
-        if(!$internship) {
+
+        if (!$internship) {
             return response()->json([
                 'message' => 'No such internship exists.'
             ], 400);
         }
 
-        $internship->company = Company::find($internship->company_id)->makeHidden(['created_at', 'updated_at']);
-        unset($internship->company_id);
+        $this->expandInternship($internship, false, false);
 
-        if($user->role !== 'ADMIN' && $internship->user_id !== $user->id && $user->id !== $internship->company->contact) {
+        if ($user->role !== 'ADMIN' && $internship->user_id !== $user->id && $user->id !== $internship->company->contact) {
             abort(403, 'Unauthorized');
         }
-
-        $internship->contact = User::find($internship->company->contact)->makeHidden(['created_at', 'updated_at', 'email_verified_at']);
-        unset($internship->company->contact);
-
-        $internship->status = InternshipStatus::whereInternshipId($internship->id)->orderByDesc('changed')->get()->first()->makeHidden(['created_at', 'updated_at', 'id']);
-        $internship->status->modified_by = User::find($internship->status->modified_by)->makeHidden(['created_at', 'updated_at', 'email_verified_at']);
-
-        $internship->agreement = $internship->agreement !== null;
-        $internship->report = $internship->report !== null;
 
         return response()->json($internship);
     }
 
-    public function get_agreement(int $id) {
+    public function get_agreement(int $id)
+    {
         $user = auth()->user();
         $internship = Internship::find($id);
-        
-        if(!$internship) {
+
+        if (!$internship) {
             return response()->json([
                 'message' => 'No such internship exists.'
             ], 400);
         }
 
-        if(!$internship->agreement) {
+        if (!$internship->agreement) {
             return response()->json([
                 'message' => 'No agreement file exists for this internship.'
             ], 404);
         }
 
-        if($user->role !== 'ADMIN' && $internship->user_id !== $user->id && $user->id !== $internship->company->contact) {
+        if ($user->role !== 'ADMIN' && $internship->user_id !== $user->id && $user->id !== $internship->company->contact) {
             abort(403, 'Unauthorized');
         }
 
@@ -160,23 +98,24 @@ class InternshipController extends Controller
             ->header('Content-Disposition', 'attachment; filename="agreement_' . $id . '.pdf"');
     }
 
-    public function get_report(int $id) {
+    public function get_report(int $id)
+    {
         $user = auth()->user();
         $internship = Internship::find($id);
-        
-        if(!$internship) {
+
+        if (!$internship) {
             return response()->json([
                 'message' => 'No such internship exists.'
             ], 400);
         }
 
-        if(!$internship->report) {
+        if (!$internship->report) {
             return response()->json([
                 'message' => 'No report file exists for this internship.'
             ], 404);
         }
 
-        if($user->role !== 'ADMIN' && $internship->user_id !== $user->id && $user->id !== $internship->company->contact) {
+        if ($user->role !== 'ADMIN' && $internship->user_id !== $user->id && $user->id !== $internship->company->contact) {
             abort(403, 'Unauthorized');
         }
 
@@ -253,8 +192,8 @@ class InternshipController extends Controller
     {
         $user = auth()->user();
         $internship = Internship::find($id);
-        
-        if(!$internship) {
+
+        if (!$internship) {
             return response()->json([
                 'message' => 'No such internship exists.'
             ], 400);
@@ -271,11 +210,12 @@ class InternshipController extends Controller
         return response()->noContent();
     }
 
-    public function update_documents(int $id, Request $request) {
+    public function update_documents(int $id, Request $request)
+    {
         $user = auth()->user();
         $internship = Internship::find($id);
-        
-        if(!$internship) {
+
+        if (!$internship) {
             return response()->json([
                 'message' => 'No such internship exists.'
             ], 400);
@@ -299,8 +239,8 @@ class InternshipController extends Controller
             $internship->report = file_get_contents($request->file('report')->getRealPath());
         }
 
-        if($user->role === 'EMPLOYER') {
-            if($request->report_confirmed && (!$internship->agreement || !$internship->report)) {
+        if ($user->role === 'EMPLOYER') {
+            if ($request->report_confirmed && (!$internship->agreement || !$internship->report)) {
                 return response()->json([
                     'message' => 'Report cannot be confirmed without an agreement and report.'
                 ], 400);
@@ -329,7 +269,8 @@ class InternshipController extends Controller
         //
     }
 
-    private function validateNewInternship(Request $request) {
+    private function validateNewInternship(Request $request)
+    {
         $request->validate([
             'company_id' => ['required', 'exists:companies,id'],
             'start' => ['required', 'date'],
@@ -345,7 +286,8 @@ class InternshipController extends Controller
         ]);
     }
 
-    private function checkOverlap(int $user_id, string $start_date, string $end_date, ?int $current_id = null) {
+    private function checkOverlap(int $user_id, string $start_date, string $end_date, ?int $current_id = null)
+    {
         $existingInternship = Internship::where('user_id', $user_id)
             // check if the two internships do not have the same ID
             ->when($current_id, function ($query) use ($current_id) {
@@ -357,15 +299,40 @@ class InternshipController extends Controller
                     ->orWhereBetween('end', [$start_date, $end_date])
                     ->orWhere(function ($q) use ($end_date) {
                         $q->where('start', '<=', $end_date)
-                          ->where('end', '>=', $end_date);
+                            ->where('end', '>=', $end_date);
                     });
             })
             ->exists();
-        
+
         if ($existingInternship) {
             abort(response()->json([
                 'message' => 'You already have an internship during this period.'
             ], 400));
         }
+    }
+
+    private function expandInternship(Internship $internship, bool $expand_user, bool $expand_dates)
+    {
+        if ($expand_user) {
+            $internship->user = User::find($internship->user_id)->makeHidden(['created_at', 'updated_at', 'email_verified_at']);
+            unset($internship->user_id);
+        }
+
+        $internship->company = Company::find($internship->company_id)->makeHidden(['created_at', 'updated_at']);
+        unset($internship->company_id);
+
+        $internship->contact = User::find($internship->company->contact)->makeHidden(['created_at', 'updated_at', 'email_verified_at']);
+        unset($internship->company->contact);
+
+        $internship->status = InternshipStatus::whereInternshipId($internship->id)->orderByDesc('changed')->get()->first()->makeHidden(['created_at', 'updated_at', 'id']);
+        $internship->status->modified_by = User::find($internship->status->modified_by)->makeHidden(['created_at', 'updated_at', 'email_verified_at']);
+
+        if ($expand_dates) {
+            $internship->start = Carbon::parse($internship->start)->format('d.m.Y');
+            $internship->end = Carbon::parse($internship->end)->format('d.m.Y');
+        }
+
+        $internship->agreement = $internship->agreement !== null;
+        $internship->report = $internship->report !== null;
     }
 }
