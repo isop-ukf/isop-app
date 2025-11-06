@@ -205,7 +205,7 @@ const deleteCompany = async () => {
                     <ErrorAlert v-if="deleteError" :error="deleteError" />
 
                     <!-- Success message -->
-                    <SuccessAlert v-if="deleteSuccess" text="Firma bola úspešne vymazaná" />
+                    <SuccessAlert v-if="deleteSuccess" title="Zmazanie" text="Firma bola úspešne vymazaná" />
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>

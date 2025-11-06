@@ -57,7 +57,7 @@ async function handleLogin() {
         <v-card id="page-container-card">
             <h2 class="page-title">Aktivácia účtu</h2>
 
-            <SuccessAlert v-show="success" title="Aktivácia ukončená">
+            <SuccessAlert v-show="success" title="Aktivácia ukončená" text="">
                 <p>Váš účet bol úspešne aktivovaný! Prihláste sa <NuxtLink to="/login">tu</NuxtLink>.
                 </p>
             </SuccessAlert>
