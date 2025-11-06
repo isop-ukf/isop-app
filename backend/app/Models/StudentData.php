@@ -21,4 +21,14 @@ class StudentData extends Model
         'personal_email',
         'study_field',
     ];
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var list<string>
+     */
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+    ];
 }
