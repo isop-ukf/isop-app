@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\InternshipStatusUpdated;
 use App\Models\Internship;
 use App\Models\InternshipStatus;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Mail;
 
 class InternshipStatusController extends Controller
 {
@@ -126,6 +128,8 @@ class InternshipStatusController extends Controller
             'changed' => now(),
             'modified_by' => $user->id
         ]);
+
+        Mail::to($internship->student)->sendNow(new InternshipStatusUpdated($internship, $user->name, $internship->student->name, $internship->company->name, $internshipStatus->status, $request->status, $request->note));
 
         return response()->noContent();
     }

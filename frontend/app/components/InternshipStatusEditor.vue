@@ -61,6 +61,9 @@ async function submit() {
 
 <template>
     <div>
+        <!-- Čakajúca hláška -->
+        <LoadingAlert v-if="loading" />
+
         <!-- Chybová hláška -->
         <ErrorAlert v-if="save_error" :error="`Nepodarilo uložiť: ${save_error}`" />
 
