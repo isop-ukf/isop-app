@@ -16,7 +16,7 @@ useSeoMeta({
         <v-card id="page-container-card">
             <h2 class="page-title">Reset hesla</h2>
 
-            <InfoAlert title="Reset hesla" text="Nové heslo vám bolo zaslané na e-mail" />
+            <SuccessAlert title="Reset hesla" text="Nové heslo vám bolo zaslané na e-mail" />
         </v-card>
     </v-container>
 </template>

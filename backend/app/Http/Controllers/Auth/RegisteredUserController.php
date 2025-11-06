@@ -114,7 +114,7 @@ class RegisteredUserController extends Controller
         return response()->noContent();
     }
 
-    public function reset_password(Request $request): Response
+    public function reset_password(Request $request)
     {
         $request->validate([
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255'],
@@ -122,7 +122,9 @@ class RegisteredUserController extends Controller
 
         $user = User::whereEmail($request->email)->first();
         if (!$user) {
-            return response(status: 400);
+            return response()->json([
+                'message' => 'No such user exists.'
+            ], 400);
         }
 
         $newPassword = bin2hex(random_bytes(16));
@@ -134,7 +136,7 @@ class RegisteredUserController extends Controller
         return response()->noContent();
     }
 
-    public function reset_password_2(Request $request): Response
+    public function reset_password_2(Request $request)
     {
         $request->validate([
             'id' => ['required', 'string', 'lowercase', 'email', 'max:255'],
@@ -143,7 +145,9 @@ class RegisteredUserController extends Controller
 
         $user = User::whereEmail($request->email)->first();
         if (!$user) {
-            return response(status: 400);
+            return response()->json([
+                'message' => 'No such user exists.'
+            ], 400);
         }
 
         $user->password = Hash::make($request->password);
