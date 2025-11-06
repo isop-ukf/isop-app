@@ -41,7 +41,7 @@ async function handleInternshipRegistration(internship: NewInternship) {
             <br />
 
             <!-- Čakajúca hláška -->
-            <LoadingAlert />
+            <LoadingAlert v-if="loading" />
 
             <!-- Chybová hláška -->
             <ErrorAlert v-if="error" :error="error" />

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-alert density="compact" :text="error" :title="error || 'Chyba'" type="error" class="mb-2 mt-2"></v-alert>
+        <v-alert density="compact" :text="error" :title="title || 'Chyba'" type="error" class="mb-2 mt-2"></v-alert>
     </div>
 </template>
 

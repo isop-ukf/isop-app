@@ -52,7 +52,7 @@ async function handleUpdateOfBasicInfo(internship: NewInternship) {
             <div style="height: 40px;"></div>
 
             <!-- Čakajúca hláška -->
-            <LoadingAlert />
+            <LoadingAlert v-if="loading" />
 
             <!-- Chybová hláška -->
             <ErrorAlert v-if="action_error" :error="action_error" />
@@ -84,7 +84,7 @@ async function handleUpdateOfBasicInfo(internship: NewInternship) {
             <div>
                 <h2>Nahratie dokumentov</h2>
 
-                <ErrorAlert v-if="data?.status.status !== InternshipStatus.CONFIRMED"
+                <ErrorAlert v-if="data?.status.status !== InternshipStatus.CONFIRMED" title="Blokované"
                     error='Vaša prax nie je v stave "Schválená" a teda nemôžete nahrať dokumenty.' />
 
                 <InternshipDocumentEditor v-else :internship="data!" @successful-submit="refresh" />
