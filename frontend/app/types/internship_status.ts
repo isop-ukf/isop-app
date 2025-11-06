@@ -1,9 +1,6 @@
-import { Role } from "./role";
 import type { User } from "./user";
 
 export interface InternshipStatusData {
-    internship_id: number;
-    user_id: string;
     status: InternshipStatus;
     changed: string;
     note: string;
@@ -36,6 +33,6 @@ export function prettyInternshipStatus(status: InternshipStatus) {
         case InternshipStatus.NOT_DEFENDED:
             return "Neobhájené";
         default:
-            throw new Error("Unknown status");
+            throw new Error(`Unknown internship status: '${status}'`);
     }
 }

@@ -4,8 +4,7 @@ import type { User } from "./user";
 
 export interface Internship {
     id: number;
-    user_id?: string;
-    user?: User;
+    student: User;
     company: CompanyData;
     start: string;
     end: string;
