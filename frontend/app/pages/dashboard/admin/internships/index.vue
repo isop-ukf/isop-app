@@ -49,7 +49,7 @@ const { data, error } = await useSanctumFetch<Internship[]>('/api/internships');
                 <tbody>
                     <tr v-for="item in data">
                         <td>{{ item.company.name }}</td>
-                        <td>{{ item.user!.name }}</td>
+                        <td>{{ item.student.name }}</td>
                         <td>{{ item.start }}</td>
                         <td>{{ item.end }}</td>
                         <td>{{ item.year_of_study }}</td>
