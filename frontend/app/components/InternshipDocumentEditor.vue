@@ -108,7 +108,7 @@ async function onSubmit() {
             <div>
                 <h4 class="mb-2">Výkaz</h4>
 
-                <WarningAlert v-if="props.internship.agreement" title="Existujúci dokument"
+                <WarningAlert v-if="props.internship.report" title="Existujúci dokument"
                     text="V systéme je už nahratý výkaz. Ak chcete nahradiť existujúcu verziu, vyberte súbor, alebo v opačnom prípade nechajte toto pole nevyplnené.">
 
                     <br />
