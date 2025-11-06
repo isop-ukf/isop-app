@@ -24,6 +24,16 @@ class Company extends Model
     ];
 
     /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var list<string>
+     */
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+    ];
+
+    /**
      * Get the internships for the company.
      */
     public function internships()
@@ -34,7 +44,7 @@ class Company extends Model
     /**
      * Get the contact person (user) for the company.
      */
-    public function contactPerson()
+    public function contact()
     {
         return $this->belongsTo(User::class, 'contact');
     }

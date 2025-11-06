@@ -39,6 +39,11 @@ class User extends Authenticatable
         'password',
         'remember_token',
         'activation_token',
+        'created_at',
+        'updated_at',
+        'email_verified_at',
+        'active',
+        'needs_password_change'
     ];
 
     /**
