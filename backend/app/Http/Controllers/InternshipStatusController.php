@@ -14,7 +14,7 @@ class InternshipStatusController extends Controller
     public function get(int $id)
     {
         $user = auth()->user();
-        $internship_statuses = InternshipStatus::whereInternshipId($id)->orderByDesc('changed')->get()->makeHidden(['created_at', 'updated_at', 'id']);
+        $internship_statuses = InternshipStatus::whereInternshipId($id)->orderByDesc('changed')->get();
 
         if (!$internship_statuses) {
             return response()->json([
@@ -26,10 +26,6 @@ class InternshipStatusController extends Controller
         if ($user->role !== 'ADMIN' && $internship->user_id !== $user->id && $user->id !== $internship->company->contact) {
             abort(403, 'Unauthorized');
         }
-
-        $internship_statuses->each(function ($internship_status) {
-            $internship_status->modified_by = User::find($internship_status->modified_by)->makeHidden(['created_at', 'updated_at', 'email_verified_at']);
-        });
 
         return response()->json($internship_statuses);
     }
@@ -49,7 +45,7 @@ class InternshipStatusController extends Controller
             abort(403, 'Unauthorized');
         }
 
-        $currentStatus = $this->currentInternshipStatus($internship);
+        $currentStatus = $internship->status;
         $nextPossibleStatuses = $this->possibleNewStatuses($currentStatus->status, $user->role, $internship->report_confirmed);
 
         return response()->json($nextPossibleStatuses);
@@ -113,7 +109,7 @@ class InternshipStatusController extends Controller
             abort(403, 'Unauthorized');
         }
 
-        $internshipStatus = $this->currentInternshipStatus($internship);
+        $internshipStatus = $internship->status;
         $newStatusValidator = 'in:' . implode(',', $this->possibleNewStatuses($internshipStatus->status, $user->role, $internship->report_confirmed));
 
         $request->validate([
@@ -171,10 +167,5 @@ class InternshipStatusController extends Controller
             default:
                 throw new \InvalidArgumentException('Unknown status');
         }
-    }
-
-    private function currentInternshipStatus(Internship $internship)
-    {
-        return InternshipStatus::whereInternshipId($internship->id)->orderByDesc('changed')->firstOrFail();
     }
 }

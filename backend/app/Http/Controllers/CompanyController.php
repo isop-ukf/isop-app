@@ -13,10 +13,10 @@ class CompanyController extends Controller
 {
     public function all_simple()
     {
-        $companies = Company::all()->makeHidden(['created_at', 'updated_at']);
+        $companies = Company::all();
 
         $companies->each(function ($company) {
-            $company->contact = User::find($company->contact)->makeHidden(['created_at', 'updated_at', 'email_verified_at']);
+            $company->contact = User::find($company->contact);
         });
 
         return response()->json($companies);
@@ -41,7 +41,7 @@ class CompanyController extends Controller
             ], 400);
         }
 
-        $company->contact = User::find($company->contact)->makeHidden(['created_at', 'updated_at', 'email_verified_at']);
+        $company->contact = User::find($company->contact);
 
         return response()->json($company);
     }
