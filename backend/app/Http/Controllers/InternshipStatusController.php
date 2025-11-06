@@ -9,11 +9,12 @@ use Illuminate\Http\Request;
 
 class InternshipStatusController extends Controller
 {
-    public function get(int $id) {
+    public function get(int $id)
+    {
         $user = auth()->user();
         $internship_statuses = InternshipStatus::whereInternshipId($id)->orderByDesc('changed')->get()->makeHidden(['created_at', 'updated_at', 'id']);
 
-        if(!$internship_statuses) {
+        if (!$internship_statuses) {
             return response()->json([
                 'message' => 'No such internship exists.'
             ], 400);
@@ -31,11 +32,12 @@ class InternshipStatusController extends Controller
         return response()->json($internship_statuses);
     }
 
-    public function get_next_states(int $id) {
+    public function get_next_states(int $id)
+    {
         $user = auth()->user();
         $internship = Internship::find($id);
 
-        if(!$internship) {
+        if (!$internship) {
             return response()->json([
                 'message' => 'No such internship exists.'
             ], 400);
@@ -46,7 +48,7 @@ class InternshipStatusController extends Controller
         }
 
         $currentStatus = $this->currentInternshipStatus($internship);
-        $nextPossibleStatuses = $this->possibleNewStatuses($currentStatus->status, $user->role);
+        $nextPossibleStatuses = $this->possibleNewStatuses($currentStatus->status, $user->role, $internship->report_confirmed);
 
         return response()->json($nextPossibleStatuses);
     }
@@ -99,7 +101,7 @@ class InternshipStatusController extends Controller
         $user = auth()->user();
         $internship = Internship::find($id);
 
-        if(!$internship) {
+        if (!$internship) {
             return response()->json([
                 'message' => 'No such internship exists.'
             ], 400);
@@ -110,7 +112,7 @@ class InternshipStatusController extends Controller
         }
 
         $internshipStatus = $this->currentInternshipStatus($internship);
-        $newStatusValidator = 'in:' . implode(',', $this->possibleNewStatuses($internshipStatus->status, $user->role));
+        $newStatusValidator = 'in:' . implode(',', $this->possibleNewStatuses($internshipStatus->status, $user->role, $internship->report_confirmed));
 
         $request->validate([
             'status' => ['required', 'string', 'uppercase', $newStatusValidator],
@@ -136,8 +138,10 @@ class InternshipStatusController extends Controller
         //
     }
 
-    private function possibleNewStatuses(string $current_status, string $userRole) {
-        if($userRole === "STUDENT") return [];
+    private function possibleNewStatuses(string $current_status, string $userRole, bool $report_confirmed)
+    {
+        if ($userRole === "STUDENT")
+            return [];
 
         switch ($current_status) {
             case 'SUBMITTED':
@@ -146,7 +150,12 @@ class InternshipStatusController extends Controller
                 if ($userRole === 'EMPLOYER') {
                     return ['DENIED'];
                 }
-                return ['SUBMITTED', 'DENIED', 'DEFENDED', 'NOT_DEFENDED'];
+
+                if ($report_confirmed) {
+                    return ['SUBMITTED', 'DENIED', 'DEFENDED', 'NOT_DEFENDED'];
+                }
+
+                return ['SUBMITTED', 'DENIED'];
             case 'DENIED':
                 if ($userRole === 'EMPLOYER') {
                     return ['CONFIRMED'];
@@ -160,7 +169,8 @@ class InternshipStatusController extends Controller
         }
     }
 
-    private function currentInternshipStatus(Internship $internship) {
+    private function currentInternshipStatus(Internship $internship)
+    {
         return InternshipStatus::whereInternshipId($internship->id)->orderByDesc('changed')->firstOrFail();
     }
 }

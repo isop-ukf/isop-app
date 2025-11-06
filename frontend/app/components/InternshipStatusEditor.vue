@@ -67,6 +67,9 @@ async function submit() {
         <!-- Chybová hláška -->
         <ErrorAlert v-if="load_error" :error="`Nepodarilo sa načítať stavy: ${save_error}`" />
 
+        <!-- Chybová hláška -->
+        <ErrorAlert v-else-if="data?.length === 0" :error="`Nepodarilo sa načítať stavy: ${save_error}`" />
+
         <v-form v-else v-model="isValid" @submit.prevent="submit" :disabled="loading">
             <v-select v-model="new_state" label="Stav" :items="data" item-value="value"></v-select>
             <v-text-field v-model="note" :rules="[rules.required]" label="Poznámka"></v-text-field>
