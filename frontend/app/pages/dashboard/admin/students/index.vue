@@ -116,7 +116,7 @@ const deleteStudent = async () => {
                     </tbody>
                 </v-table>
 
-                <InfoAlert v-else text="Zatiaľ nie sú zaregistrovaní žiadni študenti." />
+                <InfoAlert v-else title="Informácia" text="Zatiaľ nie sú zaregistrovaní žiadni študenti." />
             </div>
         </v-card>
 
