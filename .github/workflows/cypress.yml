@@ -37,19 +37,6 @@ jobs:
           php-version: '8.2'
           extensions: mbstring, xml, ctype, json, mysql, pdo, pdo_mysql
           coverage: none
-      
-      - name: Get Composer cache directory
-        id: composer-cache
-        working-directory: ./backend
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Cache Composer dependencies
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-composer-
 
       - name: Install Composer dependencies
         working-directory: ./backend
