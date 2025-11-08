@@ -44,10 +44,14 @@ class DatabaseSeeder extends Seeder
                 'role' => 'STUDENT'
             ])
             ->each(function ($user) use ($admin) {
+                $user->update([
+                    'email' => fake()->unique()->userName() . '@student.ukf.sk',
+                ]);
+
                 StudentData::factory()->create([
                     'user_id' => $user->id
                 ]);
-                
+
                 $internship = Internship::factory()->create([
                     'user_id' => $user->id,
                     'company_id' => Company::inRandomOrder()->value('id'),
