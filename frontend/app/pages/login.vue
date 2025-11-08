@@ -57,7 +57,7 @@ async function handleLogin() {
 
             <v-form v-else v-model="isValid" @submit.prevent="handleLogin">
                 <v-text-field v-model="form.email" :rules="[rules.required, rules.email]" label="Email:"
-                    variant="outlined" density="comfortable" />
+                    variant="outlined" density="comfortable" type="email" />
 
                 <v-text-field v-model="form.password" :rules="[rules.required]"
                     :type="showPassword ? 'text' : 'password'" label="Heslo:" variant="outlined" density="comfortable"
