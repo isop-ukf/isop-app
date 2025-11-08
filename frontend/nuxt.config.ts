@@ -33,4 +33,9 @@ export default defineNuxtConfig({
         },
         redirectIfAuthenticated: true
     },
+
+    typescript: {
+        strict: true,
+        typeCheck: true,
+    }
 });
