@@ -1,0 +1,129 @@
+name: Cypress E2E Tests
+
+on:
+  push:
+    branches:
+      - develop
+      - feature/ci-cypress-tests-08-11-2025
+
+jobs:
+  cypress-tests:
+    runs-on: ubuntu-latest
+    
+    services:
+      mariadb:
+        image: mariadb:latest
+        env:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: isop_test
+        ports:
+          - 3306:3306
+        options: --health-cmd="healthcheck.sh --connect --innodb_initialized" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, xml, ctype, json, mysql, pdo, pdo_mysql
+          coverage: none
+      
+      - name: Get Composer cache directory
+        id: composer-cache
+        working-directory: ./backend
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Install Composer dependencies
+        working-directory: ./backend
+        run: composer install --prefer-dist --no-progress --no-suggest
+
+      - name: Copy .env file
+        working-directory: ./backend
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Configure database
+        working-directory: ./backend
+        run: |
+          DB_CONNECTION=mariadb >> .env
+          echo "DB_HOST=127.0.0.1" >> .env
+          echo "DB_PORT=3306" >> .env
+          echo "DB_DATABASE=isop_test" >> .env
+          echo "DB_USERNAME=root" >> .env
+          echo "DB_PASSWORD=password" >> .env
+    
+      - name: Print backend .env file
+        working-directory: ./backend
+        run: cat .env
+
+      - name: Run migrations
+        working-directory: ./backend
+        run: php artisan migrate --force
+      
+      - name: Run seeders
+        working-directory: ./backend
+        run: php artisan db:seed
+
+      - name: Start Laravel server
+        working-directory: ./backend
+        run: php artisan serve --host=0.0.0.0 --port=8000 &
+    
+      - name: Install frontend dependencies
+        working-directory: ./frontend
+        run: npm ci
+    
+      - name: Build frontend
+        working-directory: ./frontend
+        run: npm run build
+
+      - name: Start frontend server
+        working-directory: ./frontend
+        run: npm run preview &
+        env:
+          PORT: 3000
+
+      - name: Wait for servers to be ready
+        run: |
+          timeout 15 bash -c 'until curl -f http://localhost:8000/sanctum/csrf-cookie; do sleep 2; done'
+          timeout 15 bash -c 'until curl -f http://localhost:3000; do sleep 2; done'
+
+      - name: Run Cypress tests
+        working-directory: ./frontend
+        run: npx cypress run
+        env:
+          CYPRESS_BASE_URL: http://localhost:3000
+
+      - name: Upload Cypress screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-screenshots
+          path: frontend/cypress/screenshots
+          if-no-files-found: ignore
+
+      - name: Upload Cypress videos
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-videos
+          path: frontend/cypress/videos
+          if-no-files-found: ignore
