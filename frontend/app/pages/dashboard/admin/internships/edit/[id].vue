@@ -33,7 +33,7 @@ async function handleUpdateOfBasicInfo(internship: NewInternship) {
 
         navigateTo("/dashboard/admin/internships");
     } catch (e) {
-        if (e instanceof FetchError && (e.response?.status === 422 || e.response?.status === 400)) {
+        if (e instanceof FetchError) {
             action_error.value = e.response?._data.message;
         }
     } finally {

@@ -64,7 +64,6 @@ async function saveChanges() {
         navigateTo("/dashboard/admin/students");
     } catch (e) {
         if (e instanceof FetchError) {
-            console.error('Error saving student:', e.response?._data.message);
             alert('Chyba:\n' + e.response?._data.message);
         }
     } finally {
@@ -111,8 +110,6 @@ const deleteStudent = async () => {
     } catch (e) {
         if (e instanceof FetchError) {
             deleteError.value = e.response?._data?.message || 'Chyba pri mazaní študenta.';
-        } else {
-            deleteError.value = 'Neznáma chyba pri mazaní študenta.';
         }
     } finally {
         deleteLoading.value = false;

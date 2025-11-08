@@ -35,7 +35,7 @@ async function handleLogin() {
     try {
         await login(form.value);
     } catch (e) {
-        if (e instanceof FetchError && e.response?.status === 422) {
+        if (e instanceof FetchError) {
             error.value = e.response?._data.message;
         }
     } finally {
