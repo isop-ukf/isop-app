@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { CompanyData } from '~/types/company_data';
-import type { Internship, NewInternship } from '~/types/internships';
+import { convertDate, type Internship, type NewInternship } from '~/types/internships';
 import type { User } from '~/types/user';
 
 const rules = {
@@ -48,8 +48,8 @@ const props = defineProps<{
 
 const isValid = ref(false);
 const form = ref({
-    start: props.internship?.start || "",
-    end: props.internship?.end || "",
+    start: props.internship?.start ? convertDate(props.internship.start) : null,
+    end: props.internship?.end ? convertDate(props.internship.end) : null,
     year_of_study: props.internship?.year_of_study || 2025,
     semester: props.internship?.semester || "WINTER",
     company_id: props.internship?.company?.id == undefined ? null : props.internship.company.id,
@@ -59,11 +59,7 @@ const form = ref({
 
 const user = useSanctumUser<User>();
 
-function dateTimeFixup(datetime: Date | string) {
-    if (typeof datetime === 'string') {
-        return datetime;
-    }
-
+function dateTimeFixup(datetime: Date) {
     const year = datetime.getFullYear()
     const month = String(datetime.getMonth() + 1).padStart(2, '0')
     const day = String(datetime.getDate()).padStart(2, '0')
@@ -74,8 +70,8 @@ function triggerSubmit() {
     const new_internship: NewInternship = {
         user_id: user.value?.id!,
         company_id: form.value.company_id!,
-        start: dateTimeFixup(form.value.start as any),
-        end: dateTimeFixup(form.value.end as any),
+        start: dateTimeFixup(form.value.start!),
+        end: dateTimeFixup(form.value.end!),
         year_of_study: form.value.year_of_study,
         semester: form.value.semester,
         position_description: form.value.description
