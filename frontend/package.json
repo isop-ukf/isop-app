@@ -18,6 +18,7 @@
     "vuetify-nuxt-module": "^0.18.8"
   },
   "devDependencies": {
+    "cypress": "^15.6.0",
     "typescript": "^5.9.3",
     "vue-tsc": "^3.1.3"
   }
