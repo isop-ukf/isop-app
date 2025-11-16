@@ -32,5 +32,6 @@ describe('Admin Student Document Downloads', () => {
 
         const downloadsFolder = Cypress.config("downloadsFolder");
         cy.contains('Stiahnuť originálnu zmluvu').click()
+        cy.wait(2000)
     })
 })
