@@ -7,24 +7,23 @@
         <title>Dohoda o odbornej praxi študenta</title>
         <style>
             @page {
-                size: A4;
                 margin: 2cm;
             }
 
             body {
-                font-family: "Times New Roman", Times, serif;
-                font-size: 12pt;
-                line-height: 1.5;
+                font-family: "Calibri", Times, serif;
+                font-size: 11pt;
+                line-height: 1.1;
                 color: #000;
                 max-width: 210mm;
                 margin: 0 auto;
                 padding: 20mm;
                 background: #fff;
+                text-align: justify;
             }
 
             .header-right {
                 text-align: right;
-                font-size: 11pt;
                 font-style: italic;
                 margin-bottom: 20px;
             }
@@ -32,14 +31,12 @@
             .title {
                 text-align: center;
                 font-weight: bold;
-                font-size: 14pt;
-                margin: 30px 0 10px;
             }
 
             .subtitle {
                 text-align: center;
                 font-size: 11pt;
-                margin-bottom: 30px;
+                margin-bottom: 20px;
             }
 
             .section-header {
@@ -52,10 +49,7 @@
             .provider-info,
             .student-info {
                 margin-bottom: 20px;
-            }
-
-            .university-info {
-                font-weight: bold;
+                font-size: 11pt;
             }
 
             .indented {
@@ -75,14 +69,14 @@
             }
 
             .list-item {
-                margin-bottom: 10px;
+                margin-bottom: 4px;
             }
 
             .sub-list {
                 margin-left: 30px;
             }
 
-            .signature-section {
+            #signature-section {
                 margin-top: 50px;
                 display: flex;
                 justify-content: space-between;
@@ -109,11 +103,6 @@
                 list-style: none;
                 padding-left: 0;
             }
-
-            .email-link {
-                color: #0000FF;
-                text-decoration: underline;
-            }
         </style>
     </head>
 
@@ -130,7 +119,7 @@
         </div>
 
         <div class="university-info">
-            Univerzita Konštantína Filozofa v Nitre<br>
+            <strong>Univerzita Konštantína Filozofa v Nitre</strong><br>
             <div class="indented">
                 Fakulta prírodných vied a informatiky<br>
                 Trieda A. Hlinku 1, 949 01 Nitra<br>
@@ -149,9 +138,9 @@
         <div class="student-info">
             <strong>Študent:</strong><br>
             <div class="indented">
-                <table style="border: none; width: 100%;">
+                <table style="border: none; width: 100%; line-height: 1;">
                     <tr>
-                        <td style="width: 250px;">Meno a priezvisko:</td>
+                        <td style="width: 260px;">Meno a priezvisko:</td>
                         <td><em>{{ $student->name }}</em></td>
                     </tr>
                     <tr>
@@ -264,13 +253,8 @@
             3. Dohoda sa uzatvára v 3 vyhotoveniach, každá zmluvná strana obdrží jedno vyhotovenie dohody.
         </div>
 
-        <div class="signature-section" style="margin-top: 40px;">
-            <div>
-                V Nitre, dňa<em style="margin-left: 5px;">{{ \Carbon\Carbon::parse(now())->format('d.m.Y') }}</em>.
-            </div>
-            <div>
-                V Nitre, dňa <em>{{ \Carbon\Carbon::parse(now())->format('d.m.Y') }}</em>
-            </div>
+        <div id="signature-section" style="margin-top: 40px;">
+            <div>V Nitre, dňa <em>{{ \Carbon\Carbon::parse(now())->format('d.m.Y') }}</em>.</div>
         </div>
 
         <div style="display: flex; justify-content: space-between; margin-top: 60px;">
@@ -280,19 +264,22 @@
                     dekan FPVaI UKF v Nitre
                 </div>
             </div>
+
+            <br>
+            <br>
+            <br>
+
             <div class="signature-block">
                 <div class="signature-line">
                     {{ $companyContact->name }}<br>
                     štatutárny zástupca pracoviska odb. praxe
                 </div>
+            </div>
+        </div>
 
-                <br />
-                <br />
-                <br />
-
-                <div class="signature-line" style="margin-top: 60px;">
-                    {{ $student->name }}
-                </div>
+        <div style="text-align: center; margin-top: 60px;">
+            <div class="signature-line" style="display: inline-block;">
+                {{ $student->name }}
             </div>
         </div>
     </body>
