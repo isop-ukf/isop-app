@@ -7,7 +7,6 @@ use App\Models\Internship;
 use App\Models\InternshipStatus;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
 
 class InternshipController extends Controller
 {
@@ -59,6 +58,36 @@ class InternshipController extends Controller
         }
 
         return response()->json($internship);
+    }
+
+    public function get_default_agreement(Request $request, int $id)
+    {
+        $user = auth()->user();
+        $internship = Internship::find($id);
+
+        if (!$internship) {
+            return response()->json([
+                'message' => 'No such internship exists.'
+            ], 400);
+        }
+
+        if ($user->role !== 'ADMIN' && $internship->user_id !== $user->id && $user->id !== $internship->company->contact) {
+            abort(403, 'Unauthorized');
+        }
+
+        $contact = User::find($internship->company->contact);
+
+        $html = view('agreement.default', [
+            'company' => $internship->company,
+            'companyContact' => $contact,
+            'internship' => $internship,
+            'student' => $internship->student,
+            'student_address' => "Hlavná 123, Nitra",
+        ])->render();
+
+        return response($html, 200)
+            ->header('Content-Type', 'application/html')
+            ->header('Content-Disposition', 'attachment; filename="agreement_' . $id . '.html"');
     }
 
     public function get_agreement(int $id)

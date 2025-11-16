@@ -43,20 +43,21 @@ Route::prefix('/internships')->group(function () {
     Route::get("/", [InternshipController::class, 'all'])->name("api.internships");
     Route::get("/my", [InternshipController::class, 'all_my'])->name("api.internships.my");
 
-    Route::middleware("auth:sanctum")->group(function () {
-        Route::prefix('/{id}')->group(function () {
-            Route::get("/", [InternshipController::class, 'get'])->name("api.internships.get");
-            Route::put("/status", [InternshipStatusController::class, 'update'])->name("api.internships.status.update");
-            Route::get("/statuses", [InternshipStatusController::class, 'get'])->name("api.internships.get");
-            Route::get("/next-statuses", [InternshipStatusController::class, 'get_next_states'])->name("api.internships.status.next.get");
-            Route::get("/agreement", [InternshipController::class, 'get_agreement'])->name("api.internships.agreement.get");
-            Route::get("/report", [InternshipController::class, 'get_report'])->name("api.internships.report.get");
-            Route::post("/documents", [InternshipController::class, 'update_documents'])->name("api.internships.documents.set");
-            Route::post("/basic", [InternshipController::class, 'update_basic'])->name("api.internships.update.basic");
-        });
-
-        Route::put("/new", [InternshipController::class, 'store'])->name("api.internships.create");
+    //Route::middleware("auth:sanctum")->group(function () {
+    Route::prefix('/{id}')->group(function () {
+        Route::get("/", [InternshipController::class, 'get'])->name("api.internships.get");
+        Route::put("/status", [InternshipStatusController::class, 'update'])->name("api.internships.status.update");
+        Route::get("/statuses", [InternshipStatusController::class, 'get'])->name("api.internships.get");
+        Route::get("/next-statuses", [InternshipStatusController::class, 'get_next_states'])->name("api.internships.status.next.get");
+        Route::get("/default-agreement", [InternshipController::class, 'get_default_agreement'])->name("api.internships.agreement.default.get");
+        Route::get("/agreement", [InternshipController::class, 'get_agreement'])->name("api.internships.agreement.get");
+        Route::get("/report", [InternshipController::class, 'get_report'])->name("api.internships.report.get");
+        Route::post("/documents", [InternshipController::class, 'update_documents'])->name("api.internships.documents.set");
+        Route::post("/basic", [InternshipController::class, 'update_basic'])->name("api.internships.update.basic");
     });
+
+    Route::put("/new", [InternshipController::class, 'store'])->name("api.internships.create");
+    //});
 });
 
 Route::prefix('/companies')->middleware("auth:sanctum")->group(function () {

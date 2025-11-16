@@ -30,15 +30,17 @@ async function downloadReport() {
 
 <template>
     <div>
-        <v-row>
+        <v-row class="d-flex">
             <!-- Podpísaná zmluva -->
             <v-col cols="12" md="6">
-                <v-card variant="outlined">
+                <v-card variant="outlined" class="h-100">
                     <v-card-title class="d-flex align-center ga-2">
                         <v-icon icon="mdi mdi-file-document-outline" />
                         Podpísaná zmluva / dohoda
                     </v-card-title>
                     <v-card-text>
+                        <InternshipAgreementDownloader :internship_id="internship.id" />
+
                         <WarningAlert v-if="!props.internship.agreement" title="Neodovzdané"
                             text="Zmluva zatiaľ nebola nahratá." />
 
@@ -56,7 +58,7 @@ async function downloadReport() {
 
             <!-- Výkaz -->
             <v-col cols="12" md="6">
-                <v-card variant="outlined">
+                <v-card variant="outlined" class="h-100">
                     <v-card-title class="d-flex align-center ga-2">
                         <v-icon icon="mdi-file-clock-outline" />
                         Výkaz
