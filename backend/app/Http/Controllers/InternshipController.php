@@ -83,7 +83,7 @@ class InternshipController extends Controller
             'companyContact' => $contact,
             'internship' => $internship,
             'student' => $internship->student,
-            'student_address' => "Hlavná 123, Nitra",
+            'student_address' => $internship->student->studentData->address,
         ])->render();
 
         $pdf = new Mpdf([
