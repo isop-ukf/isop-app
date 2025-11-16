@@ -13,8 +13,8 @@ async function requestDownload() {
     loading.value = true;
 
     try {
-        const agreement = await client(`/api/internships/${props.internship_id}/default-agreement`);
-        // todo...
+        const agreement = await client<Blob>(`/api/internships/${props.internship_id}/default-agreement`);
+        triggerDownload(agreement, `default-agreement-${props.internship_id}.pdf`);
 
     } catch (e) {
         if (e instanceof FetchError) {
