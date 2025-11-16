@@ -7,6 +7,7 @@ use App\Models\Internship;
 use App\Models\InternshipStatus;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Mpdf\Mpdf;
 
 class InternshipController extends Controller
 {
@@ -85,9 +86,14 @@ class InternshipController extends Controller
             'student_address' => "Hlavná 123, Nitra",
         ])->render();
 
-        return response($html, 200)
-            ->header('Content-Type', 'application/html')
-            ->header('Content-Disposition', 'attachment; filename="agreement_' . $id . '.html"');
+        $pdf = new Mpdf([
+            'orientation' => 'P'
+        ]);
+        $pdf->WriteHTML($html);
+
+        return response($pdf->Output('', 'S'), 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'attachment; filename="agreement_' . $id . '.pdf"');
     }
 
     public function get_agreement(int $id)
