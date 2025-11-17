@@ -16,68 +16,32 @@ describe('Admin Student CRUD', () => {
 
     it('should load the list of students in a proper format', () => {
         cy.get('table').within(() => {
-            cy.contains('th', 'Meno').parent('tr').then(($headerRow) => {
-                const nameColumnIndex = $headerRow.find('th').index(cy.$$('th:contains("Meno")')[0])
-
-                cy.get('tbody tr').each(($row) => {
-                    cy.wrap($row).find('td').eq(nameColumnIndex).invoke('text').then((name) => {
-                        const nameParts = name.trim().split(' ')
-                        expect(nameParts).to.have.length.at.least(2)
-                        expect(nameParts[0]).to.not.be.empty
-                        expect(nameParts[1]).to.not.be.empty
-                    })
-                })
+            cy.validateColumn('Meno', (name) => {
+                const nameParts = name.trim().split(' ')
+                expect(nameParts).to.have.length.at.least(2)
+                expect(nameParts[0]).to.not.be.empty
+                expect(nameParts[1]).to.not.be.empty
             })
 
-            cy.contains('th', 'E-mail').parent('tr').then(($headerRow) => {
-                const nameColumnIndex = $headerRow.find('th').index(cy.$$('th:contains("E-mail")')[0])
-
-                cy.get('tbody tr').each(($row) => {
-                    cy.wrap($row).find('td').eq(nameColumnIndex).invoke('text').then((email) => {
-                        expect(email).to.include("@student.ukf.sk")
-                    })
-                })
+            cy.validateColumn('E-mail', (email) => {
+                expect(email).to.include("@student.ukf.sk")
             })
 
-            cy.contains('th', 'Telefón').parent('tr').then(($headerRow) => {
-                const phoneColumnIndex = $headerRow.find('th').index(cy.$$('th:contains("Telefón")')[0])
-
-                cy.get('tbody tr').each(($row) => {
-                    cy.wrap($row).find('td').eq(phoneColumnIndex).invoke('text').then((phone) => {
-                        expect(phone.trim()).to.not.be.empty
-                    })
-                })
+            cy.validateColumn('Telefón', (phone) => {
+                expect(phone.trim()).to.not.be.empty
             })
 
-            cy.contains('th', 'Študijný program').parent('tr').then(($headerRow) => {
-                const programColumnIndex = $headerRow.find('th').index(cy.$$('th:contains("Študijný program")')[0])
-
-                cy.get('tbody tr').each(($row) => {
-                    cy.wrap($row).find('td').eq(programColumnIndex).invoke('text').then((program) => {
-                        expect(program.trim()).to.not.be.empty
-                    })
-                })
+            cy.validateColumn('Študijný program', (program) => {
+                expect(program.trim()).to.not.be.empty
             })
 
-            cy.contains('th', 'Osobný e-mail').parent('tr').then(($headerRow) => {
-                const personalEmailColumnIndex = $headerRow.find('th').index(cy.$$('th:contains("Osobný e-mail")')[0])
-
-                cy.get('tbody tr').each(($row) => {
-                    cy.wrap($row).find('td').eq(personalEmailColumnIndex).invoke('text').then((personalEmail) => {
-                        expect(personalEmail.trim()).to.not.be.empty
-                        expect(personalEmail.trim()).to.include("@")
-                    })
-                })
+            cy.validateColumn('Osobný e-mail', (personalEmail) => {
+                expect(personalEmail.trim()).to.not.be.empty
+                expect(personalEmail.trim()).to.include("@")
             })
 
-            cy.contains('th', 'Adresa').parent('tr').then(($headerRow) => {
-                const addressColumnIndex = $headerRow.find('th').index(cy.$$('th:contains("Adresa")')[0])
-
-                cy.get('tbody tr').each(($row) => {
-                    cy.wrap($row).find('td').eq(addressColumnIndex).invoke('text').then((address) => {
-                        expect(address.trim()).to.not.be.empty
-                    })
-                })
+            cy.validateColumn('Adresa', (address) => {
+                expect(address.trim()).to.not.be.empty
             })
         })
     })

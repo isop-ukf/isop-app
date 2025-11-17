@@ -24,14 +24,16 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
-//
-// declare global {
-//   namespace Cypress {
-//     interface Chainable {
-//       login(email: string, password: string): Chainable<void>
-//       drag(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
-//       dismiss(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
-//       visit(originalFn: CommandOriginalFn, url: string, options: Partial<VisitOptions>): Chainable<Element>
-//     }
-//   }
-// }
+
+// Custom command to validate table columns
+Cypress.Commands.add('validateColumn', (columnName: string, validator: (value: string) => void) => {
+    cy.contains('th', columnName).parent('tr').then(($headerRow) => {
+        const colIndex = $headerRow.find('th').index(cy.$$(`th:contains("${columnName}")`)[0])
+
+        cy.get('tbody tr').each(($row) => {
+            cy.wrap($row).find('td').eq(colIndex).invoke('text').then((cellText) => {
+                validator(cellText as string)
+            })
+        })
+    })
+})
