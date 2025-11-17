@@ -61,6 +61,8 @@ describe('Admin Student CRUD', () => {
         cy.contains("Potvrdiť vymazanie").parent().contains("Vymazať").click()
         cy.contains("Potvrdiť vymazanie").should('not.exist')
 
+        cy.wait(1000)
+
         cy.get('table tbody tr').its('length').then((count) => {
             expect(count).to.be.eq(initialRowCount - 1)
         })
