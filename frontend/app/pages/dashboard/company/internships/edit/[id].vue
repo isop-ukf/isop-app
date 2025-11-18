@@ -21,7 +21,7 @@ const loading = ref(false);
 const action_error = ref(null as null | string);
 const refreshKey = ref(0);
 
-const { data, error: load_error, refresh } = await useSanctumFetch<Internship>(`/api/internships/${route.params.id}`);
+const { data, error: load_error, pending, refresh } = await useLazySanctumFetch<Internship>(`/api/internships/${route.params.id}`);
 
 async function handleUpdateOfBasicInfo(internship: NewInternship) {
     action_error.value = null;
@@ -53,52 +53,57 @@ async function handleUpdateOfBasicInfo(internship: NewInternship) {
             <div style="height: 40px;"></div>
 
             <!-- Čakajúca hláška -->
-            <LoadingAlert v-if="loading" />
+            <LoadingAlert v-if="pending" />
 
             <!-- Chybová hláška -->
-            <ErrorAlert v-if="action_error" :error="action_error" />
-
-            <!-- Chybová hláška -->
-            <ErrorAlert v-if="load_error" :error="load_error.message" />
+            <ErrorAlert v-else-if="load_error" :error="load_error.message" />
 
             <div v-else>
-                <div>
-                    <h2>Základné informácie</h2>
-                    <ErrorAlert v-if="data?.status.status !== InternshipStatus.SUBMITTED" title="Blokované"
-                        error='Vaša prax nie je v stave "Zadaná" a teda nemôžete meniť údaje' />
-                    <InternshipEditor v-else :internship="data!" :submit="handleUpdateOfBasicInfo" />
-                </div>
+                <!-- Čakajúca hláška -->
+                <LoadingAlert v-if="loading" />
 
-                <hr />
+                <!-- Chybová hláška -->
+                <ErrorAlert v-else-if="action_error" :error="action_error" />
 
-                <div>
-                    <h2>Stav</h2>
-                    <h4>Aktuálny stav</h4>
-                    <p>{{ prettyInternshipStatus(data?.status.status!) }}</p>
-                    <p>Poznámka: <em>{{ data?.status.note }}</em></p>
-                    <p>Posledná zmena: <em>{{ data?.status.changed }}, {{ data?.status.modified_by.name }}</em></p>
+                <div v-else>
+                    <div>
+                        <h2>Základné informácie</h2>
+                        <ErrorAlert v-if="data?.status.status !== InternshipStatus.SUBMITTED" title="Blokované"
+                            error='Vaša prax nie je v stave "Zadaná" a teda nemôžete meniť údaje' />
+                        <InternshipEditor v-else :internship="data!" :submit="handleUpdateOfBasicInfo" />
+                    </div>
 
-                    <br />
+                    <hr />
 
-                    <h4>História</h4>
-                    <InternshipStatusHistoryView :internship="data!" />
+                    <div>
+                        <h2>Stav</h2>
+                        <h4>Aktuálny stav</h4>
+                        <p>{{ prettyInternshipStatus(data?.status.status!) }}</p>
+                        <p>Poznámka: <em>{{ data?.status.note }}</em></p>
+                        <p>Posledná zmena: <em>{{ data?.status.changed }}, {{ data?.status.modified_by.name }}</em></p>
 
-                    <br />
+                        <br />
 
-                    <h4>Zmena stavu</h4>
-                    <InternshipStatusEditor :internship="data!"
-                        @successful-submit="() => { refresh(); refreshKey++; }" />
-                </div>
+                        <h4>História</h4>
+                        <InternshipStatusHistoryView :internship="data!" />
 
-                <hr />
+                        <br />
 
-                <div>
-                    <h2>Nahratie dokumentov</h2>
+                        <h4>Zmena stavu</h4>
+                        <InternshipStatusEditor :internship="data!"
+                            @successful-submit="() => { refresh(); refreshKey++; }" />
+                    </div>
 
-                    <ErrorAlert v-if="data?.status.status !== InternshipStatus.CONFIRMED" title="Blokované"
-                        error='Vaša prax nie je v stave "Schválená" a teda nemôžete nahrať dokumenty.' />
+                    <hr />
 
-                    <InternshipDocumentEditor v-else :internship="data!" @successful-submit="refresh" />
+                    <div>
+                        <h2>Nahratie dokumentov</h2>
+
+                        <ErrorAlert v-if="data?.status.status !== InternshipStatus.CONFIRMED" title="Blokované"
+                            error='Vaša prax nie je v stave "Schválená" a teda nemôžete nahrať dokumenty.' />
+
+                        <InternshipDocumentEditor v-else :internship="data!" @successful-submit="refresh" />
+                    </div>
                 </div>
             </div>
         </v-card>

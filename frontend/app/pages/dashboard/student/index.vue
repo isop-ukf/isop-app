@@ -25,7 +25,7 @@ const headers = [
 ];
 
 const user = useSanctumUser<User>();
-const { data, error } = await useSanctumFetch<Internship[]>('/api/internships/my');
+const { data, error, pending } = await useLazySanctumFetch<Internship[]>('/api/internships/my');
 </script>
 
 <template>
@@ -53,8 +53,11 @@ const { data, error } = await useSanctumFetch<Internship[]>('/api/internships/my
 
             <h3>Moje praxe</h3>
 
+            <!-- Čakajúca hláška -->
+            <LoadingAlert v-if="pending" />
+
             <!-- Chybová hláška -->
-            <ErrorAlert v-if="error" :error="error?.message" />
+            <ErrorAlert v-else-if="error" :error="error?.message" />
 
             <v-table v-else>
                 <thead>

@@ -26,7 +26,7 @@ const headers = [
 const client = useSanctumClient();
 
 // Načítame všetkých študentov
-const { data: students, error, refresh } = await useSanctumFetch<User[]>('/api/students');
+const { data: students, error, pending, refresh } = await useLazySanctumFetch<User[]>('/api/students');
 
 // State pre delete dialog
 const deleteDialog = ref(false);
@@ -60,9 +60,8 @@ const deleteStudent = async () => {
             method: 'DELETE'
         });
 
-        refresh();
+        await refresh();
         closeDeleteDialog();
-
     } catch (err) {
         if (err instanceof FetchError) {
             deleteError.value = err.data?.message;
@@ -82,8 +81,11 @@ const deleteStudent = async () => {
             <!-- spacer -->
             <div style="height: 40px;"></div>
 
+            <!-- Čakajúca hláška -->
+            <LoadingAlert v-if="pending" />
+
             <!-- Chybová hláška -->
-            <ErrorAlert v-if="error" :error="error?.message" />
+            <ErrorAlert v-else-if="error" :error="error?.message" />
 
             <div v-else>
                 <p>Aktuálne evidujeme {{ students?.length || 0 }} študentov.</p>

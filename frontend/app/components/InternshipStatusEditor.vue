@@ -23,7 +23,7 @@ const loading = ref(false);
 const save_error = ref(null as null | string);
 
 const client = useSanctumClient();
-const { data, error: load_error, refresh } = await useSanctumFetch(`/api/internships/${props.internship.id}/next-statuses`, undefined, {
+const { data, error: load_error, refresh } = await useLazySanctumFetch(`/api/internships/${props.internship.id}/next-statuses`, undefined, {
     transform: (statuses: InternshipStatus[]) => statuses.map((state) => ({
         title: prettyInternshipStatus(state),
         value: state
@@ -47,7 +47,7 @@ async function submit() {
 
         new_state.value = null;
         note.value = "";
-        refresh();
+        await refresh();
         emit('successfulSubmit');
     } catch (e) {
         if (e instanceof FetchError) {

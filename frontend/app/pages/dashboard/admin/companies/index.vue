@@ -25,7 +25,7 @@ const headers = [
 
 const client = useSanctumClient();
 
-const { data, error, refresh } = await useSanctumFetch<CompanyData[]>('/api/companies/simple');
+const { data, error, pending, refresh } = await useLazySanctumFetch<CompanyData[]>('/api/companies/simple');
 
 // State pre delete dialog
 const deleteDialog = ref(false);
@@ -82,8 +82,11 @@ const deleteCompany = async () => {
             <!-- spacer -->
             <div style="height: 40px;"></div>
 
+            <!-- Čakajúca hláška -->
+            <LoadingAlert v-if="pending" />
+
             <!-- Chybová hláška -->
-            <ErrorAlert v-if="error" :error="error?.message" />
+            <ErrorAlert v-else-if="error" :error="error?.message" />
 
             <div v-else>
                 <p>Aktuálne spolupracujeme s {{ data?.length }} firmami.</p>

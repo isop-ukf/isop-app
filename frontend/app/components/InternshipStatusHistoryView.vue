@@ -13,10 +13,10 @@ const headers = [
     { title: 'Zmenu vykonal', key: 'modified_by', align: 'left' },
 ];
 
-const { data, error, pending, refresh } = await useSanctumFetch<InternshipStatusData[]>(`/api/internships/${props.internship.id}/statuses`);
+const { data, error, pending, refresh } = await useLazySanctumFetch<InternshipStatusData[]>(`/api/internships/${props.internship.id}/statuses`);
 
-watch(() => props.internship, () => {
-    refresh();
+watch(() => props.internship, async () => {
+    await refresh();
 });
 </script>
 

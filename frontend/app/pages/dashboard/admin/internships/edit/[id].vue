@@ -21,6 +21,8 @@ const loading = ref(false);
 const action_error = ref(null as null | string);
 const refreshKey = ref(0);
 
+const { data, error, pending, refresh } = await useLazySanctumFetch<Internship>(`/api/internships/${route.params.id}`);
+
 async function handleUpdateOfBasicInfo(internship: NewInternship) {
     action_error.value = null;
     loading.value = true;
@@ -41,7 +43,10 @@ async function handleUpdateOfBasicInfo(internship: NewInternship) {
     }
 }
 
-const { data, error, refresh } = await useSanctumFetch<Internship>(`/api/internships/${route.params.id}`);
+async function forceRefresh() {
+    await refresh();
+    refreshKey.value++;
+}
 </script>
 
 <template>
@@ -59,8 +64,11 @@ const { data, error, refresh } = await useSanctumFetch<Internship>(`/api/interns
             <ErrorAlert v-if="action_error" :error="action_error" />
 
             <div v-else>
+                <!-- Čakajúca hláška -->
+                <LoadingAlert v-if="pending" />
+
                 <!-- Chybová hláška -->
-                <ErrorAlert v-if="error" :error="error?.message" />
+                <ErrorAlert v-else-if="error" :error="error?.message" />
 
                 <div v-else>
                     <div>
@@ -84,8 +92,7 @@ const { data, error, refresh } = await useSanctumFetch<Internship>(`/api/interns
                         <br />
 
                         <h4>Zmena stavu</h4>
-                        <InternshipStatusEditor :internship="data!"
-                            @successful-submit="() => { refresh(); refreshKey++; }" />
+                        <InternshipStatusEditor :internship="data!" @successful-submit="forceRefresh" />
                     </div>
 
                     <hr />

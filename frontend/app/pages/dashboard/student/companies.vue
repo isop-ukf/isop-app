@@ -21,7 +21,7 @@ const headers = [
     { title: 'Prijímajú študentov', key: 'hiring', align: 'middle' },
 ];
 
-const { data, error } = await useSanctumFetch<CompanyData[]>('/api/companies/simple');
+const { data, error, pending } = await useLazySanctumFetch<CompanyData[]>('/api/companies/simple');
 </script>
 
 <template>
@@ -33,8 +33,11 @@ const { data, error } = await useSanctumFetch<CompanyData[]>('/api/companies/sim
             <!-- spacer -->
             <div style="height: 40px;"></div>
 
+            <!-- Čakajúca hláška -->
+            <LoadingAlert v-if="pending" />
+
             <!-- Chybová hláška -->
-            <ErrorAlert v-if="error" :error="error?.message" />
+            <ErrorAlert v-else-if="error" :error="error?.message" />
 
             <div v-else>
                 <p>Aktuálne spolupracujeme s {{ data?.length }} firmami.</p>
