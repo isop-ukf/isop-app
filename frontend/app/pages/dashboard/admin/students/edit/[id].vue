@@ -32,7 +32,7 @@ const form = ref({
     }
 });
 
-const { data } = await useSanctumFetch<User>(`/api/students/${studentId}`);
+const { data } = await useLazySanctumFetch<User>(`/api/students/${studentId}`);
 
 // Načítanie dát študenta
 watch(data, (newData) => {

@@ -91,7 +91,7 @@ function yearOfStudyValueHandler(item: { title: string, subtitle: string }) {
     return parseInt(item.title) || 0;
 }
 
-const { data, error } = await useSanctumFetch<CompanyData[]>('/api/companies/simple');
+const { data, pending, error } = await useLazySanctumFetch<CompanyData[]>('/api/companies/simple');
 </script>
 
 <template>
@@ -109,7 +109,7 @@ const { data, error } = await useSanctumFetch<CompanyData[]>('/api/companies/sim
         <!-- Výber firmy -->
 
         <!-- Čakajúca hláška -->
-        <LoadingAlert v-if="!data && !error" />
+        <LoadingAlert v-if="pending" />
 
         <!-- Chybová hláška -->
         <ErrorAlert v-else-if="error" :error="error.message" />
