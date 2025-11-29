@@ -53,6 +53,7 @@ async function confirmDeletion(confirm: boolean) {
     };
 
     await deleteKey(key);
+    deletionConfirmDialog.value = { open: false, key: null };
 }
 
 async function requestNewKey() {
