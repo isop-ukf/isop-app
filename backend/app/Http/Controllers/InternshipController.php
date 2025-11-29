@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Company;
 use App\Models\Internship;
-use App\Models\InternshipStatus;
+use App\Models\InternshipStatusData;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Mpdf\Mpdf;
@@ -61,7 +61,7 @@ class InternshipController extends Controller
         return response()->json($internship);
     }
 
-    public function get_default_agreement(Request $request, int $id)
+    public function get_default_proof(Request $request, int $id)
     {
         $user = auth()->user();
         $internship = Internship::find($id);
@@ -78,7 +78,7 @@ class InternshipController extends Controller
 
         $contact = User::find($internship->company->contact);
 
-        $html = view('agreement.default', [
+        $html = view('proof.default', [
             'company' => $internship->company,
             'companyContact' => $contact,
             'internship' => $internship,
@@ -93,10 +93,10 @@ class InternshipController extends Controller
 
         return response($pdf->Output('', 'S'), 200)
             ->header('Content-Type', 'application/pdf')
-            ->header('Content-Disposition', 'attachment; filename="agreement_' . $id . '.pdf"');
+            ->header('Content-Disposition', 'attachment; filename="proof_' . $id . '.pdf"');
     }
 
-    public function get_agreement(int $id)
+    public function get_proof(int $id)
     {
         $user = auth()->user();
         $internship = Internship::find($id);
@@ -107,9 +107,9 @@ class InternshipController extends Controller
             ], 400);
         }
 
-        if (!$internship->agreement) {
+        if (!$internship->proof) {
             return response()->json([
-                'message' => 'No agreement file exists for this internship.'
+                'message' => 'No proof file exists for this internship.'
             ], 404);
         }
 
@@ -117,9 +117,9 @@ class InternshipController extends Controller
             abort(403, 'Unauthorized');
         }
 
-        return response($internship->agreement, 200)
+        return response($internship->proof, 200)
             ->header('Content-Type', 'application/pdf')
-            ->header('Content-Disposition', 'attachment; filename="agreement_' . $id . '.pdf"');
+            ->header('Content-Disposition', 'attachment; filename="proof_' . $id . '.pdf"');
     }
 
     public function get_report(int $id)
@@ -182,10 +182,10 @@ class InternshipController extends Controller
             'year_of_study' => $request->year_of_study,
             'semester' => $request->semester,
             'position_description' => $request->position_description,
-            'agreement' => null
+            'proof' => null
         ]);
 
-        InternshipStatus::create([
+        InternshipStatusData::create([
             'internship_id' => $Internship->id,
             'status' => 'SUBMITTED',
             'changed' => now(),
@@ -250,13 +250,13 @@ class InternshipController extends Controller
         }
 
         $request->validate([
-            'agreement' => ['nullable', 'file', 'mimes:pdf', 'max:10240'],
+            'proof' => ['nullable', 'file', 'mimes:pdf', 'max:10240'],
             'report' => ['nullable', 'file', 'mimes:pdf', 'max:10240'],
             'report_confirmed' => ['required', 'boolean'],
         ]);
 
-        if ($request->hasFile('agreement')) {
-            $internship->agreement = file_get_contents($request->file('agreement')->getRealPath());
+        if ($request->hasFile('proof')) {
+            $internship->proof = file_get_contents($request->file('proof')->getRealPath());
         }
 
         if ($request->hasFile('report')) {
@@ -264,9 +264,9 @@ class InternshipController extends Controller
         }
 
         if ($user->role === 'EMPLOYER') {
-            if ($request->report_confirmed && (!$internship->agreement || !$internship->report)) {
+            if ($request->report_confirmed && (!$internship->proof || !$internship->report)) {
                 return response()->json([
-                    'message' => 'Report cannot be confirmed without an agreement and report.'
+                    'message' => 'Report cannot be confirmed without an proof and report.'
                 ], 400);
             }
 

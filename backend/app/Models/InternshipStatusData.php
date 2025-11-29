@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class InternshipStatus extends Model
+class InternshipStatusData extends Model
 {
     /** @use HasFactory<\Database\Factories\InternshipStatusFactory> */
     use HasFactory;
@@ -33,6 +33,20 @@ class InternshipStatus extends Model
         'updated_at',
     ];
 
+    protected $table = 'internship_statuses';
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'status' => '\App\Enums\InternshipStatus',
+        ];
+    }
+
     public function modifiedBy()
     {
         return $this->belongsTo(User::class, 'modified_by');
@@ -43,7 +57,7 @@ class InternshipStatus extends Model
         return [
             'id' => $this->id,
             'internship_id' => $this->internship_id,
-            'status' => $this->status,
+            'status' => $this->status->value,
             'changed' => $this->changed,
             'note' => $this->note,
             'modified_by' => $this->modifiedBy,

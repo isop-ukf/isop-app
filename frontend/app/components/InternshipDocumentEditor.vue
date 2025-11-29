@@ -18,7 +18,7 @@ const rules = {
 
 const loading = ref(false);
 const error = ref<string | null>(null);
-const agreement = ref<File | null>(null);
+const proof = ref<File | null>(null);
 const report = ref<File | null>(null);
 const report_confirmed = ref(props.internship.report_confirmed);
 
@@ -35,9 +35,9 @@ function triggerDownload(file: Blob, file_name: string) {
     window.URL.revokeObjectURL(url);
 }
 
-async function downloadAgreement() {
-    const agreement: Blob = await client(`/api/internships/${props.internship.id}/agreement`);
-    triggerDownload(agreement, `agreement-${props.internship.id}`);
+async function downloadProof() {
+    const proof: Blob = await client(`/api/internships/${props.internship.id}/proof`);
+    triggerDownload(proof, `proof-${props.internship.id}`);
 }
 
 async function downloadReport() {
@@ -51,8 +51,8 @@ async function onSubmit() {
 
     const formData = new FormData();
     formData.append('report_confirmed', report_confirmed.value ? '1' : '0');
-    if (agreement.value) {
-        formData.append('agreement', agreement.value);
+    if (proof.value) {
+        formData.append('proof', proof.value);
     }
     if (report.value) {
         formData.append('report', report.value);
@@ -64,7 +64,7 @@ async function onSubmit() {
             body: formData
         });
 
-        agreement.value = null;
+        proof.value = null;
         report.value = null;
         emit('successfulSubmit');
     } catch (e) {
@@ -87,19 +87,22 @@ async function onSubmit() {
 
         <v-form @submit.prevent="onSubmit" :disabled="loading">
             <div>
-                <h4 class="mb-2">Podpísaná zmluva / dohoda</h4>
+                <h4 class="mb-2">Dokument o vykonaní praxe</h4>
 
-                <WarningAlert v-if="props.internship.agreement" title="Existujúci dokument"
-                    text="V systéme je už nahratá zmluva/dohoda. Ak chcete nahradiť existujúcu verziu, vyberte súbor, alebo v opačnom prípade nechajte toto pole nevyplnené.">
+                <p>Zmluva/dohoda o brigádnickej praxi alebo 3 faktúry v pre živnostníkov.</p>
+                <InternshipAgreementDownloader :internship_id="internship.id" />
+
+                <WarningAlert v-if="props.internship.proof" title="Existujúci dokument"
+                    text="V systéme je už nahratý dokument. Ak chcete nahradiť existujúcu verziu, vyberte súbor, alebo v opačnom prípade nechajte toto pole nevyplnené.">
                     <br />
 
-                    <v-btn prepend-icon="mdi-download" color="blue" class="mr-2 mt-2" @click="downloadAgreement">
+                    <v-btn prepend-icon="mdi-download" color="blue" class="mr-2 mt-2" @click="downloadProof">
                         Stiahnuť
                     </v-btn>
                 </WarningAlert>
 
-                <v-file-input v-model="agreement" :rules="[rules.isPdf, rules.maxSize]" accept=".pdf,application/pdf"
-                    prepend-icon="mdi-handshake" label="Nahrať PDF zmluvu" variant="outlined" show-size clearable
+                <v-file-input v-model="proof" :rules="[rules.isPdf, rules.maxSize]" accept=".pdf,application/pdf"
+                    prepend-icon="mdi-handshake" label="Nahrať PDF dokument" variant="outlined" show-size clearable
                     hint="Povolené: PDF, max 10 MB" persistent-hint />
             </div>
 
@@ -107,6 +110,12 @@ async function onSubmit() {
 
             <div>
                 <h4 class="mb-2">Výkaz</h4>
+
+                <p>Dokument o hodnotení praxe.</p>
+                <v-btn prepend-icon="mdi-download" color="blue" class="mr-2 mt-2 mb-2" target="_blank"
+                    href="https://www.fpvai.ukf.sk/images/Organizacia_studia/odborna_prax/aplikovana_informatika/Priloha_Vykaz_o_vykonanej_odbornej_praxi-AI.docx">
+                    <span>Stiahnuť šablónu na výkaz</span>
+                </v-btn>
 
                 <WarningAlert v-if="props.internship.report" title="Existujúci dokument"
                     text="V systéme je už nahratý výkaz. Ak chcete nahradiť existujúcu verziu, vyberte súbor, alebo v opačnom prípade nechajte toto pole nevyplnené.">
@@ -123,14 +132,14 @@ async function onSubmit() {
                     hint="Povolené: PDF, max 10 MB" persistent-hint />
 
                 <v-checkbox v-if="user?.role === Role.EMPLOYER"
-                    :disabled="!props.internship.agreement || !props.internship.report" v-model="report_confirmed"
+                    :disabled="!props.internship.proof || !props.internship.report" v-model="report_confirmed"
                     label="Výkaz je správny"></v-checkbox>
             </div>
 
             <br />
 
             <v-btn type="submit" color="success" size="large" block
-                :disabled="!agreement && !report && (!props.internship.agreement || !props.internship.report)">
+                :disabled="!proof && !report && (!props.internship.proof || !props.internship.report)">
                 Uloziť
             </v-btn>
         </v-form>

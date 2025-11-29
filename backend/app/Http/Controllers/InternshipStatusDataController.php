@@ -2,19 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\InternshipStatus;
 use App\Mail\InternshipStatusUpdated;
 use App\Models\Internship;
-use App\Models\InternshipStatus;
-use App\Models\User;
+use App\Models\InternshipStatusData;
 use Illuminate\Http\Request;
 use Mail;
 
-class InternshipStatusController extends Controller
+class InternshipStatusDataController extends Controller
 {
     public function get(int $id)
     {
         $user = auth()->user();
-        $internship_statuses = InternshipStatus::whereInternshipId($id)->orderByDesc('changed')->get();
+        $internship_statuses = InternshipStatusData::whereInternshipId($id)->orderByDesc('changed')->get();
 
         if (!$internship_statuses) {
             return response()->json([
@@ -45,9 +45,7 @@ class InternshipStatusController extends Controller
             abort(403, 'Unauthorized');
         }
 
-        $currentStatus = $internship->status;
-        $nextPossibleStatuses = $this->possibleNewStatuses($currentStatus->status, $user->role, $internship->report_confirmed);
-
+        $nextPossibleStatuses = $internship->nextStates($user->role);
         return response()->json($nextPossibleStatuses);
     }
 
@@ -78,7 +76,7 @@ class InternshipStatusController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(InternshipStatus $internshipStatus)
+    public function show(InternshipStatusData $internshipStatus)
     {
         //
     }
@@ -86,7 +84,7 @@ class InternshipStatusController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(InternshipStatus $internshipStatus)
+    public function edit(InternshipStatusData $internshipStatus)
     {
         //
     }
@@ -110,14 +108,14 @@ class InternshipStatusController extends Controller
         }
 
         $internshipStatus = $internship->status;
-        $newStatusValidator = 'in:' . implode(',', $this->possibleNewStatuses($internshipStatus->status, $user->role, $internship->report_confirmed));
+        $newStatusValidator = 'in:' . implode(',', $internship->nextStates($user->role));
 
         $request->validate([
             'status' => ['required', 'string', 'uppercase', $newStatusValidator],
             'note' => ['required', 'string', 'min:1']
         ]);
 
-        InternshipStatus::create([
+        $newStatus = InternshipStatusData::make([
             'internship_id' => $id,
             'status' => $request->status,
             'note' => $request->note,
@@ -125,47 +123,26 @@ class InternshipStatusController extends Controller
             'modified_by' => $user->id
         ]);
 
-        Mail::to($internship->student)->sendNow(new InternshipStatusUpdated($internship, $user->name, $internship->student->name, $internship->company->name, $internshipStatus->status, $request->status, $request->note));
+        Mail::to($internship->student)
+            ->sendNow(new InternshipStatusUpdated(
+                $internship,
+                $user->name,
+                $internship->student->name,
+                $internship->company->name,
+                $internshipStatus->status,
+                $request->enum('status', InternshipStatus::class),
+                $request->note
+            ));
 
+        $newStatus->save();
         return response()->noContent();
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(InternshipStatus $internshipStatus)
+    public function destroy(InternshipStatusData $internshipStatus)
     {
         //
-    }
-
-    private function possibleNewStatuses(string $current_status, string $userRole, bool $report_confirmed)
-    {
-        if ($userRole === "STUDENT")
-            return [];
-
-        switch ($current_status) {
-            case 'SUBMITTED':
-                return ['CONFIRMED', 'DENIED'];
-            case 'CONFIRMED':
-                if ($userRole === 'EMPLOYER') {
-                    return ['DENIED'];
-                }
-
-                if ($report_confirmed) {
-                    return ['SUBMITTED', 'DENIED', 'DEFENDED', 'NOT_DEFENDED'];
-                }
-
-                return ['SUBMITTED', 'DENIED'];
-            case 'DENIED':
-                if ($userRole === 'EMPLOYER') {
-                    return ['CONFIRMED'];
-                }
-                return ['SUBMITTED', 'CONFIRMED'];
-            case 'DEFENDED':
-            case 'NOT_DEFENDED':
-                return [];
-            default:
-                throw new \InvalidArgumentException('Unknown status');
-        }
     }
 }

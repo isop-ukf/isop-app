@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Enums\InternshipStatus;
 use App\Models\Internship;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
@@ -17,14 +18,14 @@ class InternshipStatusUpdated extends Mailable
     private string $changedByName;
     private string $studentName;
     private string $companyName;
-    private string $oldStatus;
-    private string $newStatus;
+    private InternshipStatus $oldStatus;
+    private InternshipStatus $newStatus;
     private string $note;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(Internship $internship, string $changedByName, string $studentName, string $companyName, string $oldStatus, string $newStatus, string $note)
+    public function __construct(Internship $internship, string $changedByName, string $studentName, string $companyName, InternshipStatus $oldStatus, InternshipStatus $newStatus, string $note)
     {
         $this->internship = $internship;
         $this->changedByName = $changedByName;
@@ -57,8 +58,8 @@ class InternshipStatusUpdated extends Mailable
                 "changedByName" => $this->changedByName,
                 "studentName" => $this->studentName,
                 "companyName" => $this->companyName,
-                "oldStatus" => $this->prettyStatus($this->oldStatus),
-                "newStatus" => $this->prettyStatus($this->newStatus),
+                "oldStatus" => $this->prettyStatus($this->oldStatus->value),
+                "newStatus" => $this->prettyStatus($this->newStatus->value),
                 "note" => $this->note,
             ]
         );
@@ -78,8 +79,10 @@ class InternshipStatusUpdated extends Mailable
     {
         return match ($status) {
             'SUBMITTED' => 'Zadané',
-            'CONFIRMED' => 'Potvrdená',
-            'DENIED' => 'Zamietnutá',
+            'CONFIRMED_BY_COMPANY' => 'Potvrdená firmou',
+            'CONFIRMED_BY_ADMIN' => 'Potvrdená garantom',
+            'DENIED_BY_COMPANY' => 'Zamietnutá firmou',
+            'DENIED_BY_ADMIN' => 'Zamietnutá garantom',
             'DEFENDED' => 'Obhájená',
             'NOT_DEFENDED' => 'Neobhájená',
             default => throw new \Exception("Invalid status: $status")

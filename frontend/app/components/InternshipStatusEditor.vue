@@ -68,10 +68,11 @@ async function submit() {
         <ErrorAlert v-if="save_error" :error="`Nepodarilo uložiť: ${save_error}`" />
 
         <!-- Chybová hláška -->
-        <ErrorAlert v-if="load_error" :error="`Nepodarilo sa načítať stavy: ${save_error}`" />
+        <ErrorAlert v-if="load_error" :error="`Nepodarilo sa načítať stavy: ${load_error}`" />
 
         <!-- Chybová hláška -->
-        <ErrorAlert v-else-if="data?.length === 0" :error="`Nepodarilo sa načítať stavy: ${save_error}`" />
+        <WarningAlert v-else-if="data?.length === 0" title="Blokované"
+            text="Stav praxe už nie je možné meniť, pretože bola (ne)obhájená alebo zamietnutá. V prípade, že ste prax zamietli omylom, alebo ak máte technické problémy, prosíme kontaktovať garanta praxe." />
 
         <v-form v-else v-model="isValid" @submit.prevent="submit" :disabled="loading">
             <v-select v-model="new_state" label="Stav" :items="data" item-value="value"></v-select>

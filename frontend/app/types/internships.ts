@@ -11,7 +11,7 @@ export interface Internship {
     year_of_study: number;
     semester: string;
     position_description: string;
-    agreement: boolean;
+    proof: boolean;
     report: boolean;
     report_confirmed: boolean;
     status: InternshipStatusData;

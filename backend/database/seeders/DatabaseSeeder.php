@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Company;
 use App\Models\Internship;
-use App\Models\InternshipStatus;
+use App\Models\InternshipStatusData;
 use App\Models\StudentData;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -57,7 +57,7 @@ class DatabaseSeeder extends Seeder
                     'company_id' => Company::inRandomOrder()->value('id'),
                 ]);
 
-                InternshipStatus::factory()->create([
+                InternshipStatusData::factory()->create([
                     'internship_id' => $internship->id,
                     'status' => "SUBMITTED",
                     'note' => 'made by seeder',

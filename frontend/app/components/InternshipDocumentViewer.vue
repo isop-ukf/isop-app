@@ -8,8 +8,8 @@ const props = defineProps<{
 const client = useSanctumClient();
 
 async function downloadAgreement() {
-    const agreement: Blob = await client(`/api/internships/${props.internship.id}/agreement`);
-    triggerDownload(agreement, `agreement-${props.internship.id}`);
+    const proof: Blob = await client(`/api/internships/${props.internship.id}/proof`);
+    triggerDownload(proof, `proof-${props.internship.id}`);
 }
 
 async function downloadReport() {
@@ -21,18 +21,19 @@ async function downloadReport() {
 <template>
     <div>
         <v-row class="d-flex">
-            <!-- Podpísaná zmluva -->
+            <!-- Podpísaný dokument k praxe -->
             <v-col cols="12" md="6">
                 <v-card variant="outlined" class="h-100">
                     <v-card-title class="d-flex align-center ga-2">
                         <v-icon icon="mdi mdi-file-document-outline" />
-                        Podpísaná zmluva / dohoda
+                        Dokument o vykonaní praxe
                     </v-card-title>
-                    <v-card-text>
-                        <InternshipAgreementDownloader :internship_id="internship.id" />
 
-                        <WarningAlert v-if="!props.internship.agreement" title="Neodovzdané"
-                            text="Zmluva zatiaľ nebola nahratá." />
+                    <v-card-text>
+                        <InternshipAgreementDownloader :internship_id="internship.id" block />
+
+                        <WarningAlert v-if="!props.internship.proof" title="Neodovzdané"
+                            text="Dokument zatiaľ nebol nahratý." />
 
                         <div v-else>
                             <SuccessAlert title="Odovzdané" text="Zmluva bola nahratá." />
@@ -53,8 +54,14 @@ async function downloadReport() {
                         <v-icon icon="mdi-file-clock-outline" />
                         Výkaz
                     </v-card-title>
+
                     <v-card-text>
-                        <InfoAlert v-if="!props.internship.report" title="Neodovzdané"
+                        <v-btn prepend-icon="mdi-download" color="blue" class="mr-2 mt-2" block target="_blank"
+                            href="https://www.fpvai.ukf.sk/images/Organizacia_studia/odborna_prax/aplikovana_informatika/Priloha_Vykaz_o_vykonanej_odbornej_praxi-AI.docx">
+                            <span>Stiahnuť šablónu na výkaz</span>
+                        </v-btn>
+
+                        <WarningAlert v-if="!props.internship.report" title="Neodovzdané"
                             text="Výkaz zatiaľ nebol nahratý." />
 
                         <div v-else>
