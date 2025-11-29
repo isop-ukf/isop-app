@@ -64,5 +64,10 @@ class DatabaseSeeder extends Seeder
                     'modified_by' => $admin->id,
                 ]);
             });
+
+        // create some random external API keys
+        for ($i = 0; $i < 4; $i++) {
+            $admin->createToken(fake()->userName());
+        }
     }
 }
