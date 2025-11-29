@@ -25,7 +25,7 @@ class Internship extends Model
         'year_of_study',
         'semester',
         'position_description',
-        'agreement',
+        'proof',
         'report',
         'report_confirmed',
     ];
@@ -135,7 +135,7 @@ class Internship extends Model
             'year_of_study' => $this->year_of_study,
             'semester' => $this->semester,
             'position_description' => $this->position_description,
-            'agreement' => $this->agreement !== null,
+            'proof' => $this->proof !== null,
             'report' => $this->report !== null,
             'report_confirmed' => $this->report_confirmed,
             'status' => $this->status,

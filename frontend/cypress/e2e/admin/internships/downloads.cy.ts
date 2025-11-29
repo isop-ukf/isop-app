@@ -14,7 +14,7 @@ describe('Admin Student Document Downloads', () => {
         cy.url().should('include', '/dashboard/admin/internships')
     })
 
-    it('should be able to generate and download the default agreement', () => {
+    it('should be able to generate and download the default proof', () => {
         cy.get('table').within(() => {
             cy.get('tbody tr')
                 .then(rows => {

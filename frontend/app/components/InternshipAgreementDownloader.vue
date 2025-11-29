@@ -13,8 +13,8 @@ async function requestDownload() {
     loading.value = true;
 
     try {
-        const agreement = await client<Blob>(`/api/internships/${props.internship_id}/default-agreement`);
-        triggerDownload(agreement, `default-agreement-${props.internship_id}`);
+        const proof = await client<Blob>(`/api/internships/${props.internship_id}/default-proof`);
+        triggerDownload(proof, `default-proof-${props.internship_id}`);
     } catch (e) {
         if (e instanceof FetchError) {
             alert(`Nepodarilo sa vygenerovať zmluvu: ${e.statusMessage}`);

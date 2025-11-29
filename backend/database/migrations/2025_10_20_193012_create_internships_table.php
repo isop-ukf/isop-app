@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -20,7 +19,7 @@ return new class extends Migration
             $table->unsignedSmallInteger("year_of_study")->nullable(false);
             $table->enum("semester", ["WINTER", "SUMMER"])->nullable(false);
             $table->string("position_description")->nullable(false);
-            $table->binary("agreement")->nullable(true);
+            $table->binary("proof")->nullable(true);
             $table->binary("report")->nullable(true);
             $table->boolean("report_confirmed")->nullable(false)->default(false);
             $table->timestamps();
