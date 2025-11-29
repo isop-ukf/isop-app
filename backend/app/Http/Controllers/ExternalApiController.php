@@ -29,6 +29,12 @@ class ExternalApiController extends Controller
             'name' => 'required|string|min:3|max:64',
         ]);
 
+        if (Sanctum::$personalAccessTokenModel::where('name', $request->name)->exists()) {
+            return response()->json([
+                'message' => 'A token with this name already exists.'
+            ], 422);
+        }
+
         $token = $request->user()->createToken($request->name)->plainTextToken;
 
         return response()->json([
