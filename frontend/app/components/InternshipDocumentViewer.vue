@@ -30,9 +30,7 @@ async function downloadReport() {
                     </v-card-title>
 
                     <v-card-text>
-                        <p>Zmluva/dohoda o brigádnickej praxi alebo 3 faktúry v pre živnostníkov.</p>
-
-                        <InternshipAgreementDownloader :internship_id="internship.id" />
+                        <InternshipAgreementDownloader :internship_id="internship.id" block />
 
                         <WarningAlert v-if="!props.internship.proof" title="Neodovzdané"
                             text="Dokument zatiaľ nebol nahratý." />
@@ -58,8 +56,6 @@ async function downloadReport() {
                     </v-card-title>
 
                     <v-card-text>
-                        <p>Dokument o hodnotení praxe.</p>
-
                         <v-btn prepend-icon="mdi-download" color="blue" class="mr-2 mt-2" block target="_blank"
                             href="https://www.fpvai.ukf.sk/images/Organizacia_studia/odborna_prax/aplikovana_informatika/Priloha_Vykaz_o_vykonanej_odbornej_praxi-AI.docx">
                             <span>Stiahnuť šablónu na výkaz</span>
