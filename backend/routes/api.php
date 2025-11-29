@@ -6,6 +6,7 @@ use App\Http\Controllers\ExternalApiController;
 use App\Http\Controllers\InternshipController;
 use App\Http\Controllers\StudentDataController;
 use App\Http\Controllers\InternshipStatusDataController;
+use App\Http\Middleware\AdministratorOnly;
 use App\Models\Company;
 use App\Models\StudentData;
 use Illuminate\Http\Request;
@@ -66,8 +67,8 @@ Route::prefix('/companies')->middleware("auth:sanctum")->group(function () {
     Route::delete("/{id}", [CompanyController::class, 'delete']);
 });
 
-Route::prefix('/external')->middleware("auth:sanctum")->group(function () {
-    Route::prefix('/keys')->group(function () {
+Route::prefix('/external')->group(function () {
+    Route::prefix('/keys')->middleware(['auth:sanctum', AdministratorOnly::class])->group(function () {
         Route::get("/", [ExternalApiController::class, 'all_keys'])->name("api.external.keys.create");
         Route::put("/", [ExternalApiController::class, 'create_key'])->name("api.external.keys.list");
         Route::delete("/{id}", [ExternalApiController::class, 'destroy_key'])->name("api.external.keys.delete");
