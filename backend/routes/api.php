@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\ExternalApiController;
 use App\Http\Controllers\InternshipController;
 use App\Http\Controllers\StudentDataController;
 use App\Http\Controllers\InternshipStatusDataController;
@@ -43,8 +44,7 @@ Route::prefix('/internships')->group(function () {
     Route::get("/", [InternshipController::class, 'all'])->name("api.internships");
     Route::get("/my", [InternshipController::class, 'all_my'])->name("api.internships.my");
 
-    //Route::middleware("auth:sanctum")->group(function () {
-    Route::prefix('/{id}')->group(function () {
+    Route::prefix('/{id}')->middleware("auth:sanctum")->group(function () {
         Route::get("/", [InternshipController::class, 'get'])->name("api.internships.get");
         Route::put("/status", [InternshipStatusDataController::class, 'update'])->name("api.internships.status.update");
         Route::get("/statuses", [InternshipStatusDataController::class, 'get'])->name("api.internships.get");
@@ -57,7 +57,6 @@ Route::prefix('/internships')->group(function () {
     });
 
     Route::put("/new", [InternshipController::class, 'store'])->name("api.internships.create");
-    //});
 });
 
 Route::prefix('/companies')->middleware("auth:sanctum")->group(function () {
@@ -65,4 +64,19 @@ Route::prefix('/companies')->middleware("auth:sanctum")->group(function () {
     Route::get("/{id}", [CompanyController::class, 'get']);
     Route::post("/{id}", [CompanyController::class, 'update_all']);
     Route::delete("/{id}", [CompanyController::class, 'delete']);
+});
+
+Route::prefix('/external')->middleware("auth:sanctum")->group(function () {
+    Route::prefix('/keys')->group(function () {
+        Route::get("/", [ExternalApiController::class, 'all_keys'])->name("api.external.keys.create");
+        Route::put("/", [ExternalApiController::class, 'create_key'])->name("api.external.keys.list");
+        Route::delete("/{id}", [ExternalApiController::class, 'destroy_key'])->name("api.external.keys.delete");
+    });
+
+
+    Route::prefix('/internships')->group(function () {
+        Route::prefix('/{id}')->middleware("auth:sanctum")->group(function () {
+            Route::put("/status", [ExternalApiController::class, 'update_internship_status'])->name("api.external.internships.status.update");
+        });
+    });
 });
