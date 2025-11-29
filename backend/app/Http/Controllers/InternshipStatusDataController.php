@@ -5,11 +5,10 @@ namespace App\Http\Controllers;
 use App\Mail\InternshipStatusUpdated;
 use App\Models\Internship;
 use App\Models\InternshipStatus;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Mail;
 
-class InternshipStatusController extends Controller
+class InternshipStatusDataController extends Controller
 {
     public function get(int $id)
     {

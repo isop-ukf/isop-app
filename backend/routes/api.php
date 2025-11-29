@@ -4,7 +4,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\InternshipController;
 use App\Http\Controllers\StudentDataController;
-use App\Http\Controllers\InternshipStatusController;
+use App\Http\Controllers\InternshipStatusDataController;
 use App\Models\Company;
 use App\Models\StudentData;
 use Illuminate\Http\Request;
@@ -46,9 +46,9 @@ Route::prefix('/internships')->group(function () {
     //Route::middleware("auth:sanctum")->group(function () {
     Route::prefix('/{id}')->group(function () {
         Route::get("/", [InternshipController::class, 'get'])->name("api.internships.get");
-        Route::put("/status", [InternshipStatusController::class, 'update'])->name("api.internships.status.update");
-        Route::get("/statuses", [InternshipStatusController::class, 'get'])->name("api.internships.get");
-        Route::get("/next-statuses", [InternshipStatusController::class, 'get_next_states'])->name("api.internships.status.next.get");
+        Route::put("/status", [InternshipStatusDataController::class, 'update'])->name("api.internships.status.update");
+        Route::get("/statuses", [InternshipStatusDataController::class, 'get'])->name("api.internships.get");
+        Route::get("/next-statuses", [InternshipStatusDataController::class, 'get_next_states'])->name("api.internships.status.next.get");
         Route::get("/default-agreement", [InternshipController::class, 'get_default_agreement'])->name("api.internships.agreement.default.get");
         Route::get("/agreement", [InternshipController::class, 'get_agreement'])->name("api.internships.agreement.get");
         Route::get("/report", [InternshipController::class, 'get_report'])->name("api.internships.report.get");
