@@ -2,7 +2,8 @@
 import { FetchError } from 'ofetch';
 
 const props = defineProps<{
-    internship_id: number
+    internship_id: number,
+    block?: boolean,
 }>();
 
 const client = useSanctumClient();
@@ -27,8 +28,8 @@ async function requestDownload() {
 
 <template>
     <div>
-        <v-btn prepend-icon="mdi-download" color="blue" class="mr-2 mt-2" block :disabled="loading"
-            @click="requestDownload">
+        <v-btn prepend-icon="mdi-download" color="blue" class="mr-2 mt-2 mb-2" :disabled="loading"
+            :block="block ?? undefined" @click="requestDownload">
             <span v-show="!loading">Stiahnuť originálnu zmluvu</span>
             <span v-show="loading">Prosím čakajte...</span>
         </v-btn>
