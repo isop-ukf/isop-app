@@ -95,7 +95,7 @@ async function handleUpdateOfBasicInfo(internship: NewInternship) {
                 <div>
                     <h2>Nahratie dokumentov</h2>
 
-                    <ErrorAlert v-if="data?.status.status !== InternshipStatus.CONFIRMED" title="Blokované"
+                    <ErrorAlert v-if="data?.status.status !== InternshipStatus.CONFIRMED_BY_COMPANY" title="Blokované"
                         error='Vaša prax nie je v stave "Schválená" a teda nemôžete nahrať dokumenty.' />
 
                     <InternshipDocumentEditor v-else :internship="data!" @successful-submit="refresh" />
