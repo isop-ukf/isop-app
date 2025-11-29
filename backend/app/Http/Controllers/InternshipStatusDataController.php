@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Mail\InternshipStatusUpdated;
 use App\Models\Internship;
-use App\Models\InternshipStatus;
+use App\Models\InternshipStatusData;
 use Illuminate\Http\Request;
 use Mail;
 
@@ -13,7 +13,7 @@ class InternshipStatusDataController extends Controller
     public function get(int $id)
     {
         $user = auth()->user();
-        $internship_statuses = InternshipStatus::whereInternshipId($id)->orderByDesc('changed')->get();
+        $internship_statuses = InternshipStatusData::whereInternshipId($id)->orderByDesc('changed')->get();
 
         if (!$internship_statuses) {
             return response()->json([
@@ -77,7 +77,7 @@ class InternshipStatusDataController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(InternshipStatus $internshipStatus)
+    public function show(InternshipStatusData $internshipStatus)
     {
         //
     }
@@ -85,7 +85,7 @@ class InternshipStatusDataController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(InternshipStatus $internshipStatus)
+    public function edit(InternshipStatusData $internshipStatus)
     {
         //
     }
@@ -116,7 +116,7 @@ class InternshipStatusDataController extends Controller
             'note' => ['required', 'string', 'min:1']
         ]);
 
-        InternshipStatus::create([
+        InternshipStatusData::create([
             'internship_id' => $id,
             'status' => $request->status,
             'note' => $request->note,
@@ -132,7 +132,7 @@ class InternshipStatusDataController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(InternshipStatus $internshipStatus)
+    public function destroy(InternshipStatusData $internshipStatus)
     {
         //
     }

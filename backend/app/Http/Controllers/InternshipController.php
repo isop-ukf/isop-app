@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Company;
 use App\Models\Internship;
-use App\Models\InternshipStatus;
+use App\Models\InternshipStatusData;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Mpdf\Mpdf;
@@ -185,7 +185,7 @@ class InternshipController extends Controller
             'agreement' => null
         ]);
 
-        InternshipStatus::create([
+        InternshipStatusData::create([
             'internship_id' => $Internship->id,
             'status' => 'SUBMITTED',
             'changed' => now(),

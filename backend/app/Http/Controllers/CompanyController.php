@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Company;
 use App\Models\User;
 use App\Models\Internship;
-use App\Models\InternshipStatus;
+use App\Models\InternshipStatusData;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -186,7 +186,7 @@ class CompanyController extends Controller
 
         // mazanie statusov
         $internships->each(function ($internship) {
-            InternshipStatus::whereInternshipId($internship->id)->delete();
+            InternshipStatusData::whereInternshipId($internship->id)->delete();
         });
 
         // mazanie praxov

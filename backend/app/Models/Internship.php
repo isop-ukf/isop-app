@@ -63,7 +63,7 @@ class Internship extends Model
 
     public function status()
     {
-        return $this->hasOne(InternshipStatus::class, 'internship_id')->latestOfMany();
+        return $this->hasOne(InternshipStatusData::class, 'internship_id')->latestOfMany();
     }
 
     /**
