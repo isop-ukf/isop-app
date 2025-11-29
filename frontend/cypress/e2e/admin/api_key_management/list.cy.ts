@@ -42,7 +42,7 @@ describe('Admin API Key Management CRUD', () => {
     it('should be able to create an API key', () => {
         // vytvorenie nového kľúča
         cy.contains("Pridať").click()
-        cy.get('#input-v-0-2').type('cypress-e2e-test-key')
+        cy.get('#newKeyName').type('cypress-e2e-test-key')
         cy.contains("Vytvoriť").click()
 
         cy.wait(3000)

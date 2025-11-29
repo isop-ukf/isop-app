@@ -155,7 +155,7 @@ async function deleteKey(key: ApiKey) {
                 </v-card-title>
 
                 <v-card-text>
-                    <v-text-field label="Názov kľúča" required v-model="newKeyName"></v-text-field>
+                    <v-text-field label="Názov kľúča" required v-model="newKeyName" id="newKeyName"></v-text-field>
                 </v-card-text>
 
                 <v-card-actions>
