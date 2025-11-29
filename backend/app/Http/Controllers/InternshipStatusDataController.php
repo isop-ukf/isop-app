@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\InternshipStatus;
 use App\Mail\InternshipStatusUpdated;
 use App\Models\Internship;
 use App\Models\InternshipStatusData;
@@ -114,7 +115,7 @@ class InternshipStatusDataController extends Controller
             'note' => ['required', 'string', 'min:1']
         ]);
 
-        InternshipStatusData::create([
+        $newStatus = InternshipStatusData::make([
             'internship_id' => $id,
             'status' => $request->status,
             'note' => $request->note,
@@ -122,8 +123,18 @@ class InternshipStatusDataController extends Controller
             'modified_by' => $user->id
         ]);
 
-        Mail::to($internship->student)->sendNow(new InternshipStatusUpdated($internship, $user->name, $internship->student->name, $internship->company->name, $internshipStatus->status, $request->status, $request->note));
+        Mail::to($internship->student)
+            ->sendNow(new InternshipStatusUpdated(
+                $internship,
+                $user->name,
+                $internship->student->name,
+                $internship->company->name,
+                $internshipStatus->status,
+                $request->enum('status', InternshipStatus::class),
+                $request->note
+            ));
 
+        $newStatus->save();
         return response()->noContent();
     }
 
