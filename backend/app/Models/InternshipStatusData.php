@@ -33,6 +33,20 @@ class InternshipStatusData extends Model
         'updated_at',
     ];
 
+    protected $table = 'internship_statuses';
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'status' => '\App\Enums\InternshipStatus',
+        ];
+    }
+
     public function modifiedBy()
     {
         return $this->belongsTo(User::class, 'modified_by');
@@ -43,7 +57,7 @@ class InternshipStatusData extends Model
         return [
             'id' => $this->id,
             'internship_id' => $this->internship_id,
-            'status' => $this->status,
+            'status' => $this->status->value,
             'changed' => $this->changed,
             'note' => $this->note,
             'modified_by' => $this->modifiedBy,
