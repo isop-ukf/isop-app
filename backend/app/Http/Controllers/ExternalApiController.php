@@ -2,14 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\InternshipStatus;
-use App\Mail\InternshipStatusUpdated;
-use App\Models\Internship;
-use App\Models\InternshipStatusData;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Laravel\Sanctum\Sanctum;
-use Mail;
 
 class ExternalApiController extends Controller
 {
@@ -53,50 +48,8 @@ class ExternalApiController extends Controller
         return response()->noContent();
     }
 
-    public function update_internship_status(Request $request, $id)
+    public function update_internship_status(int $id)
     {
-        $user = $request->user();
-        $internship = Internship::find($id);
-
-        if (!$internship) {
-            return response()->json([
-                'message' => 'No such internship exists.'
-            ], 400);
-        }
-
-        $currentStatus = $internship->status->status;
-
-        $request->validate([
-            'status' => ['required', 'string', 'uppercase', 'in:DEFENDED,NOT_DEFENDED'],
-            'note' => ['required', 'string', 'min:1']
-        ]);
-
-        if ($currentStatus !== InternshipStatus::CONFIRMED_BY_ADMIN) {
-            return response()->json([
-                "error" => "Expected current status to be 'CONFIRMED_BY_ADMIN', but it was '$currentStatus->value' instead",
-            ], 422);
-        }
-
-        $newStatus = InternshipStatusData::make([
-            'internship_id' => $id,
-            'status' => $request->status,
-            'note' => $request->note,
-            'changed' => now(),
-            'modified_by' => $user->id,
-        ]);
-
-        Mail::to($internship->student)
-            ->sendNow(new InternshipStatusUpdated(
-                $internship,
-                $user->name,
-                $internship->student->name,
-                $internship->company->name,
-                $currentStatus,
-                $request->enum('status', InternshipStatus::class),
-                $request->note
-            ));
-
-        $newStatus->save();
-        return response()->noContent();
+        // TODO: Implement in SCRUM-65
     }
 }
