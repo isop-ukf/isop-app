@@ -87,10 +87,13 @@ async function onSubmit() {
 
         <v-form @submit.prevent="onSubmit" :disabled="loading">
             <div>
-                <h4 class="mb-2">Dokument na overenie praxe</h4>
+                <h4 class="mb-2">Dokument o vykonaní praxe</h4>
+
+                <p>Zmluva/dohoda o brigádnickej praxi alebo 3 faktúry v pre živnostníkov.</p>
+                <InternshipAgreementDownloader :internship_id="internship.id" />
 
                 <WarningAlert v-if="props.internship.proof" title="Existujúci dokument"
-                    text="V systéme je už nahratý dokument k praxe. Ak chcete nahradiť existujúcu verziu, vyberte súbor, alebo v opačnom prípade nechajte toto pole nevyplnené.">
+                    text="V systéme je už nahratý dokument. Ak chcete nahradiť existujúcu verziu, vyberte súbor, alebo v opačnom prípade nechajte toto pole nevyplnené.">
                     <br />
 
                     <v-btn prepend-icon="mdi-download" color="blue" class="mr-2 mt-2" @click="downloadProof">
@@ -99,7 +102,7 @@ async function onSubmit() {
                 </WarningAlert>
 
                 <v-file-input v-model="proof" :rules="[rules.isPdf, rules.maxSize]" accept=".pdf,application/pdf"
-                    prepend-icon="mdi-handshake" label="Nahrať PDF zmluvu" variant="outlined" show-size clearable
+                    prepend-icon="mdi-handshake" label="Nahrať PDF dokument" variant="outlined" show-size clearable
                     hint="Povolené: PDF, max 10 MB" persistent-hint />
             </div>
 
@@ -107,6 +110,12 @@ async function onSubmit() {
 
             <div>
                 <h4 class="mb-2">Výkaz</h4>
+
+                <p>Dokument o hodnotení praxe.</p>
+                <v-btn prepend-icon="mdi-download" color="blue" class="mr-2 mt-2 mb-2" target="_blank"
+                    href="https://www.fpvai.ukf.sk/images/Organizacia_studia/odborna_prax/aplikovana_informatika/Priloha_Vykaz_o_vykonanej_odbornej_praxi-AI.docx">
+                    <span>Stiahnuť šablónu na výkaz</span>
+                </v-btn>
 
                 <WarningAlert v-if="props.internship.report" title="Existujúci dokument"
                     text="V systéme je už nahratý výkaz. Ak chcete nahradiť existujúcu verziu, vyberte súbor, alebo v opačnom prípade nechajte toto pole nevyplnené.">
