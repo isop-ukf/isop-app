@@ -44,9 +44,7 @@ class InternshipStatusDataController extends Controller
             abort(403, 'Unauthorized');
         }
 
-        $currentStatus = $internship->status;
-        $nextPossibleStatuses = $this->possibleNewStatuses($currentStatus->status, $user->role, $internship->report_confirmed);
-
+        $nextPossibleStatuses = $internship->nextStates($user->role);
         return response()->json($nextPossibleStatuses);
     }
 
@@ -109,7 +107,7 @@ class InternshipStatusDataController extends Controller
         }
 
         $internshipStatus = $internship->status;
-        $newStatusValidator = 'in:' . implode(',', $this->possibleNewStatuses($internshipStatus->status, $user->role, $internship->report_confirmed));
+        $newStatusValidator = 'in:' . implode(',', $internship->nextStates($user->role));
 
         $request->validate([
             'status' => ['required', 'string', 'uppercase', $newStatusValidator],
@@ -135,36 +133,5 @@ class InternshipStatusDataController extends Controller
     public function destroy(InternshipStatusData $internshipStatus)
     {
         //
-    }
-
-    private function possibleNewStatuses(string $current_status, string $userRole, bool $report_confirmed)
-    {
-        if ($userRole === "STUDENT")
-            return [];
-
-        switch ($current_status) {
-            case 'SUBMITTED':
-                return ['CONFIRMED', 'DENIED'];
-            case 'CONFIRMED':
-                if ($userRole === 'EMPLOYER') {
-                    return ['DENIED'];
-                }
-
-                if ($report_confirmed) {
-                    return ['SUBMITTED', 'DENIED', 'DEFENDED', 'NOT_DEFENDED'];
-                }
-
-                return ['SUBMITTED', 'DENIED'];
-            case 'DENIED':
-                if ($userRole === 'EMPLOYER') {
-                    return ['CONFIRMED'];
-                }
-                return ['SUBMITTED', 'CONFIRMED'];
-            case 'DEFENDED':
-            case 'NOT_DEFENDED':
-                return [];
-            default:
-                throw new \InvalidArgumentException('Unknown status');
-        }
     }
 }
