@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Company;
 use App\Models\Internship;
 use App\Models\InternshipStatusData;
 use App\Models\User;
@@ -310,9 +309,18 @@ class InternshipController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Internship $internship)
+    public function destroy(int $id)
     {
-        //
+        $internship = Internship::find($id);
+
+        if (!$internship) {
+            return response()->json([
+                'message' => 'No such internship exists.'
+            ], 400);
+        }
+        $internship->delete();
+
+        return response()->noContent();
     }
 
     private function validateNewInternship(Request $request)

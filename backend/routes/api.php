@@ -46,6 +46,7 @@ Route::prefix('/internships')->group(function () {
 
     Route::prefix('/{id}')->middleware("auth:sanctum")->group(function () {
         Route::get("/", [InternshipController::class, 'get'])->name("api.internships.get");
+        Route::delete("/", [InternshipController::class, 'destroy'])->middleware(AdministratorOnly::class)->name("api.internships.delete");
         Route::put("/status", [InternshipStatusDataController::class, 'update'])->name("api.internships.status.update");
         Route::get("/statuses", [InternshipStatusDataController::class, 'get'])->name("api.internships.get");
         Route::get("/next-statuses", [InternshipStatusDataController::class, 'get_next_states'])->name("api.internships.status.next.get");

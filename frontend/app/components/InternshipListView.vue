@@ -2,6 +2,7 @@
 import type { Internship } from '~/types/internships';
 import type { Paginated } from '~/types/pagination';
 import { prettyInternshipStatus } from '~/types/internship_status';
+import { FetchError } from 'ofetch';
 
 const props = defineProps<{
     mode: 'admin' | 'company' | 'student';
@@ -17,6 +18,8 @@ const filters = ref({
 const page = ref(1);
 const itemsPerPage = ref(15);
 const totalItems = ref(0);
+const deleteConfirmDialog = ref(false);
+const internshipToDelete = ref<Internship | null>(null);
 
 const allHeaders = [
     { title: "Študent", key: "student.name", sortable: false },
@@ -34,7 +37,8 @@ const headers = props.mode === 'company'
     ? allHeaders.filter(header => header.key !== "company.name")
     : allHeaders;
 
-const { data, error, pending } = await useLazySanctumFetch<Paginated<Internship>>('/api/internships', () => ({
+const client = useSanctumClient();
+const { data, error, pending, refresh } = await useLazySanctumFetch<Paginated<Internship>>('/api/internships', () => ({
     params: {
         ...filters.value,
         page: page.value,
@@ -53,7 +57,33 @@ watch(filters, async () => {
 }, { deep: true });
 
 async function delteInternship(internship: Internship) {
-    // TODO: unimplemented
+    pending.value = true;
+
+    try {
+        await client(`/api/internships/${internship.id}`, {
+            method: 'DELETE',
+        });
+        await refresh();
+    } catch (e) {
+        if (e instanceof FetchError) {
+            alert(`Chyba pri mazaní stáže: ${e.statusMessage ?? e.message}`);
+        }
+    } finally {
+        pending.value = false;
+    }
+}
+
+function openDeleteDialog(internship: Internship) {
+    internshipToDelete.value = internship;
+    deleteConfirmDialog.value = true;
+}
+
+async function confirmDeletion(confirm: boolean) {
+    if (confirm && internshipToDelete.value) {
+        await delteInternship(internshipToDelete.value);
+    }
+    deleteConfirmDialog.value = false;
+    internshipToDelete.value = null;
 }
 </script>
 
@@ -94,14 +124,38 @@ async function delteInternship(internship: Internship) {
                             :to="`/dashboard/${mode}/internships/edit/${item.id}`" />
                     </template>
                 </v-tooltip>
-                <v-tooltip text="Vymazať">
+                <v-tooltip text="Vymazať" v-if="mode === 'admin'">
                     <template #activator="{ props }">
                         <v-btn icon="mdi-delete" size="small" variant="text" color="error"
-                            @click="async () => delteInternship(item)" />
+                            @click="() => openDeleteDialog(item)" />
                     </template>
                 </v-tooltip>
             </template>
         </v-data-table-server>
+
+        <!-- Delete confirm dialog -->
+        <v-dialog v-model="deleteConfirmDialog" max-width="500px">
+            <v-card>
+                <v-card-title class="text-h5">
+                    Nový API kľúč
+                </v-card-title>
+
+                <v-card-text>
+                    <p>Ste si istý, že chcete vymazať tento záznam?</p>
+                </v-card-text>
+
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="red" variant="text" @click="async () => await confirmDeletion(true)"
+                        :loading="pending">
+                        Áno
+                    </v-btn>
+                    <v-btn color="black" variant="text" @click="async () => await confirmDeletion(false)">
+                        Zrusiť
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
     </div>
 </template>
 
