@@ -121,7 +121,7 @@ async function deleteKey(key: ApiKey) {
             <!-- Chybová hláška -->
             <ErrorAlert v-else-if="error" :error="error?.message" />
 
-            <v-table>
+            <v-table v-else>
                 <thead>
                     <tr>
                         <th v-for="header in headers" :class="'text-' + header.align">
