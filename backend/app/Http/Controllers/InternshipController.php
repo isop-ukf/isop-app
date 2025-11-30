@@ -11,33 +11,55 @@ use Mpdf\Mpdf;
 
 class InternshipController extends Controller
 {
-    public function all()
+    public function all(Request $request)
     {
-        $user = auth()->user();
+        $user = $request->user();
 
-        if ($user->role !== 'ADMIN') {
-            abort(403, 'Unauthorized');
+        $request->validate([
+            'year' => 'nullable|integer',
+            'company' => 'nullable|string|min:3|max:32',
+            'study_programe' => 'nullable|string|min:3|max:32',
+            'student' => 'nullable|string|min:3|max:32',
+            'page' => 'nullable|integer|min:1',
+            'per_page' => 'nullable|integer|min:-1|max:100',
+        ]);
+
+        $perPage = $request->input('per_page', 15);
+
+        // Handle "All" items (-1)
+        if ($perPage == -1) {
+            $perPage = Internship::count();
         }
 
-        $internships = Internship::all();
-        return response()->json($internships);
-    }
-
-    public function all_my()
-    {
-        $user = auth()->user();
-
-        if ($user->role === 'STUDENT') {
-            $internships = Internship::whereUserId($user->id)->get();
-        } elseif ($user->role === 'EMPLOYER') {
-            $company = Company::whereContact($user->id)->first();
-            if (!$company) {
-                return response()->json(['message' => 'No company associated with this user.'], 404);
-            }
-            $internships = Internship::whereCompanyId($company->id)->get();
-        } else {
-            abort(403, 'Unauthorized');
-        }
+        $internships = Internship::query()
+            ->with(['student.studentData'])
+            ->when($request->year, function ($query, $year) {
+                $query->whereYear('start', $year);
+            })
+            ->when($request->company, function ($query, $company) {
+                $query->whereHas('company', function ($q) use ($company) {
+                    $q->where('name', 'like', "%$company%");
+                });
+            })
+            ->when($request->study_programe, function ($query, $studyPrograme) {
+                $query->whereHas('student.studentData', function ($q) use ($studyPrograme) {
+                    $q->where('study_field', 'like', "%$studyPrograme%");
+                });
+            })
+            ->when($request->student, function ($query, $student) {
+                $query->whereHas('student', function ($q) use ($student) {
+                    $q->where('name', 'like', "%$student%");
+                });
+            })
+            ->when($user->role === 'STUDENT', function ($query) use ($user) {
+                $query->where('user_id', '=', $user->id);
+            })
+            ->when($user->role === 'EMPLOYER', function ($query) use ($user) {
+                $query->whereHas('company', function ($q) use ($user) {
+                    $q->where('contact', 'like', $user->id);
+                });
+            })
+            ->paginate($perPage);
 
         return response()->json($internships);
     }

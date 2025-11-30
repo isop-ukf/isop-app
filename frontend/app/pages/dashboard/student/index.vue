@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { prettyInternshipStatus } from '~/types/internship_status';
-import type { Internship } from '~/types/internships';
 import type { User } from '~/types/user';
 
 definePageMeta({
@@ -14,18 +12,7 @@ useSeoMeta({
     ogDescription: "Portál študenta",
 });
 
-const headers = [
-    { title: 'Firma', key: 'company', align: 'left' },
-    { title: 'Od', key: 'start', align: 'left' },
-    { title: 'Do', key: 'end', align: 'left' },
-    { title: 'Ročník', key: 'year_of_study', align: 'middle' },
-    { title: 'Semester', key: 'semester', align: 'middle' },
-    { title: 'Stav', key: 'status', align: 'middle' },
-    { title: 'Operácie', key: 'ops', align: 'middle' },
-];
-
 const user = useSanctumUser<User>();
-const { data, error, pending } = await useLazySanctumFetch<Internship[]>('/api/internships/my');
 </script>
 
 <template>
@@ -38,7 +25,7 @@ const { data, error, pending } = await useLazySanctumFetch<Internship[]>('/api/i
             <!-- spacer -->
             <div style="height: 40px;"></div>
 
-            <v-btn prepend-icon="mdi-plus" color="blue" class="mr-2" to="/dashboard/student/internship/create">
+            <v-btn prepend-icon="mdi-plus" color="blue" class="mr-2" to="/dashboard/student/internships/create">
                 Pridať
             </v-btn>
             <v-btn prepend-icon="mdi-domain" color="blue" class="mr-2" to="/dashboard/student/companies">
@@ -53,41 +40,7 @@ const { data, error, pending } = await useLazySanctumFetch<Internship[]>('/api/i
 
             <h3>Moje praxe</h3>
 
-            <!-- Čakajúca hláška -->
-            <LoadingAlert v-if="pending" />
-
-            <!-- Chybová hláška -->
-            <ErrorAlert v-else-if="error" :error="error?.message" />
-
-            <v-table v-else>
-                <thead>
-                    <tr>
-                        <th v-for="header in headers" :class="'text-' + header.align">
-                            <strong>{{ header.title }}</strong>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="item in data">
-                        <td>{{ item.company.name }}</td>
-                        <td>{{ item.start }}</td>
-                        <td>{{ item.end }}</td>
-                        <td>{{ item.year_of_study }}</td>
-                        <td>{{ item.semester === "WINTER" ? "Zimný" : "Letný" }}</td>
-                        <td>
-                            <v-btn class="m-1" density="compact" base-color="grey">
-                                {{ prettyInternshipStatus(item.status.status) }}
-                            </v-btn>
-                        </td>
-                        <td class="text-left">
-                            <v-btn class="m-1 op-btn" density="compact" append-icon="mdi-pencil" base-color="orange"
-                                :to="'/dashboard/student/internship/edit/' + item.id">Editovať</v-btn>
-                            <v-btn class="m-1 op-btn" density="compact" append-icon="mdi-trash-can-outline"
-                                base-color="red" @click="async () => { }">Zmazať</v-btn>
-                        </td>
-                    </tr>
-                </tbody>
-            </v-table>
+            <InternshipListView mode="student" />
         </v-card>
     </v-container>
 </template>
@@ -96,9 +49,5 @@ const { data, error, pending } = await useLazySanctumFetch<Internship[]>('/api/i
 #page-container-card {
     padding-left: 10px;
     padding-right: 10px;
-}
-
-.op-btn {
-    margin: 10px;
 }
 </style>

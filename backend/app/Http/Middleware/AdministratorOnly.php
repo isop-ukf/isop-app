@@ -15,8 +15,14 @@ class AdministratorOnly
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->user()->role !== 'ADMIN') {
-            return response(status: 403);
+        $user = $request->user();
+
+        if ($user === null) {
+            abort(403, 'Unauthorized');
+        }
+
+        if ($user->role !== 'ADMIN') {
+            abort(403, 'Unauthorized');
         }
 
         return $next($request);
