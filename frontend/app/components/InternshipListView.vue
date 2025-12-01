@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Internship } from '~/types/internships';
+import type { Internship, InternshipFilter } from '~/types/internships';
 import type { Paginated } from '~/types/pagination';
 import { prettyInternshipStatus } from '~/types/internship_status';
 import { FetchError } from 'ofetch';
@@ -7,8 +7,12 @@ import { FetchError } from 'ofetch';
 const props = defineProps<{
     mode: 'admin' | 'company' | 'student';
 }>();
+const emit = defineEmits<{
+    filterApplied: [value: InternshipFilter],
+    itemsAvailable: [value: boolean]
+}>();
 
-const filters = ref({
+const filters = ref<InternshipFilter>({
     year: null,
     company: null,
     study_programe: null,
@@ -50,10 +54,12 @@ const { data, error, pending, refresh } = await useLazySanctumFetch<Paginated<In
 
 watch(data, (newData) => {
     totalItems.value = newData?.total ?? 0;
+    emit('itemsAvailable', totalItems.value > 0);
 });
 
 watch(filters, async () => {
     page.value = 1;
+    emit('filterApplied', filters.value);
 }, { deep: true });
 
 async function delteInternship(internship: Internship) {
