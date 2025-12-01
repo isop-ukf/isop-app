@@ -27,6 +27,13 @@ export interface NewInternship {
     position_description: string;
 };
 
+export interface InternshipFilter {
+    year: number | null;
+    company: string | null;
+    study_programe: string | null;
+    student: string | null;
+};
+
 export function convertDate(date: string): Date {
     const matcher = /^\d\d.\d\d.\d\d\d\d$/;
 
