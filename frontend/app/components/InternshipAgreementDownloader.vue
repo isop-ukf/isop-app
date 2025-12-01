@@ -15,7 +15,7 @@ async function requestDownload() {
 
     try {
         const proof = await client<Blob>(`/api/internships/${props.internship_id}/default-proof`);
-        triggerDownload(proof, `default-proof-${props.internship_id}`);
+        triggerDownload(proof, `default-proof-${props.internship_id}`, 'pdf');
     } catch (e) {
         if (e instanceof FetchError) {
             alert(`Nepodarilo sa vygenerovať zmluvu: ${e.statusMessage}`);

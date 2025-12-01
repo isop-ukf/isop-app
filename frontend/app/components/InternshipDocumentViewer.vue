@@ -9,12 +9,12 @@ const client = useSanctumClient();
 
 async function downloadAgreement() {
     const proof: Blob = await client(`/api/internships/${props.internship.id}/proof`);
-    triggerDownload(proof, `proof-${props.internship.id}`);
+    triggerDownload(proof, `proof-${props.internship.id}`, 'pdf');
 }
 
 async function downloadReport() {
     const report: Blob = await client(`/api/internships/${props.internship.id}/report`);
-    triggerDownload(report, `report-${props.internship.id}`);
+    triggerDownload(report, `report-${props.internship.id}`, 'pdf');
 }
 </script>
 
