@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Internship;
 use App\Models\InternshipStatusData;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Mpdf\Mpdf;
 
@@ -12,54 +13,7 @@ class InternshipController extends Controller
 {
     public function all(Request $request)
     {
-        $user = $request->user();
-
-        $request->validate([
-            'year' => 'nullable|integer',
-            'company' => 'nullable|string|min:3|max:32',
-            'study_programe' => 'nullable|string|min:3|max:32',
-            'student' => 'nullable|string|min:3|max:32',
-            'page' => 'nullable|integer|min:1',
-            'per_page' => 'nullable|integer|min:-1|max:100',
-        ]);
-
-        $perPage = $request->input('per_page', 15);
-
-        // Handle "All" items (-1)
-        if ($perPage == -1) {
-            $perPage = Internship::count();
-        }
-
-        $internships = Internship::query()
-            ->with(['student.studentData'])
-            ->when($request->year, function ($query, $year) {
-                $query->whereYear('start', $year);
-            })
-            ->when($request->company, function ($query, $company) {
-                $query->whereHas('company', function ($q) use ($company) {
-                    $q->where('name', 'like', "%$company%");
-                });
-            })
-            ->when($request->study_programe, function ($query, $studyPrograme) {
-                $query->whereHas('student.studentData', function ($q) use ($studyPrograme) {
-                    $q->where('study_field', 'like', "%$studyPrograme%");
-                });
-            })
-            ->when($request->student, function ($query, $student) {
-                $query->whereHas('student', function ($q) use ($student) {
-                    $q->where('name', 'like', "%$student%");
-                });
-            })
-            ->when($user->role === 'STUDENT', function ($query) use ($user) {
-                $query->where('user_id', '=', $user->id);
-            })
-            ->when($user->role === 'EMPLOYER', function ($query) use ($user) {
-                $query->whereHas('company', function ($q) use ($user) {
-                    $q->where('contact', 'like', $user->id);
-                });
-            })
-            ->paginate($perPage);
-
+        $internships = $this->filterSearch($request);
         return response()->json($internships);
     }
 
@@ -167,6 +121,43 @@ class InternshipController extends Controller
         return response($internship->report, 200)
             ->header('Content-Type', 'application/pdf')
             ->header('Content-Disposition', 'attachment; filename="report_' . $id . '.pdf"');
+    }
+
+    public function export(Request $request)
+    {
+        $internships = $this->filterSearch($request, true);
+
+        $csv_header = [
+            'ID',
+            'Student',
+            'Company',
+            'Start',
+            'End',
+            'YearOfStudy',
+            'Semester',
+            'StudyField',
+            'Status'
+        ];
+
+        $csv_content = implode(',', $csv_header) . "\n";
+        foreach ($internships as $internship) {
+            $data = [
+                $internship->id,
+                '"' . $internship->student->name . '"',
+                '"' . $internship->company->name . '"',
+                Carbon::parse($internship->start)->format('d.m.Y'),
+                Carbon::parse($internship->end)->format('d.m.Y'),
+                $internship->year_of_study,
+                $internship->semester,
+                $internship->student->studentData->study_field,
+                $internship->status->status->value
+            ];
+            $csv_content .= implode(',', $data) . "\n";
+        }
+
+        return response($csv_content, 200)
+            ->header('Content-Type', 'application/csv')
+            ->header('Content-Disposition', 'attachment; filename="internships.csv"');
     }
 
     /**
@@ -363,5 +354,62 @@ class InternshipController extends Controller
                 'message' => 'You already have an internship during this period.'
             ], 400));
         }
+    }
+
+    private function filterSearch(Request $request, bool $ignorePage = false)
+    {
+        $user = $request->user();
+
+        $request->validate([
+            'year' => 'nullable|integer',
+            'company' => 'nullable|string|min:3|max:32',
+            'study_programe' => 'nullable|string|min:3|max:32',
+            'student' => 'nullable|string|min:3|max:32',
+            'page' => 'nullable|integer|min:1',
+            'per_page' => 'nullable|integer|min:-1|max:100',
+        ]);
+
+        if ($ignorePage) {
+            $request->merge(['per_page' => -1]);
+        }
+
+        $perPage = $request->input('per_page', 15);
+
+        // Handle "All" items (-1)
+        if ($perPage == -1) {
+            $perPage = Internship::count();
+        }
+
+        $internships = Internship::query()
+            ->with(['student.studentData'])
+            ->when($request->year, function ($query, $year) {
+                $query->whereYear('start', $year);
+            })
+            ->when($request->company, function ($query, $company) {
+                $query->whereHas('company', function ($q) use ($company) {
+                    $q->where('name', 'like', "%$company%");
+                });
+            })
+            ->when($request->study_programe, function ($query, $studyPrograme) {
+                $query->whereHas('student.studentData', function ($q) use ($studyPrograme) {
+                    $q->where('study_field', 'like', "%$studyPrograme%");
+                });
+            })
+            ->when($request->student, function ($query, $student) {
+                $query->whereHas('student', function ($q) use ($student) {
+                    $q->where('name', 'like', "%$student%");
+                });
+            })
+            ->when($user->role === 'STUDENT', function ($query) use ($user) {
+                $query->where('user_id', '=', $user->id);
+            })
+            ->when($user->role === 'EMPLOYER', function ($query) use ($user) {
+                $query->whereHas('company', function ($q) use ($user) {
+                    $q->where('contact', 'like', $user->id);
+                });
+            })
+            ->paginate($perPage);
+
+        return $internships;
     }
 }
