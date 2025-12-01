@@ -36,6 +36,7 @@ async function requestExport() {
     try {
         const file = await client<Blob>(`/api/internships/export`, {
             method: 'GET',
+            query: internshipFilters.value ?? {},
         });
         triggerDownload(file, 'internships_export', 'csv');
     } catch (e) {
