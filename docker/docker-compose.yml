@@ -23,7 +23,9 @@ services:
 
   isop-backend:
     container_name: isop-backend
-    image: dunglas/frankenphp
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
     restart: unless-stopped
     env_file:
       - ../backend/.env
@@ -37,8 +39,6 @@ services:
     ports:
       - 443:443
       - 443:443/udp
-    volumes:
-      - ../backend:/app
     depends_on:
       isop-database:
         condition: service_healthy
