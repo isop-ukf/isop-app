@@ -123,16 +123,29 @@ class InternshipStatusDataController extends Controller
             'modified_by' => $user->id
         ]);
 
+        // mail študentovi
         Mail::to($internship->student)
             ->sendNow(new InternshipStatusUpdated(
                 $internship,
-                $user->name,
-                $internship->student->name,
-                $internship->company->name,
                 $internshipStatus->status,
-                $request->enum('status', InternshipStatus::class),
-                $request->note
+                $newStatus->status,
+                $request->note,
+                $user,
+                recipiantIsStudent: true,
             ));
+
+        // ak zmenu nevykonala firma, posleme mail aj firme
+        if ($user->id !== $internship->company->contactPerson->id) {
+            Mail::to($internship->company->contactPerson->email)
+                ->sendNow(new InternshipStatusUpdated(
+                    $internship,
+                    $internshipStatus->status,
+                    $newStatus->status,
+                    $request->note,
+                    $user,
+                    recipiantIsStudent: false,
+                ));
+        }
 
         $newStatus->save();
         return response()->noContent();
