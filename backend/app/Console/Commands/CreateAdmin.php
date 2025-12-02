@@ -4,23 +4,26 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
+use Hash;
 
-class CreateGarant extends Command
+class CreateAdmin extends Command
 {
     /**
-     * Názov CLI príkazu.
+     * The name and signature of the console command.
+     *
+     * @var string
      */
     protected $signature = 'user:create-garant';
 
     /**
-     * Popis príkazu.
+     * The console command description.
+     *
+     * @var string
      */
     protected $description = 'Interaktívne vytvorí nového používateľa s rolou admin (garant)';
 
     /**
-     * Spustenie príkazu.
-     * php artisan user:create-garant
+     * Execute the console command.
      */
     public function handle()
     {
