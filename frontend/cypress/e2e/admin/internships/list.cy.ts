@@ -12,6 +12,8 @@ describe('Admin Internship CRUD', () => {
 
         cy.contains("Praxe").click()
         cy.url().should('include', '/dashboard/admin/internships')
+
+        cy.wait(2000)
     })
 
     it('should load the list of internships in a proper format', () => {
