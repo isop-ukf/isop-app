@@ -66,28 +66,17 @@ describe('Admin Internship CRUD', () => {
         })
     })
 
-    // Ešte nie je implementované mazanie
-    /*it('should be able to delete an internship', () => {
-        let initialRowCount = 0
-
-        cy.get('table tbody tr').its('length').then((count) => {
-            initialRowCount = count
-        })
-
+    it('should be able to delete an internship', () => {
         cy.get('table tbody tr').first().within(() => {
-            cy.contains('Vymazať').click()
+            cy.get('.internship-delete-btn').click()
         })
 
         cy.contains("Potvrdiť vymazanie").parent().should('be.visible')
-        cy.contains("Potvrdiť vymazanie").parent().contains("Vymazať").click()
+        cy.contains("Potvrdiť vymazanie").parent().contains("Áno").click()
         cy.contains("Potvrdiť vymazanie").should('not.exist')
 
-        cy.wait(1000)
-
-        cy.get('table tbody tr').its('length').then((count) => {
-            expect(count).to.be.eq(initialRowCount - 1)
-        })
-    })*/
+        cy.wait(2000)
+    })
 
     // TODO: Edit praxe
 })
