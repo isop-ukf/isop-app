@@ -1,0 +1,63 @@
+services:
+  isop-frontend:
+    container_name: isop-frontend
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      NUXT_HOST: 0.0.0.0
+      NUXT_PORT: 80
+      NUXT_PUBLIC_SANCTUM_BASE_URL: https://localhost
+      NUXT_PUBLIC_SANCTUM_ORIGINAL: http://localhost
+    ports:
+      - 80:80
+    depends_on:
+      - isop-backend
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost"]
+      start_period: 10s
+      interval: 1m
+      timeout: 5s
+      retries: 5
+
+  isop-backend:
+    container_name: isop-backend
+    image: dunglas/frankenphp
+    restart: unless-stopped
+    env_file:
+      - ../backend/.env
+    environment:
+      DB_CONNECTION: mariadb
+      DB_HOST: isop-database
+      DB_PORT: 3306
+      DB_DATABASE: isop
+      DB_USERNAME: root
+      DB_PASSWORD: admin
+    ports:
+      - 443:443
+      - 443:443/udp
+    volumes:
+      - ../backend:/app
+    depends_on:
+      isop-database:
+        condition: service_healthy
+  
+  isop-database:
+    container_name: isop-database
+    image: mariadb:11.8.2-noble
+    restart: unless-stopped
+    cap_add:
+      # Allow memory binding
+      - SYS_NICE
+    environment:
+      MARIADB_DATABASE: "isop"
+      MARIADB_ROOT_PASSWORD: "admin"
+    volumes:
+      - ./mariadb_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "healthcheck.sh", "--su-mysql", "--connect", "--innodb_initialized" ]
+      start_period: 10s
+      interval: 1m
+      timeout: 5s
+      retries: 3
