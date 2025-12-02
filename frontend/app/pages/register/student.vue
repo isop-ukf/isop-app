@@ -23,11 +23,14 @@ const rules = {
     personal_email: (v: string) =>
         /.+@.+\..+/.test(v) || 'Zadajte platný osobný email',
     phone: (v: string) =>
-        (!v || /^[0-9 +()-]{6,}$/.test(v)) || 'Zadajte platné telefónne číslo',
+        (!v || /^\+[0-9]{6,13}$/.test(v)) || 'Zadajte platné telefónne číslo. Príklad: +421908123456',
     mustAgree: (v: boolean) => v === true || 'Je potrebné súhlasiť',
 };
 const programs = [
-    'Aplikovaná informatika',
+    { title: 'Aplikovaná informatika, Bc. (AI22b)', value: 'AI22b' },
+    { title: 'Aplikovaná informatika, Bc. (AI15b)', value: 'AI15b' },
+    { title: 'Aplikovaná informatika, Mgr. (AI22m)', value: 'AI22m' },
+    { title: 'Aplikovaná informatika, Mgr. (AI15m)', value: 'AI15m' },
 ];
 
 const isValid = ref(false);
@@ -38,7 +41,7 @@ const form = ref({
     studentEmail: '',
     personalEmail: '',
     phone: '',
-    studyProgram: programs[0] as string,
+    studyProgram: programs[0]!.value,
     year_of_study: 1,
     consent: false,
 });
@@ -109,8 +112,8 @@ async function handleRegistration() {
                 <v-text-field v-model="form.personalEmail" :rules="[rules.required, rules.personal_email]"
                     label="Alternatívny email:" variant="outlined" density="comfortable" />
 
-                <v-text-field v-model="form.phone" :rules="[rules.required, rules.phone]" label="Telefón:"
-                    variant="outlined" density="comfortable" />
+                <v-text-field v-model="form.phone" :rules="[rules.required, rules.phone]"
+                    label="Telefón (s predvoľbou):" variant="outlined" density="comfortable" />
 
                 <v-select v-model="form.studyProgram" :items="programs" :rules="[rules.required]"
                     label="Študijný odbor:" variant="outlined" density="comfortable" />
