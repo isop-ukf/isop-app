@@ -25,6 +25,11 @@ const totalItems = ref(0);
 const deleteConfirmDialog = ref(false);
 const internshipToDelete = ref<Internship | null>(null);
 
+const rules = {
+    minFilterLen: (v: string) => (v.length >= 3) || 'Min. 3 znaky',
+    minYear: (v: number | null) => (v === null ? true : v >= 1000) || 'Min. 4-ciferné číslo'
+};
+
 const allHeaders = [
     { title: "Študent", key: "student.name", sortable: false },
     { title: "Firma", key: "company.name", sortable: false },
@@ -99,16 +104,20 @@ async function confirmDeletion(confirm: boolean) {
 
         <v-row>
             <v-col cols="12" md="3">
-                <v-text-field v-model="filters.year" label="Rok" type="number" clearable density="compact" />
+                <v-text-field v-model="filters.year" label="Rok" type="number" clearable density="compact"
+                    :rules="[rules.minYear]" />
             </v-col>
             <v-col cols="12" md="3" v-if="mode !== 'company'">
-                <v-text-field v-model="filters.company" label="Názov firmy" clearable density="compact" />
+                <v-text-field v-model="filters.company" label="Názov firmy" clearable density="compact"
+                    :rules="[rules.minFilterLen]" />
             </v-col>
             <v-col cols="12" md="3" v-if="mode !== 'student'">
-                <v-text-field v-model="filters.study_programe" label="Študijný program" clearable density="compact" />
+                <v-text-field v-model="filters.study_programe" label="Študijný program" clearable density="compact"
+                    :rules="[rules.minFilterLen]" />
             </v-col>
             <v-col cols="12" md="3" v-if="mode !== 'student'">
-                <v-text-field v-model="filters.student" label="Študent" clearable density="compact" />
+                <v-text-field v-model="filters.student" label="Študent" clearable density="compact"
+                    :rules="[rules.minFilterLen]" />
             </v-col>
         </v-row>
 
