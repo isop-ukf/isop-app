@@ -45,6 +45,7 @@ const form = ref({
     year_of_study: 1,
     consent: false,
 });
+const maxYearOfStudy = ref(0);
 
 const loading = ref(false);
 const error = ref(null as null | string);
@@ -83,6 +84,10 @@ async function handleRegistration() {
         loading.value = false;
     }
 }
+
+watch(form, (newForm) => {
+    maxYearOfStudy.value = newForm.studyProgram.slice(-1) === 'b' ? 3 : 2;
+}, { deep: true, immediate: true });
 </script>
 
 <template>
@@ -119,7 +124,7 @@ async function handleRegistration() {
                     label="Študijný odbor:" variant="outlined" density="comfortable" />
 
                 <v-number-input control-variant="split" v-model="form.year_of_study" :rules="[rules.required]"
-                    label="Ročník:" :min="1" :max="5"></v-number-input>
+                    label="Ročník:" :min="1" :max="maxYearOfStudy"></v-number-input>
 
                 <v-checkbox v-model="form.consent" :rules="[rules.mustAgree]"
                     label="Súhlasím s podmienkami spracúvania osobných údajov" density="comfortable" />
