@@ -19,7 +19,8 @@ useSeoMeta({
 const rules = {
     required: (v: any) => (!!v && String(v).trim().length > 0) || 'Povinné pole',
     email: (v: string) => /.+@.+\..+/.test(v) || 'Zadajte platný email',
-    phone: (v: string) => (!v || /^[0-9 +()-]{6,}$/.test(v)) || 'Zadajte platné telefónne číslo',
+    phone: (v: string) =>
+        (!v || /^\+[0-9]{6,13}$/.test(v)) || 'Zadajte platné telefónne číslo. Príklad: +421908123456',
     mustAgree: (v: boolean) => v === true || 'Je potrebné súhlasiť',
 };
 
@@ -101,8 +102,8 @@ async function handleRegistration() {
                     density="comfortable" />
                 <v-text-field v-model="form.email" :rules="[rules.required, rules.email]" label="Email:"
                     variant="outlined" density="comfortable" />
-                <v-text-field v-model="form.phone" :rules="[rules.phone]" label="Telefón:" variant="outlined"
-                    density="comfortable" />
+                <v-text-field v-model="form.phone" :rules="[rules.phone]" label="Telefón (s predvoľbou):"
+                    variant="outlined" density="comfortable" />
 
                 <v-checkbox v-model="form.consent" :rules="[rules.mustAgree]"
                     label="Súhlasím s podmienkami spracúvania osobných údajov" density="comfortable" />
