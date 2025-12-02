@@ -4,6 +4,7 @@ namespace App\Mail;
 
 use App\Enums\InternshipStatus;
 use App\Models\Internship;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
@@ -15,25 +16,23 @@ class InternshipStatusUpdated extends Mailable
     use Queueable, SerializesModels;
 
     private Internship $internship;
-    private string $changedByName;
-    private string $studentName;
-    private string $companyName;
     private InternshipStatus $oldStatus;
     private InternshipStatus $newStatus;
     private string $note;
+    private User $changedBy;
+    private bool $recipiantIsStudent;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(Internship $internship, string $changedByName, string $studentName, string $companyName, InternshipStatus $oldStatus, InternshipStatus $newStatus, string $note)
+    public function __construct(Internship $internship, InternshipStatus $oldStatus, InternshipStatus $newStatus, string $note, User $changedBy, bool $recipiantIsStudent)
     {
         $this->internship = $internship;
-        $this->changedByName = $changedByName;
-        $this->studentName = $studentName;
-        $this->companyName = $companyName;
         $this->oldStatus = $oldStatus;
         $this->newStatus = $newStatus;
         $this->note = $note;
+        $this->changedBy = $changedBy;
+        $this->recipiantIsStudent = $recipiantIsStudent;
     }
 
     /**
@@ -55,12 +54,11 @@ class InternshipStatusUpdated extends Mailable
             view: 'mail.internship.status_updated',
             with: [
                 "internship" => $this->internship,
-                "changedByName" => $this->changedByName,
-                "studentName" => $this->studentName,
-                "companyName" => $this->companyName,
                 "oldStatus" => $this->prettyStatus($this->oldStatus->value),
                 "newStatus" => $this->prettyStatus($this->newStatus->value),
                 "note" => $this->note,
+                "recipiantIsStudent" => $this->recipiantIsStudent,
+                "changedBy" => $this->changedBy,
             ]
         );
     }
