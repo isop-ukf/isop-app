@@ -13,50 +13,49 @@ class CreateAdmin extends Command
      *
      * @var string
      */
-    protected $signature = 'user:create-garant';
+    protected $signature = 'app:create-admin';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Interaktívne vytvorí nového používateľa s rolou admin (garant)';
+    protected $description = 'Create a new admin user';
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        $this->info('=== Vytvorenie garanta (admin) ===');
+        $this->info('=== Create Admin ===');
 
         // Načítanie údajov interaktívne
-        $firstName = $this->ask('Zadaj krstné meno');
-        $lastName = $this->ask('Zadaj priezvisko');
-        $email = $this->ask('Zadaj email');
+        $firstName = $this->ask('First name');
+        $lastName = $this->ask('Last name');
+        $email = $this->ask('E-mail');
 
         // Kontrola duplicity emailu
         if (User::where('email', $email)->exists()) {
-            $this->error('Používateľ s týmto emailom už existuje.');
+            $this->error('A user with the same email already exists.');
             return 1;
         }
 
-        $password = $this->secret('Zadaj heslo (nebude sa zobrazovať)');
-        $phone = $this->ask('Zadaj telefón ');
+        $password = $this->secret('Enter password');
+        $phone = $this->ask('Enter phone number');
 
         // Vytvorenie používateľa
         $user = User::create([
-            'name'       => $firstName . ' ' . $lastName,
+            'name' => $firstName . ' ' . $lastName,
             'first_name' => $firstName,
-            'last_name'  => $lastName,
-            'email'      => $email,
-            'phone'      => $phone,
-            'role'       => 'ADMIN',
-            'password'   => Hash::make($password),
+            'last_name' => $lastName,
+            'email' => $email,
+            'password' => Hash::make($password),
+            'active' => true,
+            'role' => 'ADMIN',
+            'phone' => $phone,
         ]);
 
-        $this->info("\n Garant {$user->first_name} {$user->last_name} bol úspešne vytvorený s rolou ADMIN.");
-        $this->info("Email: {$user->email}");
-
+        $this->info("\n Admin {$user->first_name} {$user->last_name} created.");
         return 0;
     }
 }
