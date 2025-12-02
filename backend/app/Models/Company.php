@@ -44,7 +44,7 @@ class Company extends Model
     /**
      * Get the contact person (user) for the company.
      */
-    public function contact()
+    public function contactPerson()
     {
         return $this->belongsTo(User::class, 'contact');
     }
