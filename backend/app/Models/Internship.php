@@ -107,6 +107,10 @@ class Internship extends Model
             $current_status === InternshipStatus::CONFIRMED_BY_ADMIN && $userRole === "ADMIN" && !$report_confirmed
             => ['DENIED_BY_ADMIN', 'CONFIRMED_BY_COMPANY', 'DENIED_BY_COMPANY'],
 
+            // prax bola zamietnutá garantom a ide ju meniť garant
+            $current_status === InternshipStatus::DENIED_BY_ADMIN && $userRole === "ADMIN"
+            => ['CONFIRMED_BY_COMPANY', 'CONFIRMED_BY_ADMIN', 'DENIED_BY_COMPANY'],
+
             // prax bola obhájená a ide ju meniť admin
             $current_status === InternshipStatus::DEFENDED && $userRole === "ADMIN"
             => ['NOT_DEFENDED'],
