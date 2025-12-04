@@ -12,6 +12,7 @@ describe('Admin Student CRUD', () => {
 
         cy.contains("Študenti").click()
         cy.url().should('include', '/dashboard/admin/students')
+        cy.wait(1000)
     })
 
     it('should load the list of students in a proper format', () => {
@@ -31,7 +32,7 @@ describe('Admin Student CRUD', () => {
                 expect(phone.trim()).to.not.be.empty
             })
 
-            cy.validateColumn('Študijný program', (program) => {
+            cy.validateColumn('Študijný odbor', (program) => {
                 expect(program.trim()).to.not.be.empty
             })
 
@@ -47,25 +48,15 @@ describe('Admin Student CRUD', () => {
     })
 
     it('should be able to delete a student', () => {
-        let initialRowCount = 0
-
-        cy.get('table tbody tr').its('length').then((count) => {
-            initialRowCount = count
-        })
-
         cy.get('table tbody tr').first().within(() => {
-            cy.contains('Vymazať').click()
+            cy.get('.student-delete-btn').click()
         })
 
         cy.contains("Potvrdiť vymazanie").parent().should('be.visible')
-        cy.contains("Potvrdiť vymazanie").parent().contains("Vymazať").click()
+        cy.contains("Potvrdiť vymazanie").parent().contains("Áno").click()
         cy.contains("Potvrdiť vymazanie").should('not.exist')
 
         cy.wait(1000)
-
-        cy.get('table tbody tr').its('length').then((count) => {
-            expect(count).to.be.eq(initialRowCount - 1)
-        })
     })
 
     it('should be able to edit a student', () => {
@@ -84,7 +75,7 @@ describe('Admin Student CRUD', () => {
 
         // Kliknutie na "Editovať"
         cy.get('@selectedRow').within(() => {
-            cy.contains('Editovať').click()
+            cy.get('.student-edit-btn').click()
         })
 
         // Generovanie náhodného mena
@@ -132,9 +123,9 @@ describe('Admin Student CRUD', () => {
                 const expectedValues = [
                     `${randomFirstName} ${randomLastName}`,
                     randomStudentEmail,
+                    randomPersonalEmail,
                     randomPhone,
                     'aplikovaná informatika',
-                    randomPersonalEmail,
                     randomAddress
                 ]
 

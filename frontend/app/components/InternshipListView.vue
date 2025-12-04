@@ -48,7 +48,7 @@ const headers = props.mode === 'company'
 
 const client = useSanctumClient();
 const { data, error, pending, refresh } = await useLazySanctumFetch<Paginated<Internship>>('/api/internships', () => ({
-    params: {
+    query: {
         ...filters.value,
         page: page.value,
         per_page: itemsPerPage.value,

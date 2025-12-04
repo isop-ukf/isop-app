@@ -14,18 +14,24 @@ class StudentDataController extends Controller
     /**
      * Display a listing of all students with their data.
      */
-    public function all()
+    public function all(Request $request)
     {
-        // Iba admin môže vidieť zoznam študentov
-        $user = auth()->user();
+        $request->validate([
+            'page' => 'nullable|integer|min:1',
+            'per_page' => 'nullable|integer|min:-1|max:100',
+        ]);
 
-        if ($user->role !== 'ADMIN') {
-            abort(403, 'Unauthorized');
+        $perPage = $request->input('per_page', 15);
+
+        // Handle "All" items (-1)
+        if ($perPage == -1) {
+            $perPage = User::whereRole('STUDENT')->count();
         }
 
-        $students = User::where('role', 'STUDENT')
-            ->with('studentData')
-            ->get();
+        $students = User::query()
+            ->whereRole('STUDENT')
+            ->with(['studentData'])
+            ->paginate($perPage);
 
         return response()->json($students);
     }
