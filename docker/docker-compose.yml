@@ -7,7 +7,7 @@ services:
     restart: unless-stopped
     environment:
       NUXT_PUBLIC_SANCTUM_BASE_URL: ${BACKEND_URL:-https://backend.example.com}
-      NUXT_PUBLIC_SANCTUM_ORIGINAL: ${FRONTEND_URL:-https://example.com}
+      NUXT_PUBLIC_SANCTUM_ORIGIN: ${FRONTEND_URL:-https://example.com}
     ports:
       - 80:80
     depends_on:
