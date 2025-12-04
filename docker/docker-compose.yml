@@ -6,8 +6,8 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     environment:
-      NUXT_PUBLIC_SANCTUM_BASE_URL: https://backend.example.com
-      NUXT_PUBLIC_SANCTUM_ORIGINAL: https://example.com
+      NUXT_PUBLIC_SANCTUM_BASE_URL: ${BACKEND_URL:-https://backend.example.com}
+      NUXT_PUBLIC_SANCTUM_ORIGINAL: ${FRONTEND_URL:-https://example.com}
     ports:
       - 80:80
     depends_on:
@@ -30,10 +30,10 @@ services:
       APP_ENV: production
       APP_KEY: SOME-KEY
       APP_DEBUG: false
-      APP_URL: https://example.com
-      FRONTEND_URL: https://example.com
-      SANCTUM_STATEFUL_DOMAINS: backend.example.com,example.com
-      SESSION_DOMAIN: .example.com # Note the first dot
+      APP_URL: ${FRONTEND_URL:-https://example.com}
+      FRONTEND_URL: ${FRONTEND_URL:-https://example.com}
+      SANCTUM_STATEFUL_DOMAINS: ${BACKEND_URL:-https://backend.example.com},${FRONTEND_URL:-https://example.com}
+      SESSION_DOMAIN: ${SESSION_DOMAIN:-.example.com} # Note the first dot
 
       APP_LOCALE: sk
       APP_FALLBACK_LOCALE: en_US
