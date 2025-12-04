@@ -12,6 +12,7 @@ describe('Admin Student Document Downloads', () => {
 
         cy.contains("Praxe").click()
         cy.url().should('include', '/dashboard/admin/internships')
+        cy.wait(2000)
     })
 
     it('should be able to generate and download the default proof', () => {
@@ -24,13 +25,12 @@ describe('Admin Student Document Downloads', () => {
                 })
 
             cy.get('@randomRow').within(() => {
-                cy.get('td').contains('Editovať').click()
+                cy.get('td').get('.internship-edit-btn').click()
             })
         })
 
         cy.url().should('include', '/dashboard/admin/internships/edit/')
 
-        const downloadsFolder = Cypress.config("downloadsFolder");
         cy.contains('Stiahnuť originálnu zmluvu').click()
         cy.wait(2000)
     })

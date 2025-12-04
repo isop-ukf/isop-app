@@ -136,13 +136,13 @@ async function confirmDeletion(confirm: boolean) {
                 <v-tooltip text="Editovať">
                     <template #activator="{ props }">
                         <v-btn icon="mdi-pencil" size="small" variant="text"
-                            :to="`/dashboard/${mode}/internships/edit/${item.id}`" />
+                            :to="`/dashboard/${mode}/internships/edit/${item.id}`" class="internship-edit-btn" />
                     </template>
                 </v-tooltip>
                 <v-tooltip text="Vymazať" v-if="mode === 'admin'">
                     <template #activator="{ props }">
                         <v-btn icon="mdi-delete" size="small" variant="text" color="error"
-                            @click="() => openDeleteDialog(item)" />
+                            @click="() => openDeleteDialog(item)" class="internship-delete-btn" />
                     </template>
                 </v-tooltip>
             </template>
