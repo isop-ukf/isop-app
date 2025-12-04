@@ -6,8 +6,6 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     environment:
-      NUXT_HOST: 0.0.0.0
-      NUXT_PORT: 80
       NUXT_PUBLIC_SANCTUM_BASE_URL: https://backend.example.com
       NUXT_PUBLIC_SANCTUM_ORIGINAL: https://example.com
     ports:
