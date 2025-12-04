@@ -1,7 +1,1 @@
-.Caddyfile
-
-caddy-data/
-
-caddy-config/
-
 mariadb_data/

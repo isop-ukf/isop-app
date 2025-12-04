@@ -5,15 +5,13 @@ services:
       context: ../frontend
       dockerfile: Dockerfile
     restart: unless-stopped
+    environment:
+      NUXT_PUBLIC_SANCTUM_BASE_URL: https://backend.example.com
+      NUXT_PUBLIC_SANCTUM_ORIGINAL: https://example.com
     ports:
       - 80:80
-    environment:
-      NUXT_PUBLIC_SANCTUM_BASE_URL: http://localhost:8080
-      NUXT_PUBLIC_SANCTUM_ORIGIN: http://localhost
-      PORT: 80
     depends_on:
-      isop-backend:
-        condition: service_healthy
+      - isop-backend
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost"]
       start_period: 10s
@@ -21,68 +19,51 @@ services:
       timeout: 5s
       retries: 5
 
-  # Caddy webserver
   isop-backend:
     container_name: isop-backend
-    image: caddy:2.10.0-alpine
-    restart: unless-stopped
-    ports:
-      - 8080:80 # Needed for HTTP->HTTPS redirection
-      - 443:443
-      - 443:443/udp
-    volumes:
-      # Caddy routes files (read-only)
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-
-      # Caddy certificates and other temporary data
-      - ./caddy-data:/data
-
-      # Caddy configuration
-      - ./caddy-config:/config
-    depends_on:
-      isop-php-fpm:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:2019/metrics"]
-      start_period: 10s
-      interval: 1m
-      timeout: 5s
-      retries: 5
-
-  # Custom PHP container
-  isop-php-fpm:
-    container_name: isop-php-fpm
-    user: 'www-data:www-data'
     build:
       context: ../backend
       dockerfile: Dockerfile
     restart: unless-stopped
-    env_file:
-      - ../backend/.env
     environment:
-      APP_URL: http://localhost:8080
-      FRONTEND_URL: http://localhost
-      SESSION_DOMAIN: localhost
-      SESSION_SECURE_COOKIE: false
-      SANCTUM_STATEFUL_DOMAINS: localhost,localhost:80,localhost:8080
+      APP_NAME: ISOP
+      APP_ENV: production
+      APP_KEY: SOME-KEY
+      APP_DEBUG: false
+      APP_URL: https://example.com
+      FRONTEND_URL: https://example.com
+      SANCTUM_STATEFUL_DOMAINS: backend.example.com,example.com
+      SESSION_DOMAIN: .example.com # Note the first dot
+
+      APP_LOCALE: sk
+      APP_FALLBACK_LOCALE: en_US
+
+      MAIL_MAILER: smtp
+      MAIL_HOST: smtp.example.com
+      MAIL_PORT: 2525
+      MAIL_USERNAME: username
+      MAIL_PASSWORD: password
+      MAIL_FROM_ADDRESS: "noreply@example.com"
+      MAIL_FROM_NAME: "ISOP"
+
       DB_CONNECTION: mariadb
       DB_HOST: isop-database
       DB_PORT: 3306
       DB_DATABASE: isop
       DB_USERNAME: root
       DB_PASSWORD: admin
+    ports:
+      - 8111:80
     depends_on:
       isop-database:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "pgrep", "-x", "php-fpm"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/api"]
       start_period: 10s
       interval: 1m
       timeout: 5s
       retries: 5
-
-  # MariaDB database
-  # No ports are open, only Shopware itself has access
+  
   isop-database:
     container_name: isop-database
     image: mariadb:11.8.2-noble
@@ -91,11 +72,9 @@ services:
       # Allow memory binding
       - SYS_NICE
     environment:
-      # Change these if needed
       MARIADB_DATABASE: "isop"
       MARIADB_ROOT_PASSWORD: "admin"
     volumes:
-      # Database data
       - ./mariadb_data:/var/lib/mysql
     healthcheck:
       test: [ "CMD", "healthcheck.sh", "--su-mysql", "--connect", "--innodb_initialized" ]

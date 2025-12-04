@@ -1,0 +1,8 @@
+.nuxt/
+.output/
+.env*
+node_modules/
+cypress/
+cypress.config.ts
+package-lock.json
+*.md

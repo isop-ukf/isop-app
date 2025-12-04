@@ -1,20 +1,37 @@
-FROM node:lts
+# Build Stage 1
 
-# Update the system
-RUN apt update -y
-RUN apt upgrade -y
-
-# Copy the frontend project
-COPY . /app
-
-# Run NPM
+FROM node:22-alpine AS build
 WORKDIR /app
-RUN npm install
 
-# Build
-RUN npm run build
+RUN corepack enable
 
-STOPSIGNAL SIGTERM
+# Copy package.json and your lockfile
+COPY package.json ./
 
-# Run frontend web server
-CMD ["node", ".output/server/index.mjs"]
+# Install dependencies
+RUN pnpm i
+
+# Copy the entire project
+COPY . ./
+
+# Prepare Nuxt (generates .nuxt with type definitions and auto-imports)
+RUN pnpm run postinstall
+
+# Build the project
+RUN pnpm run build
+
+# Build Stage 2
+
+FROM node:22-alpine
+WORKDIR /app
+
+# Only `.output` folder is needed from the build stage
+COPY --from=build /app/.output/ ./
+
+# Change the port and host
+ENV PORT=80
+ENV HOST=0.0.0.0
+
+EXPOSE 80
+
+CMD ["node", "/app/server/index.mjs"]
