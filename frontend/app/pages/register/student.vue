@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { NewRole } from '~/types/role';
 import type { NewUser } from '~/types/user';
+import { FetchError } from 'ofetch';
 
 definePageMeta({
     middleware: ['sanctum:guest'],
@@ -22,11 +23,14 @@ const rules = {
     personal_email: (v: string) =>
         /.+@.+\..+/.test(v) || 'Zadajte platný osobný email',
     phone: (v: string) =>
-        (!v || /^[0-9 +()-]{6,}$/.test(v)) || 'Zadajte platné telefónne číslo',
+        (!v || /^\+[0-9]{6,13}$/.test(v)) || 'Zadajte platné telefónne číslo. Príklad: +421908123456',
     mustAgree: (v: boolean) => v === true || 'Je potrebné súhlasiť',
 };
 const programs = [
-    'Aplikovaná informatika',
+    { title: 'Aplikovaná informatika, Bc. (AI22b)', value: 'AI22b' },
+    { title: 'Aplikovaná informatika, Bc. (AI15b)', value: 'AI15b' },
+    { title: 'Aplikovaná informatika, Mgr. (AI22m)', value: 'AI22m' },
+    { title: 'Aplikovaná informatika, Mgr. (AI15m)', value: 'AI15m' },
 ];
 
 const isValid = ref(false);
@@ -37,10 +41,11 @@ const form = ref({
     studentEmail: '',
     personalEmail: '',
     phone: '',
-    studyProgram: programs[0] as string,
+    studyProgram: programs[0]!.value,
     year_of_study: 1,
     consent: false,
 });
+const maxYearOfStudy = ref(0);
 
 const loading = ref(false);
 const error = ref(null as null | string);
@@ -71,12 +76,18 @@ async function handleRegistration() {
         });
 
         navigateTo("/");
-    } catch (e: any) {
-        error.value = e.data?.message as string;
+    } catch (e) {
+        if (e instanceof FetchError) {
+            error.value = e.response?._data.message;
+        }
     } finally {
         loading.value = false;
     }
 }
+
+watch(form, (newForm) => {
+    maxYearOfStudy.value = newForm.studyProgram.slice(-1) === 'b' ? 3 : 2;
+}, { deep: true, immediate: true });
 </script>
 
 <template>
@@ -85,12 +96,10 @@ async function handleRegistration() {
             <h4 class="page-title">Registrácia študenta</h4>
 
             <!-- Chybová hláška -->
-            <v-alert v-if="error !== null" density="compact" :text="error" title="Chyba" type="error"
-                id="login-error-alert" class="mx-auto alert"></v-alert>
+            <ErrorAlert v-if="error" :error="error" />
 
             <!-- Čakajúca hláška -->
-            <v-alert v-if="loading" density="compact" text="Prosím čakajte..." title="Spracovávam" type="info"
-                id="login-error-alert" class="mx-auto alert"></v-alert>
+            <LoadingAlert v-if="loading" />
 
             <v-form v-else v-model="isValid" @submit.prevent="handleRegistration">
                 <v-text-field v-model="form.firstName" :rules="[rules.required]" label="Meno:" variant="outlined"
@@ -108,14 +117,14 @@ async function handleRegistration() {
                 <v-text-field v-model="form.personalEmail" :rules="[rules.required, rules.personal_email]"
                     label="Alternatívny email:" variant="outlined" density="comfortable" />
 
-                <v-text-field v-model="form.phone" :rules="[rules.required, rules.phone]" label="Telefón:"
-                    variant="outlined" density="comfortable" />
+                <v-text-field v-model="form.phone" :rules="[rules.required, rules.phone]"
+                    label="Telefón (s predvoľbou):" variant="outlined" density="comfortable" />
 
                 <v-select v-model="form.studyProgram" :items="programs" :rules="[rules.required]"
                     label="Študijný odbor:" variant="outlined" density="comfortable" />
 
                 <v-number-input control-variant="split" v-model="form.year_of_study" :rules="[rules.required]"
-                    label="Ročník:" :min="1" :max="5"></v-number-input>
+                    label="Ročník:" :min="1" :max="maxYearOfStudy"></v-number-input>
 
                 <v-checkbox v-model="form.consent" :rules="[rules.mustAgree]"
                     label="Súhlasím s podmienkami spracúvania osobných údajov" density="comfortable" />

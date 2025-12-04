@@ -16,15 +16,20 @@ class InternshipFactory extends Factory
      */
     public function definition(): array
     {
+        $start = fake()->dateTime()->setTime(0, 0, 0, 0);
+        $end = (clone $start)->modify('+' . fake()->numberBetween(150, 160) . ' hours')->setTime(0, 0, 0, 0);
+
         return [
             'user_id' => 0,
             'company_id' => 0,
-            'start' => fake()->dateTime(),
-            'end' => fake()->dateTime("+30 days"),
+            'start' => $start,
+            'end' => $end,
             'year_of_study' => fake()->randomElement([1, 2, 3, 4, 5]),
             'semester' => fake()->randomElement(["WINTER", "SUMMER"]),
             'position_description' => fake()->jobTitle(),
-            'agreement' => null,
+            'proof' => null,
+            'report' => null,
+            'report_confirmed' => false,
         ];
     }
 }

@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Company;
 use App\Models\Internship;
-use App\Models\InternshipStatus;
+use App\Models\InternshipStatusData;
 use App\Models\StudentData;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -28,7 +28,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // create employers and companies
-        User::factory(10)
+        User::factory(20)
             ->create([
                 'role' => 'EMPLOYER'
             ])
@@ -39,26 +39,35 @@ class DatabaseSeeder extends Seeder
             });
 
         // create students
-        User::factory(10)
+        User::factory(20)
             ->create([
                 'role' => 'STUDENT'
             ])
             ->each(function ($user) use ($admin) {
+                $user->update([
+                    'email' => fake()->unique()->userName() . '@student.ukf.sk',
+                ]);
+
                 StudentData::factory()->create([
                     'user_id' => $user->id
                 ]);
-                
+
                 $internship = Internship::factory()->create([
                     'user_id' => $user->id,
                     'company_id' => Company::inRandomOrder()->value('id'),
                 ]);
 
-                InternshipStatus::factory()->create([
+                InternshipStatusData::factory()->create([
                     'internship_id' => $internship->id,
                     'status' => "SUBMITTED",
                     'note' => 'made by seeder',
                     'modified_by' => $admin->id,
                 ]);
             });
+
+        // create some random external API keys
+        for ($i = 0; $i < 4; $i++) {
+            $admin->createToken(fake()->userName());
+        }
     }
 }

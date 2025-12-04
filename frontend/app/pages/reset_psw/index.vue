@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { FetchError } from 'ofetch';
+
 const client = useSanctumClient();
 
 definePageMeta({
@@ -36,8 +38,10 @@ async function handleReset() {
         });
 
         navigateTo("/reset_psw/request_sent");
-    } catch (e: any) {
-        error.value = e.data?.message as string;
+    } catch (e) {
+        if (e instanceof FetchError) {
+            error.value = e.response?._data.message;
+        }
     } finally {
         loading.value = false;
     }
@@ -50,12 +54,10 @@ async function handleReset() {
             <h2 class="page-title">Reset hesla</h2>
 
             <!-- Chybová hláška -->
-            <v-alert v-if="error !== null" density="compact" :text="error" title="Chyba" type="error"
-                id="login-error-alert" class="alert mx-auto"></v-alert>
+            <ErrorAlert v-if="error" :error="error" />
 
             <!-- Čakajúca hláška -->
-            <v-alert v-if="loading" density="compact" text="Prosím čakajte..." title="Spracovávam" type="info"
-                id="login-error-alert" class="alert mx-auto"></v-alert>
+            <LoadingAlert v-if="loading" />
 
             <v-form v-else v-model="isValid" @submit.prevent="handleReset">
                 <v-text-field v-model="email" :rules="[rules.required, rules.email]" label="Email:" variant="outlined"

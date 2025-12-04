@@ -14,15 +14,15 @@ class UserRegistrationCompleted extends Mailable
     use Queueable, SerializesModels;
 
     private string $name;
-    private string $password;
+    private string $activation_token;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(string $name, string $password)
+    public function __construct(string $name, string $activation_token)
     {
         $this->name = $name;
-        $this->password = $password;
+        $this->activation_token = $activation_token;
     }
 
     /**
@@ -44,7 +44,7 @@ class UserRegistrationCompleted extends Mailable
             view: 'mail.registration.completed',
             with: [
                 "name" => $this->name,
-                "password" => $this->password
+                "activation_token" => $this->activation_token
             ]
         );
     }

@@ -18,7 +18,7 @@ class CompanyFactory extends Factory
     {
         return [
             'name' => fake()->company(),
-            'address' => fake()->address(),
+            'address' => fake()->streetAddress() . ", " . fake()->city() . ", " . fake()->postcode(),
             'ico' => fake()->numberBetween(111111, 999999),
             'contact' => 0,
             'hiring' => fake()->boolean(),

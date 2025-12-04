@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { NewRole } from '~/types/role';
 import type { NewUser } from '~/types/user';
+import { FetchError } from 'ofetch';
 
 definePageMeta({
     middleware: ['sanctum:guest'],
@@ -18,7 +19,8 @@ useSeoMeta({
 const rules = {
     required: (v: any) => (!!v && String(v).trim().length > 0) || 'Povinné pole',
     email: (v: string) => /.+@.+\..+/.test(v) || 'Zadajte platný email',
-    phone: (v: string) => (!v || /^[0-9 +()-]{6,}$/.test(v)) || 'Zadajte platné telefónne číslo',
+    phone: (v: string) =>
+        (!v || /^\+[0-9]{6,13}$/.test(v)) || 'Zadajte platné telefónne číslo. Príklad: +421908123456',
     mustAgree: (v: boolean) => v === true || 'Je potrebné súhlasiť',
 };
 
@@ -63,8 +65,10 @@ async function handleRegistration() {
         });
 
         navigateTo("/");
-    } catch (e: any) {
-        error.value = e.data?.message as string;
+    } catch (e) {
+        if (e instanceof FetchError) {
+            error.value = e.response?._data.message;
+        }
     } finally {
         loading.value = false;
     }
@@ -77,12 +81,10 @@ async function handleRegistration() {
             <h4 class="page-title">Registrácia firmy</h4>
 
             <!-- Chybová hláška -->
-            <v-alert v-if="error !== null" density="compact" :text="error" title="Chyba" type="error"
-                id="login-error-alert" class="mx-auto"></v-alert>
+            <ErrorAlert v-if=error :error="error" />
 
             <!-- Čakajúca hláška -->
-            <v-alert v-if="loading" density="compact" text="Prosím čakajte..." title="Spracovávam" type="info"
-                id="login-error-alert" class="mx-auto"></v-alert>
+            <LoadingAlert v-if="loading" />
 
             <v-form v-else v-model="isValid" @submit.prevent="handleRegistration">
                 <v-text-field v-model="form.name" :rules="[rules.required]" label="Názov firmy:" variant="outlined"
@@ -100,8 +102,8 @@ async function handleRegistration() {
                     density="comfortable" />
                 <v-text-field v-model="form.email" :rules="[rules.required, rules.email]" label="Email:"
                     variant="outlined" density="comfortable" />
-                <v-text-field v-model="form.phone" :rules="[rules.phone]" label="Telefón:" variant="outlined"
-                    density="comfortable" />
+                <v-text-field v-model="form.phone" :rules="[rules.phone]" label="Telefón (s predvoľbou):"
+                    variant="outlined" density="comfortable" />
 
                 <v-checkbox v-model="form.consent" :rules="[rules.mustAgree]"
                     label="Súhlasím s podmienkami spracúvania osobných údajov" density="comfortable" />

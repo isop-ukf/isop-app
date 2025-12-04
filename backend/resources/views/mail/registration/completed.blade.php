@@ -3,7 +3,12 @@
 <p>vaša registrácia do systému ISOP UKF prebehla úspešne!</p>
 <br />
 
-<p>Vaše heslo je: <em>{{ $password }}</em></p>
+<p>Aktivujte účet pomocou nasledujúceho linku:</p>
+<br />
+<p>
+    <a
+        href="{{ config('app.frontend_url') }}/account/activation/{{ $activation_token }}">{{ config('app.frontend_url') }}/account/activation/{{ $activation_token }}</a>
+</p>
 
 <br />
 

@@ -1,9 +1,11 @@
+import type { User } from "./user";
+
 export interface CompanyData {
     id: number;
     name: string;
     address: string;
     ico: number;
-    contact: number;
+    contact: User;
     hiring: boolean;
 };
 

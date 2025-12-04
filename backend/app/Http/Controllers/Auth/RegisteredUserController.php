@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Mail\UserAccountActivated;
 use App\Mail\UserPasswordReset;
 use App\Mail\UserRegistrationCompleted;
 use App\Models\Company;
 use App\Models\StudentData;
 use App\Models\User;
+use DB;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -24,9 +26,10 @@ class RegisteredUserController extends Controller
     public function store(Request $request): Response
     {
         $password = bin2hex(random_bytes(16));
+        $activation_token = bin2hex(random_bytes(16));
 
         $request->validate([
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'first_name' => ['required', 'string', 'max:64'],
             'last_name' => ['required', 'string', 'max:64'],
             'phone' => ['required', 'string', 'max:13'],
@@ -46,47 +49,82 @@ class RegisteredUserController extends Controller
             'company_data.hiring' => ['required_if:role,EMPLOYER', 'boolean'],
         ]);
 
-        $user = User::create([
-            'email' => $request->email,
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'name' => "{$request->first_name} {$request->last_name}",
-            'phone' => $request->phone,
-            'role' => $request->role,
-            'password' => Hash::make($password),
-        ]);
+        DB::beginTransaction();
 
-        if($user->role === "STUDENT") {
-            StudentData::create([
-                'user_id' => $user->id,
-                'address' => $request->student_data['address'],
-                'personal_email' => $request->student_data['personal_email'],
-                'study_field' => $request->student_data['study_field'],
+        try {
+            $user = User::create([
+                'email' => $request->email,
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'name' => "{$request->first_name} {$request->last_name}",
+                'phone' => $request->phone,
+                'role' => $request->role,
+                'password' => Hash::make($password),
+                'activation_token' => $activation_token
             ]);
-        } else if($user->role === "EMPLOYER") {
-            Company::create([
-                'name' => $request->company_data['name'],
-                'address' => $request->company_data['address'],
-                'ico' => $request->company_data['ico'],
-                'contact' => $user->id,
-                'hiring' => $request->company_data['hiring'],
-            ]);
+
+            if ($user->role === "STUDENT") {
+                StudentData::create([
+                    'user_id' => $user->id,
+                    'address' => $request->student_data['address'],
+                    'personal_email' => $request->student_data['personal_email'],
+                    'study_field' => $request->student_data['study_field'],
+                ]);
+            } else if ($user->role === "EMPLOYER") {
+                Company::create([
+                    'name' => $request->company_data['name'],
+                    'address' => $request->company_data['address'],
+                    'ico' => $request->company_data['ico'],
+                    'contact' => $user->id,
+                    'hiring' => $request->company_data['hiring'],
+                ]);
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
         }
 
-        Mail::to($user)->sendNow(new UserRegistrationCompleted($user->name, $password));
+        Mail::to($user)->sendNow(new UserRegistrationCompleted($user->name, $activation_token));
         event(new Registered($user));
 
         return response()->noContent();
     }
 
-    public function reset_password(Request $request): Response {
+    public function activate(Request $request)
+    {
+        $request->validate([
+            'token' => ['required', 'string', 'exists:users,activation_token'],
+            'password' => ['required', 'string', 'min:8'],
+        ]);
+
+        $user = User::where('activation_token', '=', $request->token)->first();
+
+        if (!$user) {
+            return response()->json(['message' => 'Invalid activation token'], 400);
+        }
+
+        $user->active = true;
+        $user->activation_token = null;
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        Mail::to($user)->sendNow(new UserAccountActivated($user->name));
+        return response()->noContent();
+    }
+
+    public function reset_password(Request $request)
+    {
         $request->validate([
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255'],
         ]);
 
         $user = User::whereEmail($request->email)->first();
         if (!$user) {
-            return response(status: 400);
+            return response()->json([
+                'message' => 'No such user exists.'
+            ], 400);
         }
 
         $newPassword = bin2hex(random_bytes(16));
@@ -94,6 +132,40 @@ class RegisteredUserController extends Controller
         $user->save();
 
         Mail::to($user)->sendNow(new UserPasswordReset($user->name, $newPassword));
+
+        return response()->noContent();
+    }
+
+    public function reset_password_2(Request $request)
+    {
+        $request->validate([
+            'id' => ['required', 'string', 'lowercase', 'email', 'max:255'],
+            'password' => ['required', 'string', 'lowercase', 'email', 'max:255'],
+        ]);
+
+        $user = User::whereEmail($request->email)->first();
+        if (!$user) {
+            return response()->json([
+                'message' => 'No such user exists.'
+            ], 400);
+        }
+
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return response()->noContent();
+    }
+
+    public function change_password(Request $request)
+    {
+        $user = auth()->user();
+
+        $request->validate([
+            'password' => ['required', 'string', 'min:8'],
+        ]);
+
+        $user->password = Hash::make($request->password);
+        $user->save();
 
         return response()->noContent();
     }

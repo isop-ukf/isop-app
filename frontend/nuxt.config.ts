@@ -39,5 +39,10 @@ export default defineNuxtConfig({
                 origin: 'http://localhost:8080', // NUXT_PUBLIC_SANCTUM_ORIGIN
             },
         },
+    },
+
+    typescript: {
+        strict: true,
+        typeCheck: true,
     }
 });

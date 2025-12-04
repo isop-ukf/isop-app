@@ -35,7 +35,7 @@ async function handleLogin() {
     try {
         await login(form.value);
     } catch (e) {
-        if (e instanceof FetchError && e.response?.status === 422) {
+        if (e instanceof FetchError) {
             error.value = e.response?._data.message;
         }
     } finally {
@@ -50,16 +50,14 @@ async function handleLogin() {
             <h2 class="page-title">Prihlásenie</h2>
 
             <!-- Chybová hláška -->
-            <v-alert v-if="error !== null" density="compact" :text="error" title="Chyba" type="error"
-                id="login-error-alert" class="mx-auto alert"></v-alert>
+            <ErrorAlert v-if="error" :error="error" />
 
             <!-- Čakajúca hláška -->
-            <v-alert v-if="loading" density="compact" text="Prosím čakajte..." title="Spracovávam" type="info"
-                id="login-error-alert" class="mx-auto alert"></v-alert>
+            <LoadingAlert v-if="loading" />
 
             <v-form v-else v-model="isValid" @submit.prevent="handleLogin">
                 <v-text-field v-model="form.email" :rules="[rules.required, rules.email]" label="Email:"
-                    variant="outlined" density="comfortable" />
+                    variant="outlined" density="comfortable" type="email" />
 
                 <v-text-field v-model="form.password" :rules="[rules.required]"
                     :type="showPassword ? 'text' : 'password'" label="Heslo:" variant="outlined" density="comfortable"
