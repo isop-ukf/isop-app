@@ -7,7 +7,6 @@ services:
     restart: unless-stopped
     environment:
       NUXT_PUBLIC_SANCTUM_BASE_URL: ${BACKEND_URL:-https://backend.example.com}
-      NUXT_PUBLIC_SANCTUM_ORIGIN: ${FRONTEND_URL:-https://example.com}
     ports:
       - 80:80
     depends_on:
@@ -30,9 +29,9 @@ services:
       APP_ENV: production
       APP_KEY: ${APP_KEY:-SOME-KEY}
       APP_DEBUG: false
-      APP_URL: ${FRONTEND_URL:-https://example.com}
+      APP_URL: ${BACKEND_URL:-https://example.com}
       FRONTEND_URL: ${FRONTEND_URL:-https://example.com}
-      SANCTUM_STATEFUL_DOMAINS: ${BACKEND_URL:-https://backend.example.com},${FRONTEND_URL:-https://example.com}
+      SANCTUM_STATEFUL_DOMAINS: ${BACKEND_DOMAIN:-https://backend.example.com},${FRONTEND_DOMAIN:-https://example.com}
       SESSION_DOMAIN: ${SESSION_DOMAIN:-.example.com} # Note the first dot
 
       APP_LOCALE: sk
