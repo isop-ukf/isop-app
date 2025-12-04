@@ -28,7 +28,7 @@ services:
     environment:
       APP_NAME: ISOP
       APP_ENV: production
-      APP_KEY: SOME-KEY
+      APP_KEY: ${APP_KEY:-SOME-KEY}
       APP_DEBUG: false
       APP_URL: ${FRONTEND_URL:-https://example.com}
       FRONTEND_URL: ${FRONTEND_URL:-https://example.com}
