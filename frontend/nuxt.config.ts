@@ -32,15 +32,6 @@ export default defineNuxtConfig({
         redirectIfAuthenticated: true
     },
 
-    runtimeConfig: {
-        public: {
-            sanctum: {
-                baseUrl: 'http://localhost:8080', // NUXT_PUBLIC_SANCTUM_BASE_URL
-                origin: 'http://localhost:8080', // NUXT_PUBLIC_SANCTUM_ORIGIN
-            },
-        },
-    },
-
     typescript: {
         strict: true,
         typeCheck: true,
