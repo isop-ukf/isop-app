@@ -22,7 +22,7 @@ export default defineNuxtConfig({
     },
 
     sanctum: {
-        baseUrl: process.env.NODE_ENV === 'production' ? undefined : 'http://localhost:8000',
+        baseUrl: process.env.NO_DEFAULT_SANCTUM_URL === 'true' ? undefined : 'http://localhost:8000',
         redirect: {
             onLogin: '/dashboard',
             onLogout: "/",

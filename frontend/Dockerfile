@@ -4,6 +4,7 @@ FROM node:22-alpine AS build
 WORKDIR /app
 
 ENV NODE_ENV=production
+ENV NO_DEFAULT_SANCTUM_URL=true
 
 RUN corepack enable
 
