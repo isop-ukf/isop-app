@@ -15,14 +15,11 @@ export default defineNuxtConfig({
     ],
 
     nitro: {
-        // statický obsah vyrenderujeme vopred
-        prerender: {
-            routes: ["/", "/info/student", "/info/company", "/register", "/about"],
-        },
+        compressPublicAssets: true,
     },
 
     sanctum: {
-        baseUrl: process.env.NO_DEFAULT_SANCTUM_URL === 'true' ? undefined : 'http://localhost:8000',
+        baseUrl: 'http://localhost:8000',
         redirect: {
             onLogin: '/dashboard',
             onLogout: "/",
