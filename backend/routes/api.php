@@ -29,7 +29,7 @@ Route::prefix('/account')->group(function () {
     Route::post('/change-password', [RegisteredUserController::class, 'change_password']);
 });
 
-Route::middleware(['auth:sanctum'])->prefix('/students')->group(function () {
+Route::prefix('/students')->middleware(['auth:sanctum', AdministratorOnly::class])->group(function () {
     Route::get('/', [StudentDataController::class, 'all']);
     Route::get('/{id}', [StudentDataController::class, 'get']);
     Route::post('/{id}', [StudentDataController::class, 'update_all']);
@@ -61,11 +61,11 @@ Route::prefix('/internships')->group(function () {
     Route::put("/new", [InternshipController::class, 'store'])->name("api.internships.create");
 });
 
-Route::prefix('/companies')->middleware("auth:sanctum")->group(function () {
-    Route::get("/simple", [CompanyController::class, 'all_simple']);
-    Route::get("/{id}", [CompanyController::class, 'get']);
-    Route::post("/{id}", [CompanyController::class, 'update_all']);
-    Route::delete("/{id}", [CompanyController::class, 'delete']);
+Route::prefix('/companies')->middleware(['auth:sanctum'])->group(function () {
+    Route::get("/", [CompanyController::class, 'all']);
+    Route::get("/{id}", [CompanyController::class, 'get', AdministratorOnly::class]);
+    Route::post("/{id}", [CompanyController::class, 'update_all', AdministratorOnly::class]);
+    Route::delete("/{id}", [CompanyController::class, 'delete', AdministratorOnly::class]);
 });
 
 Route::prefix('/external')->group(function () {
