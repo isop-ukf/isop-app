@@ -11,6 +11,29 @@ use Illuminate\Support\Facades\DB;
 
 class CompanyController extends Controller
 {
+    public function all(Request $request)
+    {
+        $request->validate([
+            'page' => 'nullable|integer|min:1',
+            'per_page' => 'nullable|integer|min:-1|max:100',
+        ]);
+
+        $perPage = $request->input('per_page', 15);
+
+        // Handle "All" items (-1)
+        if ($perPage == -1) {
+            $perPage = Company::count();
+        }
+
+        $companies = Company::query()->paginate($perPage);
+
+        $companies->getCollection()->transform(function ($company) {
+            $company->contact = User::find($company->contact);
+            return $company;
+        });
+
+        return response()->json($companies);
+    }
     public function all_simple()
     {
         $companies = Company::all();
