@@ -84,6 +84,10 @@ watch(data, (newData) => {
         <v-data-table-server v-model:items-per-page="itemsPerPage" v-model:page="page" :headers="headers"
             :items="data?.data" :items-length="totalItems" :loading="pending">
 
+            <template #item.hiring="{ item }">
+                {{ item.hiring ? 'Áno' : 'Nie' }}
+            </template>
+
             <template #item.operations="{ item }" v-if="adminOps === true">
                 <v-tooltip text="Editovať">
                     <template #activator="{ props }">
