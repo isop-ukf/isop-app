@@ -61,11 +61,11 @@ Route::prefix('/internships')->group(function () {
     Route::put("/new", [InternshipController::class, 'store'])->name("api.internships.create");
 });
 
-Route::prefix('/companies')->middleware(['auth:sanctum', AdministratorOnly::class])->group(function () {
+Route::prefix('/companies')->middleware(['auth:sanctum'])->group(function () {
     Route::get("/", [CompanyController::class, 'all']);
-    Route::get("/{id}", [CompanyController::class, 'get']);
-    Route::post("/{id}", [CompanyController::class, 'update_all']);
-    Route::delete("/{id}", [CompanyController::class, 'delete']);
+    Route::get("/{id}", [CompanyController::class, 'get', AdministratorOnly::class]);
+    Route::post("/{id}", [CompanyController::class, 'update_all', AdministratorOnly::class]);
+    Route::delete("/{id}", [CompanyController::class, 'delete', AdministratorOnly::class]);
 });
 
 Route::prefix('/external')->group(function () {
