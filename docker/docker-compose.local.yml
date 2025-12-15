@@ -1,0 +1,81 @@
+services:
+  isop-frontend:
+    container_name: isop-frontend
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - 80:80
+    depends_on:
+      - isop-backend
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost"]
+      start_period: 10s
+      interval: 1m
+      timeout: 5s
+      retries: 5
+
+  isop-backend:
+    container_name: isop-backend
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      APP_NAME: ISOP
+      APP_ENV: production
+      APP_KEY: ${APP_KEY:-SOME-KEY}
+      APP_DEBUG: false
+      APP_URL: http://localhost:8000
+      FRONTEND_URL: http://localhost
+      SANCTUM_STATEFUL_DOMAINS: localhost
+      SESSION_DOMAIN: localhost # Note the first dot
+
+      APP_LOCALE: sk
+      APP_FALLBACK_LOCALE: en_US
+
+      MAIL_MAILER: smtp
+      MAIL_HOST: smtp.example.com
+      MAIL_PORT: 2525
+      MAIL_USERNAME: username
+      MAIL_PASSWORD: password
+      MAIL_FROM_ADDRESS: "noreply@example.com"
+      MAIL_FROM_NAME: "ISOP"
+
+      DB_CONNECTION: mariadb
+      DB_HOST: isop-database
+      DB_PORT: 3306
+      DB_DATABASE: isop
+      DB_USERNAME: root
+      DB_PASSWORD: admin
+    ports:
+      - 8000:80
+    depends_on:
+      isop-database:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/api"]
+      start_period: 10s
+      interval: 1m
+      timeout: 5s
+      retries: 5
+  
+  isop-database:
+    container_name: isop-database
+    image: mariadb:11.8.2-noble
+    restart: unless-stopped
+    cap_add:
+      # Allow memory binding
+      - SYS_NICE
+    environment:
+      MARIADB_DATABASE: "isop"
+      MARIADB_ROOT_PASSWORD: "admin"
+    volumes:
+      - ./mariadb_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "healthcheck.sh", "--su-mysql", "--connect", "--innodb_initialized" ]
+      start_period: 10s
+      interval: 1m
+      timeout: 5s
+      retries: 3
