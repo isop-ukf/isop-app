@@ -77,6 +77,8 @@ Route::prefix('/external')->middleware(['auth:sanctum'])->group(function () {
     });
 
     Route::prefix('/internships')->middleware([ApiKeyAccessOnly::class])->group(function () {
+        Route::get('/', [ExternalApiController::class, 'index'])->name('api.external.internships.list');
+
         Route::prefix('/{id}')->group(function () {
             Route::put("/status", [ExternalApiController::class, 'update_internship_status'])->name("api.external.internships.status.update");
         });

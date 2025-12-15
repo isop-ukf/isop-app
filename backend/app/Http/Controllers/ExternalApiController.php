@@ -99,4 +99,10 @@ class ExternalApiController extends Controller
         $newStatus->save();
         return response()->noContent();
     }
+
+    public function index(Request $request)
+    {
+        $results = InternshipController::filterSearch($request);
+        return response()->json($results);
+    }
 }

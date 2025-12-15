@@ -356,7 +356,7 @@ class InternshipController extends Controller
         }
     }
 
-    private function filterSearch(Request $request, bool $ignorePage = false)
+    public static function filterSearch(Request $request, bool $ignorePage = false)
     {
         $user = $request->user();
 
