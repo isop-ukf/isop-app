@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { CompanyData } from '~/types/company_data';
 import { convertDate, type Internship, type NewInternship } from '~/types/internships';
+import type { Paginated } from '~/types/pagination';
 import type { User } from '~/types/user';
 
 const rules = {
@@ -91,7 +92,16 @@ function yearOfStudyValueHandler(item: { title: string, subtitle: string }) {
     return parseInt(item.title) || 0;
 }
 
-const { data, pending, error } = await useLazySanctumFetch<CompanyData[]>('/api/companies/simple');
+const { data, pending, error } = await useLazySanctumFetch('/api/companies', {
+    query: {
+        page: 1,
+        per_page: -1
+    },
+}, {
+    transform: (original: Paginated<CompanyData>) => {
+        return original.data;
+    }
+});
 </script>
 
 <template>
