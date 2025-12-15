@@ -26,20 +26,9 @@ class CompanyController extends Controller
         }
 
         $companies = Company::query()->paginate($perPage);
-
         $companies->getCollection()->transform(function ($company) {
-            $company->contact = User::find($company->contact);
+            $company->contact = $company->contactPerson;
             return $company;
-        });
-
-        return response()->json($companies);
-    }
-    public function all_simple()
-    {
-        $companies = Company::all();
-
-        $companies->each(function ($company) {
-            $company->contact = User::find($company->contact);
         });
 
         return response()->json($companies);
