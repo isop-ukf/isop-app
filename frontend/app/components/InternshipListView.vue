@@ -26,7 +26,7 @@ const deleteConfirmDialog = ref(false);
 const internshipToDelete = ref<Internship | null>(null);
 
 const rules = {
-    minFilterLen: (v: string) => (v.length >= 3) || 'Min. 3 znaky',
+    minFilterLen: (v: string | null) => (v === null ? true : v.length >= 3) || 'Min. 3 znaky',
     minYear: (v: number | null) => (v === null ? true : v >= 1000) || 'Min. 4-ciferné číslo'
 };
 
