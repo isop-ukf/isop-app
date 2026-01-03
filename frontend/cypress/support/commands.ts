@@ -27,13 +27,24 @@
 
 // Custom command to validate table columns
 Cypress.Commands.add('validateColumn', (columnName: string, validator: (value: string) => void) => {
-    cy.contains('th', columnName).parent('tr').then(($headerRow) => {
-        const colIndex = $headerRow.find('th').index(cy.$$(`th:contains("${columnName}")`)[0])
+    // Find the column index by matching the header text
+    cy.get('thead th').then(($headers) => {
+        const headers = $headers.toArray().map((header) => header.innerText.trim());
+        const columnIndex = headers.indexOf(columnName);
 
+        if (columnIndex === -1) {
+            throw new Error(`Column "${columnName}" not found.  Available columns: ${headers.join(', ')}`);
+        }
+
+        // Get all rows in the table body and validate each cell in the target column
         cy.get('tbody tr').each(($row) => {
-            cy.wrap($row).find('td').eq(colIndex).invoke('text').then((cellText) => {
-                validator(cellText as string)
-            })
-        })
-    })
-})
+            cy.wrap($row)
+                .find('td')
+                .eq(columnIndex)
+                .invoke('text')
+                .then((cellValue) => {
+                    validator(cellValue.trim());
+                });
+        });
+    });
+});
