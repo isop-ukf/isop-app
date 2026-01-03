@@ -19,6 +19,7 @@ const allHeaders = [
     { title: "IČO", key: "ico", sortable: false },
     { title: "Adresa", key: "address", sortable: false },
     { title: "Kontaktná osoba", key: "contact.name", sortable: false },
+    { title: "E-mail", key: "contact.email", sortable: false },
     { title: "Telefón", key: "contact.phone", sortable: false },
     { title: "Prijímajú študentov", key: "hiring", sortable: false },
     { title: "Operácie", key: "operations", sortable: false }
