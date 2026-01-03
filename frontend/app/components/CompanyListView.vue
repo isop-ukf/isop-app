@@ -92,14 +92,14 @@ watch(data, (newData) => {
             <template #item.operations="{ item }" v-if="adminOps === true">
                 <v-tooltip text="Editovať">
                     <template #activator="{ props }">
-                        <v-btn icon="mdi-pencil" size="small" variant="text"
+                        <v-btn icon="mdi-pencil" size="small" variant="text" class="company-edit-btn"
                             :to="`/dashboard/admin/companies/edit/${item.id}`" />
                     </template>
                 </v-tooltip>
 
                 <v-tooltip text="Vymazať">
                     <template #activator="{ props }">
-                        <v-btn icon="mdi-delete" size="small" color="error" variant="text"
+                        <v-btn icon="mdi-delete" size="small" color="error" variant="text" class="company-delete-btn"
                             @click="() => openDeleteDialog(item)" />
                     </template>
                 </v-tooltip>
