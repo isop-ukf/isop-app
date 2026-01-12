@@ -23,14 +23,14 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
-        $first_name = fake()->firstName();
-        $last_name = fake()->lastName();
+        $first_name = fake()->unique()->firstName();
+        $last_name = fake()->unique()->lastName();
 
         return [
             'name' => "$first_name $last_name",
             'first_name' => $first_name,
             'last_name' => $last_name,
-            'phone' => fake()->phoneNumber(),
+            'phone' => fake()->unique()->phoneNumber(),
             'role' => fake()->randomElement(['STUDENT', 'EMPLOYER', 'ADMIN']),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
@@ -46,7 +46,7 @@ class UserFactory extends Factory
      */
     public function unverified(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'email_verified_at' => null,
         ]);
     }

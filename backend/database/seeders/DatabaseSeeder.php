@@ -28,7 +28,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // create employers and companies
-        User::factory(20)
+        User::factory(10)
             ->create([
                 'role' => 'EMPLOYER'
             ])
@@ -39,7 +39,7 @@ class DatabaseSeeder extends Seeder
             });
 
         // create students
-        User::factory(20)
+        User::factory(10)
             ->create([
                 'role' => 'STUDENT'
             ])

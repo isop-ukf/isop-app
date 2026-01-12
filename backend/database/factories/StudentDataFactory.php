@@ -19,7 +19,7 @@ class StudentDataFactory extends Factory
         return [
             'user_id' => 0,
             'address' => fake()->streetAddress() . ", " . fake()->city() . ", " . fake()->postcode(),
-            'personal_email' => fake()->safeEmail(),
+            'personal_email' => fake()->unique()->safeEmail(),
             'study_field' => fake()->randomElement(["AI22m", "AI22b"]),
         ];
     }
