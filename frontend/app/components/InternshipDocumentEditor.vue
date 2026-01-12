@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { Internship } from '~/types/internships';
-import { FetchError } from 'ofetch';
 import type { User } from '~/types/user';
 import { Role } from '~/types/role';
 
@@ -68,9 +67,7 @@ async function onSubmit() {
         report.value = null;
         emit('successfulSubmit');
     } catch (e) {
-        if (e instanceof FetchError) {
-            error.value = e.response?._data.message;
-        }
+        error.value = simplifyApiError(e);
     } finally {
         loading.value = false;
     }

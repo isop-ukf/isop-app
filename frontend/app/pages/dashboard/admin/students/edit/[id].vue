@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { User } from '~/types/user';
-import { FetchError } from 'ofetch';
 
 definePageMeta({
     middleware: ['sanctum:auth', 'admin-only']
@@ -63,9 +62,7 @@ async function saveChanges() {
         alert('Údaje študenta boli úspešne aktualizované');
         navigateTo("/dashboard/admin/students");
     } catch (e) {
-        if (e instanceof FetchError) {
-            alert('Chyba:\n' + e.response?._data.message);
-        }
+        alert(`Chyba pri uložení študenta: ${simplifyApiError(e)}`);
     } finally {
         saving.value = false;
     }
@@ -108,9 +105,7 @@ const deleteStudent = async () => {
         }, 1500);
 
     } catch (e) {
-        if (e instanceof FetchError) {
-            deleteError.value = e.response?._data?.message || 'Chyba pri mazaní študenta.';
-        }
+        deleteError.value = simplifyApiError(e);
     } finally {
         deleteLoading.value = false;
     }

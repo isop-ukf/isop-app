@@ -2,7 +2,6 @@
 import type { Internship, InternshipFilter } from '~/types/internships';
 import type { Paginated } from '~/types/pagination';
 import { prettyInternshipStatus } from '~/types/internship_status';
-import { FetchError } from 'ofetch';
 
 const props = defineProps<{
     mode: 'admin' | 'company' | 'student';
@@ -76,9 +75,7 @@ async function delteInternship(internship: Internship) {
         });
         await refresh();
     } catch (e) {
-        if (e instanceof FetchError) {
-            alert(`Chyba pri mazaní stáže: ${e.statusMessage ?? e.message}`);
-        }
+        alert(`Chyba pri mazaní stáže: ${simplifyApiError(e)}`);
     } finally {
         pending.value = false;
     }

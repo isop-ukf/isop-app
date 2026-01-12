@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { FetchError } from 'ofetch';
-
 const props = defineProps<{
     internship_id: number,
     block?: boolean,
@@ -17,9 +15,7 @@ async function requestDownload() {
         const proof = await client<Blob>(`/api/internships/${props.internship_id}/default-proof`);
         triggerDownload(proof, `default-proof-${props.internship_id}`, 'pdf');
     } catch (e) {
-        if (e instanceof FetchError) {
-            alert(`Nepodarilo sa vygenerovať zmluvu: ${e.statusMessage}`);
-        }
+        alert(`Nepodarilo sa vygenerovať zmluvu: ${simplifyApiError(e)}`);
     } finally {
         loading.value = false;
     }

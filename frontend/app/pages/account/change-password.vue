@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { FetchError } from 'ofetch';
-
 definePageMeta({
     middleware: ['sanctum:auth'],
 });
@@ -40,9 +38,7 @@ const changePassword = async () => {
         password.value = '';
         password_confirmation.value = '';
     } catch (e) {
-        if (e instanceof FetchError) {
-            error.value = e.data?.message;
-        }
+        error.value = simplifyApiError(e);
     } finally {
         loading.value = false;
     }

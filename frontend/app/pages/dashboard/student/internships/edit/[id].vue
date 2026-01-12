@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { InternshipStatus, prettyInternshipStatus } from '~/types/internship_status';
 import type { Internship, NewInternship } from '~/types/internships';
-import { FetchError } from 'ofetch';
 
 definePageMeta({
     middleware: ['sanctum:auth', 'student-only'],
@@ -34,9 +33,7 @@ async function handleUpdateOfBasicInfo(internship: NewInternship) {
 
         navigateTo("/dashboard/student");
     } catch (e) {
-        if (e instanceof FetchError) {
-            action_error.value = e.response?._data.message;
-        }
+        action_error.value = simplifyApiError(e);
     } finally {
         loading.value = false;
     }

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { InternshipFilter } from '~/types/internships';
-import { FetchError } from 'ofetch';
 
 definePageMeta({
     middleware: ['sanctum:auth', 'admin-only'],
@@ -40,9 +39,7 @@ async function requestExport() {
         });
         triggerDownload(file, 'internships_export', 'csv');
     } catch (e) {
-        if (e instanceof FetchError) {
-            alert(`Chyba pri exportovaní: ${e.statusMessage ?? e.message}`);
-        }
+        alert(`Chyba pri exportovaní: ${simplifyApiError(e)}`);
     } finally {
         exportPending.value = false;
     }

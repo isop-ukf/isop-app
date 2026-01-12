@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { Paginated } from '~/types/pagination';
-import { FetchError } from 'ofetch';
 import type { User } from '~/types/user';
 
 const props = defineProps<{
@@ -46,9 +45,7 @@ async function delteStudent(student: User) {
         });
         await refresh();
     } catch (e) {
-        if (e instanceof FetchError) {
-            alert(`Chyba pri mazaní študenta: ${e.statusMessage ?? e.message}`);
-        }
+        alert(`Chyba pri mazaní študenta: ${simplifyApiError(e)}`);
     } finally {
         pending.value = false;
     }

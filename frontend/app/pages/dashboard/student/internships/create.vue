@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { NewInternship } from '~/types/internships';
-import { FetchError } from 'ofetch';
 
 definePageMeta({
     middleware: ['sanctum:auth', 'student-only'],
@@ -27,9 +26,7 @@ async function handleInternshipRegistration(internship: NewInternship) {
 
         navigateTo("/dashboard/student");
     } catch (e) {
-        if (e instanceof FetchError) {
-            error.value = e.response?._data.message;
-        }
+        error.value = simplifyApiError(e);
     } finally {
         loading.value = false;
     }

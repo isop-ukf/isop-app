@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { FetchError } from 'ofetch';
-
 const route = useRoute();
 const client = useSanctumClient();
 
@@ -43,9 +41,7 @@ async function handleLogin() {
 
         success.value = true;
     } catch (e) {
-        if (e instanceof FetchError) {
-            error.value = e.response?._data.message;
-        }
+        error.value = simplifyApiError(e);
     } finally {
         loading.value = false;
     }

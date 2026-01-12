@@ -2,7 +2,6 @@
 import type { Internship } from '~/types/internships';
 import { InternshipStatus, prettyInternshipStatus, type NewInternshipStatusData } from '~/types/internship_status';
 import type { User } from '~/types/user';
-import { FetchError } from 'ofetch';
 
 const props = defineProps<{
     internship: Internship
@@ -50,9 +49,7 @@ async function submit() {
         await refresh();
         emit('successfulSubmit');
     } catch (e) {
-        if (e instanceof FetchError) {
-            save_error.value = e.response?._data.message;
-        }
+        save_error.value = simplifyApiError(e);
     } finally {
         loading.value = false;
     }

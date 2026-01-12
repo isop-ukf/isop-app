@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { FetchError } from 'ofetch';
 import type { ApiKey, NewApiKey } from '~/types/api_keys';
 
 definePageMeta({
@@ -73,9 +72,7 @@ async function requestNewKey() {
 
         keyDisplayDialog.value = true;
     } catch (e) {
-        if (e instanceof FetchError) {
-            alert(`Chyba: ${e.data?.message}`);
-        }
+        alert(`Chyba: ${simplifyApiError(e)}`);
     } finally {
         waiting.value = false;
     }
@@ -93,9 +90,7 @@ async function deleteKey(key: ApiKey) {
 
         deletionConfirmDialog.value = { open: false, key: null };
     } catch (e) {
-        if (e instanceof FetchError) {
-            alert(`Chyba: ${e.data?.message}`);
-        }
+        alert(`Chyba: ${simplifyApiError(e)}`);
     } finally {
         waiting.value = false;
     }

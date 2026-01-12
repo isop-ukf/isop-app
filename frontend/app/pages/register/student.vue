@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { NewRole } from '~/types/role';
 import type { NewUser } from '~/types/user';
-import { FetchError } from 'ofetch';
 
 definePageMeta({
     middleware: ['sanctum:guest'],
@@ -77,9 +76,7 @@ async function handleRegistration() {
 
         navigateTo("/");
     } catch (e) {
-        if (e instanceof FetchError) {
-            error.value = e.response?._data.message;
-        }
+        error.value = simplifyApiError(e);
     } finally {
         loading.value = false;
     }

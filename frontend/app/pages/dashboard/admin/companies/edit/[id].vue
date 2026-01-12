@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { CompanyData } from '~/types/company_data';
-import { FetchError } from 'ofetch';
 
 definePageMeta({
     middleware: ['sanctum:auth', 'admin-only']
@@ -59,10 +58,7 @@ async function saveChanges() {
         alert('Údaje firmy boli úspešne aktualizované');
         navigateTo("/dashboard/admin/companies");
     } catch (e) {
-        if (e instanceof FetchError) {
-            console.error('Error saving company:', e.response?._data.message);
-            alert('Chyba:\n' + e.response?._data.message);
-        }
+        alert(`Chyba pri uložení firmy: ${simplifyApiError(e)}`);
     } finally {
         saving.value = false;
     }

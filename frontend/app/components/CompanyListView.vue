@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { Paginated } from '~/types/pagination';
-import { FetchError } from 'ofetch';
 import type { CompanyData } from '~/types/company_data';
 
 const props = defineProps<{
@@ -51,9 +50,7 @@ async function deleteCompany(company: CompanyData) {
         await client(`/api/companies/${company.id}`, { method: "DELETE" });
         await refresh();
     } catch (e) {
-        if (e instanceof FetchError) {
-            alert(`Chyba pri mazaní firmy: ${e.statusMessage ?? e.message}`);
-        }
+        alert(`Chyba pri mazaní firmy: ${simplifyApiError(e)}`);
     } finally {
         pending.value = false;
     }
