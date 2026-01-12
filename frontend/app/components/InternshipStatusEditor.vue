@@ -22,12 +22,7 @@ const loading = ref(false);
 const save_error = ref(null as null | string);
 
 const client = useSanctumClient();
-const { data, error: load_error, refresh } = await useLazySanctumFetch(`/api/internships/${props.internship.id}/next-statuses`, undefined, {
-    transform: (statuses: InternshipStatus[]) => statuses.map((state) => ({
-        title: prettyInternshipStatus(state),
-        value: state
-    }))
-});
+const { data, error: load_error, refresh } = await useLazySanctumFetch<InternshipStatus[]>(`/api/internships/${props.internship.id}/next-statuses`);
 
 async function submit() {
     save_error.value = null;
@@ -72,7 +67,8 @@ async function submit() {
             text="Stav praxe už nie je možné meniť, pretože bola (ne)obhájená alebo zamietnutá. V prípade, že ste prax zamietli omylom, alebo ak máte technické problémy, prosíme kontaktovať garanta praxe." />
 
         <v-form v-else v-model="isValid" @submit.prevent="submit" :disabled="loading">
-            <v-select v-model="new_state" label="Stav" :items="data" item-value="value"></v-select>
+            <v-select v-model="new_state" label="Stav" :items="data"
+                :item-title="(item) => prettyInternshipStatus(item)" :item-value="(item) => item"></v-select>
             <v-text-field v-model="note" :rules="[rules.required]" label="Poznámka"></v-text-field>
 
             <v-btn type="submit" color="success" size="large" block :disabled="!isValid">

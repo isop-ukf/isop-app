@@ -33,13 +33,13 @@ const client = useSanctumClient();
 // FETCH dát (používame useLazySanctumFetch — NIE neexistujúcu funkciu)
 const { data, error, pending, refresh } = await useLazySanctumFetch<Paginated<CompanyData>>(
     '/api/companies',
-    () => ({
+    {
         query: {
             page: page.value,
             per_page: itemsPerPage.value,
-        }
-    }),
-    { watch: [page, itemsPerPage] }
+        },
+        watch: [page, itemsPerPage]
+    }
 );
 
 // DELETE firmy

@@ -27,12 +27,11 @@ const headers = props.adminOps !== true
     : allHeaders;
 
 const client = useSanctumClient();
-const { data, error, pending, refresh } = await useLazySanctumFetch<Paginated<User>>('/api/students', () => ({
+const { data, error, pending, refresh } = await useLazySanctumFetch<Paginated<User>>('/api/students', {
     query: {
         page: page.value,
         per_page: itemsPerPage.value,
-    }
-}), {
+    },
     watch: [page, itemsPerPage]
 });
 
