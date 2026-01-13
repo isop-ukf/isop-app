@@ -41,8 +41,6 @@ const user = useSanctumUser<User>();
 
             <!-- spacer -->
             <div style="height: 40px;"></div>
-
-            <p>...</p>
         </v-card>
     </v-container>
 </template>

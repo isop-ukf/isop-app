@@ -10,8 +10,6 @@ useSeoMeta({
     description: "Partnerské firmy ISOP",
     ogDescription: "Partnerské firmy",
 });
-
-
 </script>
 
 <template>
@@ -24,7 +22,6 @@ useSeoMeta({
             <div style="height: 40px;"></div>
 
             <CompanyListView admin-ops />
-
         </v-card>
     </v-container>
 </template>
