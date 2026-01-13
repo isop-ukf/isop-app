@@ -47,6 +47,7 @@ const props = defineProps<{
     submit: (new_internship: NewInternship) => void,
 }>();
 
+const displayNotHiringWarning = ref(false);
 const isValid = ref(false);
 const form = ref({
     start: props.internship?.start ? convertDate(props.internship.start) : null,
@@ -98,6 +99,11 @@ const { data, pending, error } = await useLazySanctumFetch<Paginated<CompanyData
         per_page: -1
     }
 });
+
+watch(() => form.value.company_id, (company_id) => {
+    const company = data.value?.data.find(company => company.id == company_id);
+    displayNotHiringWarning.value = !(company?.hiring ?? true) /* ak je null, nech je upozornenie skryté */;
+});
 </script>
 
 <template>
@@ -120,8 +126,12 @@ const { data, pending, error } = await useLazySanctumFetch<Paginated<CompanyData
         <!-- Chybová hláška -->
         <ErrorAlert v-else-if="error" :error="error.message" />
 
-        <v-select v-else v-model="form.company_id" clearable label="Firma" :items="data?.data"
-            :item-props="companyListProps" item-value="id" :rules="[rules.required]"></v-select>
+        <div v-else>
+            <WarningAlert v-if="displayNotHiringWarning" title="Poznámka"
+                text="Zvolená firma aktuálne neprijíma nových študentov. Vaša prax môže byť zamietnutá. Ak ste dohodnutý so zamestnávateľom, považujte túto správu za bezpredmetnú." />
+            <v-select v-model="form.company_id" clearable label="Firma" :items="data?.data"
+                :item-props="companyListProps" item-value="id" :rules="[rules.required]"></v-select>
+        </div>
 
         <v-textarea v-model="form.description" clearable label="Popis práce" :rules="[rules.required]"></v-textarea>
 
