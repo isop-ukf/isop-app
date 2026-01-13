@@ -123,6 +123,27 @@ class CompanyController extends Controller
         return response()->noContent();
     }
 
+    public function update_hiring(int $id, Request $request)
+    {
+        $user = Auth::user();
+
+        $request->validate([
+            'status' => ['required', 'boolean']
+        ]);
+
+        $company = Company::find($id);
+
+        if ($user->role != 'ADMIN' && $company->contactPerson->id != $user->id) {
+            abort(403, 'Unauthorized');
+        }
+
+        $company->update([
+            'hiring' => $request->status
+        ]);
+
+        return response()->noContent();
+    }
+
     public function update_verification(int $id, Request $request)
     {
         $request->validate([

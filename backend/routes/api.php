@@ -68,6 +68,7 @@ Route::prefix('/companies')->middleware(['auth:sanctum'])->group(function () {
     Route::post("/{id}", [CompanyController::class, 'update_all', AdministratorOnly::class]);
     Route::delete("/{id}", [CompanyController::class, 'delete', AdministratorOnly::class]);
     Route::put("/{id}/verification", [CompanyController::class, 'update_verification', AdministratorOnly::class]);
+    Route::put("/{id}/hiring", [CompanyController::class, 'update_hiring']);
 });
 
 Route::prefix('/external')->middleware(['auth:sanctum'])->group(function () {
