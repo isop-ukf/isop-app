@@ -43,6 +43,7 @@ class Company extends Model
     {
         return [
             'verified' => 'boolean',
+            'hiring' => 'boolean',
         ];
     }
 
