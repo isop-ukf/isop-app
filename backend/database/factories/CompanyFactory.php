@@ -22,6 +22,7 @@ class CompanyFactory extends Factory
             'ico' => fake()->numberBetween(111111, 999999),
             'contact' => 0,
             'hiring' => fake()->boolean(),
+            'verified' => true
         ];
     }
 }

@@ -71,6 +71,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the student data associated with the user.
+     */
+    public function companyData()
+    {
+        return $this->hasOne(Company::class, 'contact');
+    }
+
+    /**
      * Get the internships for the user.
      */
     public function internships()

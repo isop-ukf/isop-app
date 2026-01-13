@@ -6,6 +6,7 @@ use App\Models\Company;
 use App\Models\User;
 use App\Models\Internship;
 use App\Models\InternshipStatusData;
+use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -25,7 +26,14 @@ class CompanyController extends Controller
             $perPage = Company::count();
         }
 
-        $companies = Company::query()->paginate($perPage);
+        $companies = Company::query();
+
+        // hide unverified companies from students
+        if (Auth::user()->role != 'ADMIN') {
+            $companies = $companies->whereVerified(true);
+        }
+
+        $companies = $companies->paginate($perPage);
         $companies->getCollection()->transform(function ($company) {
             $company->contact = $company->contactPerson;
             return $company;
@@ -111,6 +119,21 @@ class CompanyController extends Controller
                 ]);
             }
         }
+
+        return response()->noContent();
+    }
+
+    public function update_verification(int $id, Request $request)
+    {
+        $request->validate([
+            'status' => ['required', 'boolean']
+        ]);
+
+        $company = Company::find($id);
+
+        $company->update([
+            'verified' => $request->status
+        ]);
 
         return response()->noContent();
     }

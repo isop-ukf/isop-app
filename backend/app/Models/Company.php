@@ -20,7 +20,8 @@ class Company extends Model
         'address',
         'ico',
         'contact',
-        'hiring'
+        'hiring',
+        'verified'
     ];
 
     /**
@@ -32,6 +33,18 @@ class Company extends Model
         'created_at',
         'updated_at',
     ];
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'verified' => 'boolean',
+        ];
+    }
 
     /**
      * Get the internships for the company.

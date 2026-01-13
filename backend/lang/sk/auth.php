@@ -17,5 +17,6 @@ return [
     'password' => 'Zadané heslo je nesprávne.',
     'throttle' => 'Príliš veľa pokusov o prihlásenie. Skúste to znova o :seconds sekúnd.',
     'inactive_account' => 'Váš účet nie je aktívny. Kontaktujte, prosím, administrátora.',
+    'unverified_company' => 'Vaša firma ešte nebola overená. Kontaktujte, prosím, administrátora.',
 
 ];
