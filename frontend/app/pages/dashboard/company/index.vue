@@ -24,12 +24,22 @@ const user = useSanctumUser<User>();
             <!-- spacer -->
             <div style="height: 40px;"></div>
 
-            <v-btn prepend-icon="mdi-briefcase" color="blue" class="mr-2" to="/dashboard/company/internships">
-                Praxe
-            </v-btn>
-            <v-btn prepend-icon="mdi-account-circle" color="blue" class="mr-2" to="/account">
-                Môj profil
-            </v-btn>
+            <v-row align="center" no-gutters>
+                <v-col cols="auto" class="mr-3">
+                    <v-btn prepend-icon="mdi-briefcase" color="blue" to="/dashboard/company/internships">
+                        Praxe
+                    </v-btn>
+                </v-col>
+                <v-col cols="auto" class="mr-3">
+                    <v-btn prepend-icon="mdi-account-circle" color="blue" to="/account">
+                        Môj profil
+                    </v-btn>
+                </v-col>
+                <v-col cols="auto">
+                    <CompanyHiringToggle :company="user?.company_data?.id"
+                        :current_value="user?.company_data?.hiring" />
+                </v-col>
+            </v-row>
 
             <!-- spacer -->
             <div style="height: 40px;"></div>
