@@ -6,6 +6,7 @@ on:
       - develop
       - feature/ci-cypress-tests-08-11-2025
       - feature/fix-cypress-tests-03-01-2026
+      - feature/fix-company-hiring-toggle-typecheck-13-01-2026
 
 jobs:
   cypress-tests:

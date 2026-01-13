@@ -36,8 +36,8 @@ const user = useSanctumUser<User>();
                     </v-btn>
                 </v-col>
                 <v-col cols="auto">
-                    <CompanyHiringToggle :company="user?.company_data?.id"
-                        :current_value="user?.company_data?.hiring" />
+                    <CompanyHiringToggle :company="user!.company_data!.id"
+                        :current_value="user!.company_data!.hiring" />
                 </v-col>
             </v-row>
 
