@@ -7,6 +7,7 @@ export interface CompanyData {
     ico: number;
     contact: User;
     hiring: boolean;
+    verified: boolean;
 };
 
 export interface NewCompanyData {

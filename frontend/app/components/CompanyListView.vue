@@ -21,11 +21,12 @@ const allHeaders = [
     { title: "E-mail", key: "contact.email", sortable: false },
     { title: "Telefón", key: "contact.phone", sortable: false },
     { title: "Prijímajú študentov", key: "hiring", sortable: false },
+    { title: "Overená", key: "verified", sortable: false },
     { title: "Operácie", key: "operations", sortable: false }
 ];
 
 const headers = props.adminOps !== true
-    ? allHeaders.filter(h => h.key !== "operations")
+    ? allHeaders.filter(h => h.key !== "operations" && h.key !== "verified")
     : allHeaders;
 
 const client = useSanctumClient();
@@ -84,6 +85,10 @@ watch(data, (newData) => {
 
             <template #item.hiring="{ item }">
                 {{ item.hiring ? 'Áno' : 'Nie' }}
+            </template>
+
+            <template #item.verified="{ item }" v-if="adminOps === true">
+                <CompanyVerificationToggle :company="item.id" :current_value="item.verified" />
             </template>
 
             <template #item.operations="{ item }" v-if="adminOps === true">
