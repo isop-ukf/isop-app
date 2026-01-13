@@ -92,14 +92,10 @@ function yearOfStudyValueHandler(item: { title: string, subtitle: string }) {
     return parseInt(item.title) || 0;
 }
 
-const { data, pending, error } = await useLazySanctumFetch('/api/companies', {
+const { data, pending, error } = await useLazySanctumFetch<Paginated<CompanyData>>('/api/companies', {
     query: {
         page: 1,
         per_page: -1
-    },
-}, {
-    transform: (original: Paginated<CompanyData>) => {
-        return original.data;
     }
 });
 </script>
@@ -124,8 +120,8 @@ const { data, pending, error } = await useLazySanctumFetch('/api/companies', {
         <!-- Chybová hláška -->
         <ErrorAlert v-else-if="error" :error="error.message" />
 
-        <v-select v-else v-model="form.company_id" clearable label="Firma" :items="data" :item-props="companyListProps"
-            item-value="id" :rules="[rules.required]"></v-select>
+        <v-select v-else v-model="form.company_id" clearable label="Firma" :items="data?.data"
+            :item-props="companyListProps" item-value="id" :rules="[rules.required]"></v-select>
 
         <v-textarea v-model="form.description" clearable label="Popis práce" :rules="[rules.required]"></v-textarea>
 
