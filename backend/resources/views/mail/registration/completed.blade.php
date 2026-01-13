@@ -7,7 +7,7 @@
 <br />
 <p>
     <a
-        href="{{ config('app.frontend_url') }}/account/activation/{{ $activation_token }}">{{ config('app.frontend_url') }}/account/activation/{{ $activation_token }}</a>
+        href="{{ config('app.frontend_url') }}/login/activation/{{ $activation_token }}">{{ config('app.frontend_url') }}/login/activation/{{ $activation_token }}</a>
 </p>
 
 <br />
