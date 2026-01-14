@@ -1,6 +1,8 @@
 <template>
     <div>
-        <v-alert density="compact" :text="text" :title="title" type="info" class="mb-2 mt-2"></v-alert>
+        <v-alert density="compact" :text="text" :title="title" type="info" class="mb-2 mt-2">
+            <slot></slot>
+        </v-alert>
     </div>
 </template>
 

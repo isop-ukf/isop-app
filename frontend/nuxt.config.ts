@@ -33,5 +33,25 @@ export default defineNuxtConfig({
     typescript: {
         strict: true,
         typeCheck: true,
+    },
+
+    runtimeConfig: {
+        public: {
+            demo: {
+                enabled: false, // NUXT_PUBLIC_DEMO_ENABLED
+                student: {
+                    email: "student@ukf.sk", // NUXT_PUBLIC_DEMO_STUDENT_EMAIL
+                    password: "password" // NUXT_PUBLIC_DEMO_STUDENT_PASSWORD
+                },
+                company: {
+                    email: "employer@company.com",
+                    password: "password"
+                },
+                admin: {
+                    email: "admin@ukf.sk",
+                    password: "password"
+                }
+            }
+        }
     }
 });

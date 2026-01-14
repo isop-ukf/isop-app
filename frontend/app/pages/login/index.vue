@@ -17,6 +17,8 @@ const rules = {
     email: (v: string) => /.+@.+\..+/.test(v) || 'Zadajte platný email',
 };
 
+const config = useRuntimeConfig();
+
 const isValid = ref(false);
 const showPassword = ref(false);
 const form = ref({
@@ -45,6 +47,24 @@ async function handleLogin() {
     <v-container fluid class="page-container form-wrap">
         <v-card id="page-container-card">
             <h2 class="page-title">Prihlásenie</h2>
+
+            <InfoAlert title="Demo" text="" v-if="config.public.demo.enabled">
+                <p>Demo režim je aktívny. Systém môžete vyskúšať nasledovnými prihlasovacími údajmi.</p>
+
+                <br />
+
+                <ul>
+                    <li>Študent: <code>{{ config.public.demo.student.email }}</code> |
+                        <code>{{ config.public.demo.student.password }}</code>
+                    </li>
+                    <li>Firma: <code>{{ config.public.demo.company.email }}</code> |
+                        <code>{{ config.public.demo.company.password }}</code>
+                    </li>
+                    <li>Garant: <code>{{ config.public.demo.admin.email }}</code> |
+                        <code>{{ config.public.demo.admin.password }}</code>
+                    </li>
+                </ul>
+            </InfoAlert>
 
             <!-- Chybová hláška -->
             <ErrorAlert v-if="error" :error="error" />
