@@ -167,8 +167,8 @@
 
         <div>
             Predmetom tejto dohody je vykonanie odbornej praxe študenta v rozsahu 150 hodín, v termíne od
-            <em>{{ \Carbon\Carbon::parse($internship->start)->format('d.m.Y') }}</em> do
-            <em>{{ \Carbon\Carbon::parse($internship->end)->format('d.m.Y') }}</em> bezodplatne.
+            <em>{{ $internship->start->format('d.m.Y') }}</em> do
+            <em>{{ $internship->end->format('d.m.Y') }}</em> bezodplatne.
         </div>
 
         <div class="roman-numeral">II. Práva a povinnosti účastníkov dohody</div>
@@ -254,7 +254,7 @@
         </div>
 
         <div id="signature-section" style="margin-top: 40px;">
-            <div>V Nitre, dňa <em>{{ \Carbon\Carbon::parse(now())->format('d.m.Y') }}</em>.</div>
+            <div>V Nitre, dňa <em>{{ now()->format('d.m.Y') }}</em>.</div>
         </div>
 
         <div style="display: flex; justify-content: space-between; margin-top: 60px;">
