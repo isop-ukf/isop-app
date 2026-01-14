@@ -7,7 +7,6 @@ use App\Mail\InternshipStatusUpdated;
 use App\Models\Internship;
 use App\Models\InternshipStatusData;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Laravel\Sanctum\Sanctum;
 use Mail;
@@ -21,8 +20,8 @@ class ExternalApiController extends Controller
         $tokens = $tokens->map(fn($token) => [
             "id" => $token->id,
             "name" => $token->name,
-            "created_at" => Carbon::parse($token->created_at)->format('d.m.Y H:i:s'),
-            "last_used_at" => $token->last_used_at ? Carbon::parse($token->last_used_at)->format('d.m.Y H:i:s') : null,
+            "created_at" => $token->created_at,
+            "last_used_at" => $token->last_used_at,
             "owner" => User::find($token->tokenable_id)->name,
         ]);
 
@@ -89,24 +88,24 @@ class ExternalApiController extends Controller
         // mail študentovi
         Mail::to($internship->student)
             ->sendNow(new InternshipStatusUpdated(
-                    $internship,
-                    $currentStatus,
-                    $newStatus->status,
-                    $request->note,
-                    $user,
-                    recipiantIsStudent: true,
-                ));
+                $internship,
+                $currentStatus,
+                $newStatus->status,
+                $request->note,
+                $user,
+                recipiantIsStudent: true,
+            ));
 
         // mail firme
         Mail::to($internship->company->contactPerson->email)
             ->sendNow(new InternshipStatusUpdated(
-                    $internship,
-                    $currentStatus,
-                    $newStatus->status,
-                    $request->note,
-                    $user,
-                    recipiantIsStudent: false,
-                ));
+                $internship,
+                $currentStatus,
+                $newStatus->status,
+                $request->note,
+                $user,
+                recipiantIsStudent: false,
+            ));
 
         $newStatus->save();
         return response()->noContent();
