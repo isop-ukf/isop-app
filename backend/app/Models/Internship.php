@@ -48,6 +48,8 @@ class Internship extends Model
     protected function casts(): array
     {
         return [
+            'start' => 'datetime:d.m.Y',
+            'end' => 'datetime:d.m.Y',
             'report_confirmed' => 'boolean',
         ];
     }
@@ -130,19 +132,12 @@ class Internship extends Model
      */
     public function toArray(): array
     {
-        return [
-            'id' => $this->id,
-            'student' => $this->student,
-            'company' => $this->company,
-            'start' => Carbon::parse($this->start)->format('d.m.Y'),
-            'end' => Carbon::parse($this->end)->format('d.m.Y'),
-            'year_of_study' => $this->year_of_study,
-            'semester' => $this->semester,
-            'position_description' => $this->position_description,
-            'proof' => $this->proof !== null,
-            'report' => $this->report !== null,
-            'report_confirmed' => $this->report_confirmed,
-            'status' => $this->status,
-        ];
+        $array = parent::toArray();
+        $array['proof'] = $this->proof !== null;
+        $array['report'] = $this->report !== null;
+        $array['status'] = $this->status;
+        $array['company'] = $this->company;
+
+        return $array;
     }
 }
