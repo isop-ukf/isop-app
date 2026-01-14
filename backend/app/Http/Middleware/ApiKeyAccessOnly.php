@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Laravel\Sanctum\PersonalAccessToken;
 use Symfony\Component\HttpFoundation\Response;
 
 class ApiKeyAccessOnly
@@ -15,12 +16,8 @@ class ApiKeyAccessOnly
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $isSession = $request->hasCookie(config('session.cookie'));
-        $isToken = $request->user()->currentAccessToken() !== null && !$isSession;
-
-        if (!$isToken) {
-            abort(403, 'Forbidden');
-        }
+        $token = $request->user()->currentAccessToken(); // Session cookie - TransientAccessToken, API key - PersonalAccessToken
+        abort_unless($token instanceof PersonalAccessToken, 403, "Forbidden");
 
         return $next($request);
     }
